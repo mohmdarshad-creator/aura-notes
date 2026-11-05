@@ -16,7 +16,9 @@ import {
   ChevronRight,
   BookMarked,
   PlusCircle,
-  X
+  X,
+  User,
+  CheckCircle2
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
@@ -34,6 +36,7 @@ interface HomeScreenProps {
   onAddSubject: (name: string, description: string, color: NoteColor, icon: string) => void
   onOpenGemini: () => void
   onNewNote: () => void
+  onOpenSettings?: () => void
 }
 
 const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; glow: string; badge: string }> = {
@@ -100,7 +103,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenSubject,
   onAddSubject,
   onOpenGemini,
-  onNewNote
+  onNewNote,
+  onOpenSettings
 }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [newSubName, setNewSubName] = useState('')
@@ -459,6 +463,133 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             )
           })}
+        </div>
+      </section>
+
+      {/* PERSONAL DETAILS SECTION (TAB BELOW NOTEBOOKS) */}
+      <section className="space-y-4 pt-4 border-t border-stone-200/70 dark:border-stone-800">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
+              <User className="w-4 h-4 text-indigo-500" />
+              Personal Details
+            </h2>
+            <p className="text-xs text-stone-400 mt-0.5">
+              Academic scholar credentials, specializations & personal learning metrics
+            </p>
+          </div>
+
+          {/* Student Profile Tabs */}
+          <div className="flex items-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-1 border border-stone-200/80 dark:border-stone-700/60 text-xs self-start sm:self-auto">
+            {users.map((u) => {
+              const isSelected = activeUser.id === u.id
+              return (
+                <button
+                  key={u.id}
+                  onClick={() => onSelectUser(u)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                    isSelected
+                      ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs'
+                      : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                  }`}
+                >
+                  <span className={`w-3.5 h-3.5 rounded text-[8px] font-bold flex items-center justify-center text-white bg-gradient-to-tr ${u.avatarGradient}`}>
+                    {u.initials}
+                  </span>
+                  <span>{u.name}</span>
+                </button>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Personal Details Aesthetic Card */}
+        <div className="relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden">
+          {/* Subtle Ambient Background Tint */}
+          <div className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${activeUser.avatarGradient} opacity-5 blur-3xl pointer-events-none`} />
+
+          <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+            
+            {/* Left: Avatar & Identity Details */}
+            <div className="flex items-start sm:items-center gap-4 sm:gap-5">
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-md flex-shrink-0`}>
+                {activeUser.initials}
+              </div>
+
+              <div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-stone-900 dark:text-stone-100">
+                    {activeUser.name}
+                  </h3>
+                  <span className="text-xs font-mono font-medium px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    Active Scholar
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 flex items-center gap-2 flex-wrap">
+                  <span className="font-semibold text-stone-700 dark:text-stone-300">{activeUser.role}</span>
+                  <span className="text-stone-300 dark:text-stone-600">•</span>
+                  <span>Student ID: {activeUser.id === 'user-arshad' ? 'STU-ARSHAD-2026' : 'STU-RANIYA-2026'}</span>
+                </p>
+
+                <div className="flex items-center gap-2 mt-2 text-[11px] text-stone-400">
+                  <span className="flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500" />
+                    Verified Local Study Space
+                  </span>
+                  <span>•</span>
+                  <span>Gemini 2.5 Flash Connected</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Academic Metrics Grid */}
+            <div className="grid grid-cols-3 gap-3 w-full lg:w-auto">
+              <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-stone-900 dark:text-stone-100">
+                  {notes.filter(n => n.authorId === activeUser.id).length}
+                </div>
+                <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">
+                  Authored Notes
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-amber-600 dark:text-amber-400">
+                  {notes.filter(n => n.authorId === activeUser.id && n.isPinned).length}
+                </div>
+                <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">
+                  Pinned Review
+                </div>
+              </div>
+
+              <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-rose-600 dark:text-rose-400">
+                  {notes.filter(n => n.authorId === activeUser.id && n.isFavorite).length}
+                </div>
+                <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">
+                  Starred Sheets
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Footer Notice (No pen button) */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-5 mt-6 border-t border-stone-100 dark:border-stone-800/80 text-xs text-stone-400">
+            <span>
+              Profile details are configured in <strong>Settings</strong> &gt; <strong>Student Profiles</strong>.
+            </span>
+            {onOpenSettings && (
+              <button
+                onClick={onOpenSettings}
+                className="self-start sm:self-auto px-3 py-1.5 rounded-xl font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
+              >
+                Configure in Settings →
+              </button>
+            )}
+          </div>
         </div>
       </section>
 

@@ -244,6 +244,7 @@ export function App() {
             onAddSubject={handleAddSubject}
             onOpenGemini={() => handleOpenGeminiGeneral()}
             onNewNote={() => handleCreateNote()}
+            onOpenSettings={() => setIsSettingsOpen(true)}
           />
         ) : (
           /* Page 2: Dedicated Notes Window */
