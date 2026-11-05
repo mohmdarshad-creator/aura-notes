@@ -36,3 +36,16 @@ export interface CategoryItem {
   color: string
 }
 
+export interface SubjectItem {
+  id: string
+  name: string
+  description?: string
+  color: NoteColor
+  icon: string
+  createdAt?: number
+}
+
+export type PageRoute = 
+  | { type: 'home' }
+  | { type: 'collection'; view: 'all' | 'pinned' | 'favorites' }
+  | { type: 'subject'; subjectName: string }

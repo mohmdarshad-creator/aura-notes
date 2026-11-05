@@ -1,9 +1,41 @@
-import { Note, DoubtMessage } from '../types'
+import { Note, DoubtMessage, SubjectItem } from '../types'
 
 const NOTES_STORAGE_KEY = 'auranotes_notes_v1'
 const API_KEY_STORAGE_KEY = 'auranotes_gemini_api_key'
 const CHAT_HISTORY_STORAGE_KEY = 'auranotes_doubt_history_v1'
 const THEME_STORAGE_KEY = 'auranotes_theme'
+const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
+
+export const DEFAULT_SUBJECTS: SubjectItem[] = [
+  { 
+    id: 'sub-cs', 
+    name: 'Computer Science', 
+    description: 'Neural Networks, Data Structures, Algorithms & Machine Learning',
+    color: 'indigo', 
+    icon: 'Code' 
+  },
+  { 
+    id: 'sub-physics', 
+    name: 'Physics', 
+    description: 'Quantum Mechanics, Entanglement, Relativity & Thermodynamics',
+    color: 'purple', 
+    icon: 'Atom' 
+  },
+  { 
+    id: 'sub-math', 
+    name: 'Mathematics', 
+    description: 'Linear Algebra, Calculus, Proofs & Discrete Structures',
+    color: 'sky', 
+    icon: 'Sigma' 
+  },
+  { 
+    id: 'sub-philosophy', 
+    name: 'Philosophy', 
+    description: 'Stoicism, Cognitive Clarity, Epistemology & Logic',
+    color: 'emerald', 
+    icon: 'Feather' 
+  },
+]
 
 export const INITIAL_NOTES: Note[] = [
   {
@@ -208,6 +240,43 @@ export const storageService = {
 
   saveTheme(theme: string): void {
     localStorage.setItem(THEME_STORAGE_KEY, theme)
+  },
+
+  getSubjects(): SubjectItem[] {
+    try {
+      const stored = localStorage.getItem(SUBJECTS_STORAGE_KEY)
+      if (!stored) {
+        localStorage.setItem(SUBJECTS_STORAGE_KEY, JSON.stringify(DEFAULT_SUBJECTS))
+        return DEFAULT_SUBJECTS
+      }
+      return JSON.parse(stored)
+    } catch (e) {
+      console.error('Failed to load subjects', e)
+      return DEFAULT_SUBJECTS
+    }
+  },
+
+  saveSubjects(subjects: SubjectItem[]): void {
+    try {
+      localStorage.setItem(SUBJECTS_STORAGE_KEY, JSON.stringify(subjects))
+    } catch (e) {
+      console.error('Failed to save subjects', e)
+    }
+  },
+
+  addSubject(name: string, description: string = '', color: any = 'indigo', icon: string = 'BookOpen'): SubjectItem {
+    const current = this.getSubjects()
+    const newSubject: SubjectItem = {
+      id: `sub-${Date.now()}`,
+      name: name.trim(),
+      description: description.trim() || 'Custom study collection',
+      color,
+      icon,
+      createdAt: Date.now()
+    }
+    const updated = [...current, newSubject]
+    this.saveSubjects(updated)
+    return newSubject
   },
 
   exportNotesJson(notes: Note[]): void {

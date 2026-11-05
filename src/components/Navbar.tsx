@@ -20,10 +20,8 @@ interface NavbarProps {
   theme: string
   onToggleTheme: () => void
   isGeminiConfigured: boolean
-  activeView: 'notes' | 'ai-tutor'
-  setActiveView: (view: 'notes' | 'ai-tutor') => void
-  isZenMode: boolean
-  onToggleZenMode: () => void
+  onNavigateHome: () => void
+  isAtHome: boolean
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -35,10 +33,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   theme,
   onToggleTheme,
   isGeminiConfigured,
-  activeView,
-  setActiveView,
-  isZenMode,
-  onToggleZenMode
+  onNavigateHome,
+  isAtHome
 }) => {
   return (
     <header className="sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-colors">
@@ -47,7 +43,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Brand / Logo */}
         <div className="flex items-center gap-3">
           <div 
-            onClick={() => setActiveView('notes')}
+            onClick={onNavigateHome}
             className="flex items-center gap-2.5 cursor-pointer group"
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-400 p-[1px] shadow-sm group-hover:scale-105 transition-transform">
@@ -65,25 +61,21 @@ export const Navbar: React.FC<NavbarProps> = ({
           {/* Navigation Tabs */}
           <nav className="hidden md:flex items-center gap-1 ml-4 pl-4 border-l border-stone-200 dark:border-stone-800">
             <button
-              onClick={() => setActiveView('notes')}
+              onClick={onNavigateHome}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                activeView === 'notes'
-                  ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-sm'
+                isAtHome
+                  ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs'
                   : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
               }`}
             >
-              Study Notes
+              Home
             </button>
             <button
-              onClick={() => setActiveView('ai-tutor')}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all ${
-                activeView === 'ai-tutor'
-                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 font-semibold'
-                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-              }`}
+              onClick={onOpenGemini}
+              className="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
             >
-              <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-              Gemini Doubt Solver
+              <Sparkles className="w-4 h-4 text-amber-500" />
+              Doubt Solver
             </button>
           </nav>
         </div>
