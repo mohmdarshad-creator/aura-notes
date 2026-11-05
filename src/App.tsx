@@ -186,8 +186,8 @@ export function App() {
   }
 
   // Delete Note
-  const handleDeleteNote = (id: string) => {
-    if (confirm('Are you sure you want to delete this note?')) {
+  const handleDeleteNote = (id: string, skipNativeConfirm: boolean = false) => {
+    if (skipNativeConfirm || confirm('Are you sure you want to delete this note?')) {
       setNotes(prev => prev.filter(n => n.id !== id))
       if (selectedNoteId === id) {
         setSelectedNoteId(null)
@@ -311,7 +311,7 @@ export function App() {
             <NoteEditor
               note={activeNote}
               onUpdateNote={(updated) => handleUpdateNote(activeNote.id, updated)}
-              onDeleteNote={() => handleDeleteNote(activeNote.id)}
+              onDeleteNote={() => handleDeleteNote(activeNote.id, true)}
               onExportMarkdown={() => storageService.exportSingleNoteMarkdown(activeNote)}
               onAskGeminiAboutNote={(quickPrompt) => handleAskGeminiAboutNote(activeNote, quickPrompt)}
               onClose={() => setSelectedNoteId(null)}
