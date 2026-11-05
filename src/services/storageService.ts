@@ -1,16 +1,36 @@
-import { Note, DoubtMessage, SubjectItem } from '../types'
+import { Note, DoubtMessage, SubjectItem, UserProfile } from '../types'
 
-const NOTES_STORAGE_KEY = 'auranotes_notes_v1'
+const NOTES_STORAGE_KEY = 'auranotes_notes_v2'
 const API_KEY_STORAGE_KEY = 'auranotes_gemini_api_key'
-const CHAT_HISTORY_STORAGE_KEY = 'auranotes_doubt_history_v1'
+const CHAT_HISTORY_STORAGE_KEY = 'auranotes_doubt_history_v2'
 const THEME_STORAGE_KEY = 'auranotes_theme'
 const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
+const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
+
+export const USERS: UserProfile[] = [
+  {
+    id: 'user-arshad',
+    name: 'Mohamed Arshad',
+    initials: 'MA',
+    color: 'indigo',
+    role: 'Computer Science & AI Researcher',
+    avatarGradient: 'from-indigo-600 via-indigo-500 to-amber-400'
+  },
+  {
+    id: 'user-raniya',
+    name: 'Raniya Parveen',
+    initials: 'RP',
+    color: 'coral',
+    role: 'Physics & Life Sciences Scholar',
+    avatarGradient: 'from-rose-500 via-pink-500 to-amber-300'
+  }
+]
 
 export const DEFAULT_SUBJECTS: SubjectItem[] = [
   { 
     id: 'sub-cs', 
     name: 'Computer Science', 
-    description: 'Neural Networks, Data Structures, Algorithms & Machine Learning',
+    description: 'Neural Networks, Distributed Systems & Machine Learning',
     color: 'indigo', 
     icon: 'Code' 
   },
@@ -38,12 +58,13 @@ export const DEFAULT_SUBJECTS: SubjectItem[] = [
 ]
 
 export const INITIAL_NOTES: Note[] = [
+  // Mohamed Arshad's Notes
   {
     id: 'note-1',
     title: '🧠 Neural Networks & Backpropagation Simplified',
     content: `# Neural Networks & Backpropagation
 
-A neural network is an interconnected assembly of simple processing units (neurons) whose functionality is loosely based on the animal neuron.
+A neural network is an interconnected assembly of simple processing units (neurons) whose functionality is loosely based on the biological neuron.
 
 ### 1. Forward Pass
 Information flows from input layer $\\rightarrow$ hidden layers $\\rightarrow$ output layer:
@@ -55,23 +76,75 @@ Common activation functions:
 - **Sigmoid**: $f(x) = \\frac{1}{1 + e^{-x}}$ — maps output between $[0, 1]$.
 - **Softmax**: Multi-class probability distribution.
 
-### 2. The Loss Function (Error)
-For regression, we typically use Mean Squared Error (MSE):
-$$L = \\frac{1}{2} (y_{pred} - y_{true})^2$$
-
-### 3. Backpropagation (Chain Rule)
+### 2. Backpropagation (Chain Rule)
 To update weight $w_{ij}$, we compute the partial derivative of loss with respect to that weight:
 $$\\frac{\\partial L}{\\partial w} = \\frac{\\partial L}{\\partial a} \\cdot \\frac{\\partial a}{\\partial z} \\cdot \\frac{\\partial z}{\\partial w}$$
 
-> **Key Intuition**: Backpropagation is just the calculus chain rule working backward to tell each weight how much it contributed to the final mistake!`,
+> **Key Takeaway**: Backpropagation is the calculus chain rule working backward to tell each neuron how much it contributed to the final prediction error.`,
     category: 'Computer Science',
     tags: ['machine-learning', 'math', 'ai'],
     color: 'indigo',
     isPinned: true,
     isFavorite: true,
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3, // 3 days ago
+    authorId: 'user-arshad',
+    authorName: 'Mohamed Arshad',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 3,
     updatedAt: Date.now() - 1000 * 60 * 60 * 4,
   },
+  {
+    id: 'note-4',
+    title: '🌿 Stoic Philosophy: The Dichotomy of Control & Deep Focus',
+    content: `# Stoic Principles for High Performance
+
+Stoicism is not the suppression of emotion; it is the liberation from destructive impulses through clear, rational thinking.
+
+### 1. The Dichotomy of Control (Epictetus)
+Things are divided into two categories:
+- **Within our control**: Our opinions, desires, intentions, focus, and actions.
+- **Outside our control**: Other people's opinions, external outcomes, algorithmic feeds.
+
+> *"Make the best use of what is in your power, and take the rest as it happens."* — Epictetus
+
+### 2. Practical Protocols for Deep Study
+- **Amor Fati**: Love your fate. Difficult exams or bug fixes aren't obstacles; they are the training ground.
+- **Premeditatio Malorum**: Negative visualization. Prepare your mind for distractions before starting deep work.
+- **Memento Mori**: Treat your attention as the most sacred currency.`,
+    category: 'Philosophy',
+    tags: ['stoicism', 'productivity', 'mindset'],
+    color: 'emerald',
+    isPinned: false,
+    isFavorite: true,
+    authorId: 'user-arshad',
+    authorName: 'Mohamed Arshad',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 10,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 48,
+  },
+  {
+    id: 'note-5',
+    title: '🌐 Distributed Systems: CAP Theorem & Consensus',
+    content: `# Distributed Systems & Consensus
+
+In a distributed computer network, trade-offs between consistency and availability are inevitable.
+
+### Eric Brewer's CAP Theorem
+A distributed data store can simultaneously provide at most two out of three guarantees:
+1. **Consistency (C)**: Every read receives the most recent write or an error.
+2. **Availability (A)**: Every request receives a non-error response, without guarantee that it contains the most recent write.
+3. **Partition Tolerance (P)**: The system continues to operate despite an arbitrary number of dropped or delayed messages between nodes.
+
+> In the presence of a network partition, you must choose between Consistency (CP) and Availability (AP).`,
+    category: 'Computer Science',
+    tags: ['distributed-systems', 'architecture', 'cloud'],
+    color: 'sky',
+    isPinned: true,
+    isFavorite: false,
+    authorId: 'user-arshad',
+    authorName: 'Mohamed Arshad',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 2,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 6,
+  },
+
+  // Raniya Parveen's Notes
   {
     id: 'note-2',
     title: '⚡ Quantum Computing: Superposition & Entanglement',
@@ -89,24 +162,20 @@ $$|\\psi\\rangle = \\alpha|0\\rangle + \\beta|1\\rangle$$
 where $|\\alpha|^2 + |\\beta|^2 = 1$. Until measured, the qubit is in both states simultaneously!
 
 #### 2. Quantum Entanglement
-Two or more particles become connected such that the quantum state of each particle cannot be described independently of the others:
+Two or more particles become connected such that the quantum state of each particle cannot be described independently:
 $$|\\Phi^+\\rangle = \\frac{|00\\rangle + |11\\rangle}{\\sqrt{2}}$$
-If one qubit collapses to $|0\\rangle$, the other collapses to $|0\\rangle$ instantaneously, regardless of distance.
+If one qubit collapses to $|0\\rangle$, the other collapses instantaneously, regardless of cosmic distance.
 
-#### 3. Quantum Gates
-- **Hadamard (H)**: Creates superposition from basis states.
-- **Pauli-X**: Bit-flip gate (quantum NOT).
-- **CNOT**: Entangles two qubits (conditional NOT).
-
-### Why it Matters
-- **Shor's Algorithm**: Factorizes large integers in polynomial time (breaks RSA).
-- **Grover's Algorithm**: Unsorted database search in $O(\\sqrt{N})$ time.
-- **Drug Discovery**: Simulating molecular structures at quantum level.`,
+### Algorithms to Know
+- **Shor's Algorithm**: Factorizes large integers in polynomial time.
+- **Grover's Algorithm**: Unsorted database search in $O(\\sqrt{N})$ time.`,
     category: 'Physics',
     tags: ['quantum', 'physics', 'computing'],
     color: 'purple',
     isPinned: true,
     isFavorite: true,
+    authorId: 'user-raniya',
+    authorName: 'Raniya Parveen',
     createdAt: Date.now() - 1000 * 60 * 60 * 24 * 5,
     updatedAt: Date.now() - 1000 * 60 * 60 * 12,
   },
@@ -117,58 +186,48 @@ If one qubit collapses to $|0\\rangle$, the other collapses to $|0\\rangle$ inst
 
 > *"Where is everybody?"* — Enrico Fermi, 1950
 
-If the universe is $\\approx 13.8$ billion years old and contains trillions of habitable planets, intelligent life should have colonized the galaxy by now. Why is there total silence?
+If the observable universe contains trillions of habitable planets, intelligent life should have colonized our galaxy by now. Why is there cosmic silence?
 
 ### Robin Hanson's Great Filter
 Somewhere along the evolutionary path from non-living matter to an interstellar civilization, there exists a barrier that is nearly impossible to cross.
 
-The 9 Evolutionary Steps:
-1. Right star system & habitable planet
-2. Abiogenesis (organic molecules $\\rightarrow$ self-replicating RNA)
-3. Prokaryotic single-cell life
-4. Eukaryotic complex single-cell life
-5. Sexual reproduction
-6. Multi-cellular organisms
-7. Tool-using animals with big brains
-8. Space-faring civilization (Humans currently here)
-9. Interstellar colonization
-
 ### The Big Question: Is the filter behind us or ahead of us?
 - **Behind Us**: Abiogenesis or eukaryotic transition is cosmically rare. We are lonely and extremely lucky.
-- **Ahead of Us**: Technological civilizations inevitably destroy themselves (nuclear war, runaway AGI, engineered pandemics, or climate collapse).`,
+- **Ahead of Us**: Technological civilizations inevitably destroy themselves (nuclear war, unaligned AGI, synthetic pandemics, or climate collapse).`,
     category: 'Astronomy',
     tags: ['space', 'philosophy', 'evolution'],
     color: 'amber',
-    isPinned: false,
+    isPinned: true,
     isFavorite: false,
+    authorId: 'user-raniya',
+    authorName: 'Raniya Parveen',
     createdAt: Date.now() - 1000 * 60 * 60 * 24 * 7,
     updatedAt: Date.now() - 1000 * 60 * 60 * 20,
   },
   {
-    id: 'note-4',
-    title: '🌿 Stoic Philosophy: The Dichotomy of Control & Deep Focus',
-    content: `# Stoic Principles for High Performance
+    id: 'note-6',
+    title: '🧬 CRISPR-Cas9 & Molecular Genetics Architecture',
+    content: `# CRISPR-Cas9 Gene Editing Mechanisms
 
-Stoicism is not the suppression of emotion; it is the freedom from destructive passions through clear, rational thinking.
+CRISPR (Clustered Regularly Interspaced Short Palindromic Repeats) is a bacterial defense mechanism adapted into a revolutionary precision genome editing tool.
 
-### 1. The Dichotomy of Control (Epictetus)
-Things are divided into two categories:
-- **Within our control**: Our opinions, desires, intentions, focus, and actions.
-- **Outside our control**: Other people's opinions, outcomes, the past, the weather, algorithmic feeds.
-
-> *"Make the best use of what is in your power, and take the rest as it happens."* — Epictetus
-
-### 2. Practical Protocols for Deep Study
-- **Amor Fati**: Love your fate. Difficult exams or challenging bug fixes aren't obstacles; they are the training ground.
-- **Premeditatio Malorum**: Negative visualization. Prepare your mind for distractions and fatigue before starting a 3-hour deep work block.
-- **Memento Mori**: Remember that time is finite. Treat your attention as the most sacred currency.`,
-    category: 'Philosophy',
-    tags: ['stoicism', 'productivity', 'mindset'],
-    color: 'emerald',
+### Mechanism Steps:
+1. **Guide RNA (gRNA)**: Synthesized sequence (approx 20 base pairs) targeting the exact genomic DNA locus.
+2. **Cas9 Endonuclease**: The molecular "scissors" that binds to the gRNA.
+3. **PAM Sequence**: Cas9 scans for the Protospacer Adjacent Motif (5'-NGG-3').
+4. **Double-Strand Break (DSB)**: Cas9 cleaves both strands 3-4 base pairs upstream of the PAM.
+5. **DNA Repair**:
+   - *NHEJ* (Non-Homologous End Joining) $\\rightarrow$ gene knockout.
+   - *HDR* (Homology-Directed Repair) $\\rightarrow$ precise targeted gene insertion.`,
+    category: 'Physics',
+    tags: ['genetics', 'biology', 'crispr', 'biotech'],
+    color: 'coral',
     isPinned: false,
     isFavorite: true,
-    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 10,
-    updatedAt: Date.now() - 1000 * 60 * 60 * 48,
+    authorId: 'user-raniya',
+    authorName: 'Raniya Parveen',
+    createdAt: Date.now() - 1000 * 60 * 60 * 24 * 1,
+    updatedAt: Date.now() - 1000 * 60 * 60 * 3,
   }
 ]
 
@@ -183,6 +242,26 @@ export const CATEGORIES = [
 ]
 
 export const storageService = {
+  getActiveUser(): UserProfile {
+    try {
+      const activeId = localStorage.getItem(ACTIVE_USER_STORAGE_KEY)
+      const found = USERS.find(u => u.id === activeId)
+      return found || USERS[0]
+    } catch {
+      return USERS[0]
+    }
+  },
+
+  setActiveUser(userId: string): UserProfile {
+    const found = USERS.find(u => u.id === userId) || USERS[0]
+    localStorage.setItem(ACTIVE_USER_STORAGE_KEY, found.id)
+    return found
+  },
+
+  getAllUsers(): UserProfile[] {
+    return USERS
+  },
+
   getNotes(): Note[] {
     try {
       const stored = localStorage.getItem(NOTES_STORAGE_KEY)
@@ -213,25 +292,28 @@ export const storageService = {
     localStorage.setItem(API_KEY_STORAGE_KEY, key.trim())
   },
 
-  getChatHistory(): DoubtMessage[] {
+  getChatHistory(userId?: string): DoubtMessage[] {
     try {
-      const stored = localStorage.getItem(CHAT_HISTORY_STORAGE_KEY)
+      const key = `${CHAT_HISTORY_STORAGE_KEY}_${userId || 'default'}`
+      const stored = localStorage.getItem(key)
       return stored ? JSON.parse(stored) : []
     } catch {
       return []
     }
   },
 
-  saveChatHistory(messages: DoubtMessage[]): void {
+  saveChatHistory(userId: string, messages: DoubtMessage[]): void {
     try {
-      localStorage.setItem(CHAT_HISTORY_STORAGE_KEY, JSON.stringify(messages))
+      const key = `${CHAT_HISTORY_STORAGE_KEY}_${userId}`
+      localStorage.setItem(key, JSON.stringify(messages))
     } catch (e) {
       console.error('Failed to save chat history', e)
     }
   },
 
-  clearChatHistory(): void {
-    localStorage.removeItem(CHAT_HISTORY_STORAGE_KEY)
+  clearChatHistory(userId: string): void {
+    const key = `${CHAT_HISTORY_STORAGE_KEY}_${userId}`
+    localStorage.removeItem(key)
   },
 
   getTheme(): string {
@@ -292,6 +374,7 @@ export const storageService = {
   exportSingleNoteMarkdown(note: Note): void {
     const header = `---
 title: ${note.title}
+author: ${note.authorName}
 category: ${note.category}
 tags: ${note.tags.join(', ')}
 date: ${new Date(note.updatedAt).toISOString()}
@@ -309,4 +392,3 @@ date: ${new Date(note.updatedAt).toISOString()}
     downloadAnchor.remove()
   }
 }
-

@@ -5,12 +5,15 @@ import { NotesWindow } from './components/NotesWindow'
 import { NoteEditor } from './components/NoteEditor'
 import { GeminiDrawer } from './components/GeminiDrawer'
 import { SettingsModal } from './components/SettingsModal'
-import { Note, PageRoute, SubjectItem, NoteColor } from './types'
-import { storageService, INITIAL_NOTES } from './services/storageService'
+import { Note, PageRoute, SubjectItem, NoteColor, UserProfile } from './types'
+import { storageService, INITIAL_NOTES, USERS } from './services/storageService'
 import { geminiService } from './services/geminiService'
 
 export function App() {
   const [route, setRoute] = useState<PageRoute>({ type: 'home' })
+  const [users] = useState<UserProfile[]>(() => storageService.getAllUsers())
+  const [activeUser, setActiveUser] = useState<UserProfile>(() => storageService.getActiveUser())
+  const [userFilter, setUserFilter] = useState<'all' | 'mine'>('mine')
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes())
   const [subjects, setSubjects] = useState<SubjectItem[]>(() => storageService.getSubjects())
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
@@ -46,6 +49,11 @@ export function App() {
     if (theme === 'light') setTheme('dark')
     else if (theme === 'dark') setTheme('sepia')
     else setTheme('light')
+  }
+
+  const handleSelectUser = (user: UserProfile) => {
+    setActiveUser(user)
+    storageService.setActiveUser(user.id)
   }
 
   // Active note for editor
@@ -97,9 +105,11 @@ export function App() {
       content: `# Untitled Note\n\nJot down thoughts, definitions, or equations...\n`,
       category: cat,
       tags: ['study'],
-      color: 'indigo',
+      color: activeUser.color || 'indigo',
       isPinned: route.type === 'collection' && route.view === 'pinned',
       isFavorite: route.type === 'collection' && route.view === 'favorites',
+      authorId: activeUser.id,
+      authorName: activeUser.name,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     }
@@ -148,7 +158,7 @@ export function App() {
   }
 
   const handleOpenGeminiGeneral = (contextTitle?: string) => {
-    setGeminiInitialPrompt(contextTitle ? `I'm currently reviewing ${contextTitle}. Can you give me an overview and suggest key focus areas?` : undefined)
+    setGeminiInitialPrompt(contextTitle ? `I'm currently reviewing ${contextTitle}. Can you give me an overview and suggest key focus areas for ${activeUser.name}?` : undefined)
     setIsGeminiDrawerOpen(true)
   }
 
@@ -166,9 +176,11 @@ export function App() {
       content,
       category: activeNote ? activeNote.category : (route.type === 'subject' ? route.subjectName : 'General'),
       tags: ['gemini-solved'],
-      color: 'amber',
+      color: activeUser.color || 'amber',
       isPinned: false,
       isFavorite: false,
+      authorId: activeUser.id,
+      authorName: activeUser.name,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     }
@@ -179,7 +191,7 @@ export function App() {
   return (
     <div className="min-h-screen flex flex-col transition-colors">
       
-      {/* Top Navbar with Logo, Search & Settings */}
+      {/* Top Navbar with Logo, Search, User Profile Switcher & Settings */}
       <Navbar
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -191,6 +203,10 @@ export function App() {
         isGeminiConfigured={geminiService.hasApiKey()}
         onNavigateHome={handleBackToHome}
         isAtHome={route.type === 'home'}
+        users={users}
+        activeUser={activeUser}
+        onSelectUser={handleSelectUser}
+        notes={notes}
       />
 
       {/* Main Multi-Page Content (No left dashboard) */}
@@ -200,6 +216,11 @@ export function App() {
           <HomeScreen
             subjects={subjects}
             notes={notes}
+            activeUser={activeUser}
+            users={users}
+            onSelectUser={handleSelectUser}
+            userFilter={userFilter}
+            setUserFilter={setUserFilter}
             onOpenCollection={handleOpenCollection}
             onOpenSubject={handleOpenSubject}
             onAddSubject={handleAddSubject}
@@ -211,6 +232,8 @@ export function App() {
           <NotesWindow
             currentRoute={route}
             notes={notes}
+            activeUser={activeUser}
+            users={users}
             onBackToHome={handleBackToHome}
             onSelectNote={(noteId) => setSelectedNoteId(noteId)}
             selectedNoteId={selectedNoteId}
@@ -245,6 +268,7 @@ export function App() {
         isOpen={isGeminiDrawerOpen}
         onClose={() => setIsGeminiDrawerOpen(false)}
         activeNote={activeNote}
+        activeUser={activeUser}
         onAppendToNote={handleAppendToNote}
         onSaveAsNewNote={handleSaveAsNewNote}
         onOpenSettings={() => {

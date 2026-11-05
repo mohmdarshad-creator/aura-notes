@@ -121,6 +121,17 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
             ))}
           </select>
 
+          {note.authorName && (
+            <span className={`text-[11px] font-bold px-2 py-1 rounded-lg flex items-center gap-1 ${
+              note.authorName.includes('Arshad')
+                ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300'
+                : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300'
+            }`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              {note.authorName}
+            </span>
+          )}
+
           {/* Color Dots */}
           <div className="flex items-center gap-1.5 pl-2 border-l border-stone-200 dark:border-stone-700">
             {COLORS.map(c => (

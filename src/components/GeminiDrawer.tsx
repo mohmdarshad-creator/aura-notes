@@ -18,7 +18,7 @@ import {
   User,
   ArrowRight
 } from 'lucide-react'
-import { Note, DoubtMessage } from '../types'
+import { Note, DoubtMessage, UserProfile } from '../types'
 import { geminiService } from '../services/geminiService'
 import { storageService } from '../services/storageService'
 
@@ -26,6 +26,7 @@ interface GeminiDrawerProps {
   isOpen: boolean
   onClose: () => void
   activeNote: Note | null
+  activeUser?: UserProfile
   onAppendToNote: (text: string) => void
   onSaveAsNewNote: (title: string, content: string) => void
   onOpenSettings: () => void
@@ -36,12 +37,13 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
   isOpen,
   onClose,
   activeNote,
+  activeUser,
   onAppendToNote,
   onSaveAsNewNote,
   onOpenSettings,
   initialPrompt
 }) => {
-  const [messages, setMessages] = useState<DoubtMessage[]>(() => storageService.getChatHistory())
+  const [messages, setMessages] = useState<DoubtMessage[]>(() => storageService.getChatHistory(activeUser?.id))
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [useNoteContext, setUseNoteContext] = useState(true)
@@ -52,9 +54,18 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
 
   const hasApiKey = geminiService.hasApiKey()
 
+  // Reload history when active user changes
   useEffect(() => {
-    storageService.saveChatHistory(messages)
-  }, [messages])
+    if (activeUser?.id) {
+      setMessages(storageService.getChatHistory(activeUser.id))
+    }
+  }, [activeUser?.id])
+
+  useEffect(() => {
+    if (activeUser?.id) {
+      storageService.saveChatHistory(activeUser.id, messages)
+    }
+  }, [messages, activeUser?.id])
 
   useEffect(() => {
     if (isOpen) {
@@ -155,7 +166,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
   const handleClearHistory = () => {
     if (confirm('Clear entire doubt chat history?')) {
       setMessages([])
-      storageService.clearChatHistory()
+      storageService.clearChatHistory(activeUser?.id || 'default')
     }
   }
 
@@ -180,7 +191,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
               </span>
             </h2>
             <p className="text-[11px] text-stone-400">
-              Clear concepts, explore nuances, get analogies
+              Personalized for {activeUser?.name || 'Student'} • Clear concepts & doubts
             </p>
           </div>
         </div>

@@ -67,6 +67,16 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
             {note.category}
           </span>
+          {note.authorName && (
+            <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 ${
+              note.authorName.includes('Arshad')
+                ? 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800'
+                : 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200/50 dark:border-rose-800'
+            }`}>
+              <span className="w-1.5 h-1.5 rounded-full bg-current" />
+              {note.authorName}
+            </span>
+          )}
           <span className="text-[11px] text-stone-400 flex items-center gap-1">
             <Calendar className="w-3 h-3" />
             {formattedDate}

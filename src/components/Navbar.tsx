@@ -7,9 +7,10 @@ import {
   Moon, 
   Sun, 
   Coffee, 
-  BookMarked,
-  SlidersHorizontal
+  BookMarked
 } from 'lucide-react'
+import { UserSwitcher } from './UserSwitcher'
+import { UserProfile, Note } from '../types'
 
 interface NavbarProps {
   searchQuery: string
@@ -22,6 +23,10 @@ interface NavbarProps {
   isGeminiConfigured: boolean
   onNavigateHome: () => void
   isAtHome: boolean
+  users: UserProfile[]
+  activeUser: UserProfile
+  onSelectUser: (user: UserProfile) => void
+  notes: Note[]
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -34,7 +39,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleTheme,
   isGeminiConfigured,
   onNavigateHome,
-  isAtHome
+  isAtHome,
+  users,
+  activeUser,
+  onSelectUser,
+  notes
 }) => {
   return (
     <header className="sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-colors">
@@ -125,6 +134,14 @@ export const Navbar: React.FC<NavbarProps> = ({
             <Plus className="w-4 h-4" />
             <span>New Note</span>
           </button>
+
+          {/* User Profile Switcher */}
+          <UserSwitcher
+            users={users}
+            activeUser={activeUser}
+            onSelectUser={onSelectUser}
+            notes={notes}
+          />
 
           {/* Theme switcher */}
           <button

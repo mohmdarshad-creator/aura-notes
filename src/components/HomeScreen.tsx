@@ -18,11 +18,16 @@ import {
   PlusCircle,
   X
 } from 'lucide-react'
-import { Note, SubjectItem, NoteColor } from '../types'
+import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 
 interface HomeScreenProps {
   subjects: SubjectItem[]
   notes: Note[]
+  activeUser: UserProfile
+  users: UserProfile[]
+  onSelectUser: (user: UserProfile) => void
+  userFilter: 'all' | 'mine'
+  setUserFilter: (filter: 'all' | 'mine') => void
   onOpenCollection: (view: 'all' | 'pinned' | 'favorites') => void
   onOpenSubject: (subjectName: string) => void
   onAddSubject: (name: string, description: string, color: NoteColor, icon: string) => void
@@ -85,6 +90,11 @@ const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; g
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   subjects,
   notes,
+  activeUser,
+  users,
+  onSelectUser,
+  userFilter,
+  setUserFilter,
   onOpenCollection,
   onOpenSubject,
   onAddSubject,
@@ -96,8 +106,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
 
-  const pinnedNotes = notes.filter(n => n.isPinned)
-  const favoriteNotes = notes.filter(n => n.isFavorite)
+  // Scoped notes based on userFilter
+  const displayNotes = userFilter === 'mine' 
+    ? notes.filter(n => n.authorId === activeUser.id)
+    : notes
+
+  const myNotesCount = notes.filter(n => n.authorId === activeUser.id).length
+  const pinnedNotes = displayNotes.filter(n => n.isPinned)
+  const favoriteNotes = displayNotes.filter(n => n.isFavorite)
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -125,33 +141,69 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-12 animate-fade-in">
       
-      {/* Hero Welcome Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-stone-200/70 dark:border-stone-800">
+      {/* Hero Welcome Banner - Personalized */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1.5">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Personal Knowledge Base</span>
+            <span>Active Student Profile: <strong className="text-stone-800 dark:text-stone-200">{activeUser.name}</strong></span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-serif font-bold tracking-tight text-stone-900 dark:text-stone-100">
-            Aesthetic Study Space
-          </h1>
-          <p className="text-sm text-stone-500 dark:text-stone-400 mt-1 max-w-lg">
-            Organized subject notes, crystal-clear formulas, and real-time Gemini AI doubt resolution.
-          </p>
+
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white font-bold text-sm shadow-sm`}>
+              {activeUser.initials}
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                <span>Welcome back, {activeUser.name}</span>
+                <span className="text-sm font-sans font-normal text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full">
+                  {activeUser.role}
+                </span>
+              </h1>
+              <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">
+                Organized study workspace & instant Gemini AI doubt solver.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        {/* User Scope Toggle & Actions */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* User Filter Scope: My Notes vs All Notes */}
+          <div className="flex items-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-1 border border-stone-200/80 dark:border-stone-700/60 text-xs">
+            <button
+              onClick={() => setUserFilter('mine')}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                userFilter === 'mine'
+                  ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs'
+                  : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+              }`}
+            >
+              My Notes ({myNotesCount})
+            </button>
+            <button
+              onClick={() => setUserFilter('all')}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                userFilter === 'all'
+                  ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs'
+                  : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+              }`}
+            >
+              Combined ({notes.length})
+            </button>
+          </div>
+
           <button
             onClick={() => setShowAddModal(true)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 transition-colors border border-stone-200 dark:border-stone-700 shadow-sm"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 transition-colors border border-stone-200 dark:border-stone-700 shadow-xs"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-3.5 h-3.5" />
             <span>Insert Subject</span>
           </button>
           
           <button
             onClick={onNewNote}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md transition-all hover:scale-[1.02]"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md transition-all hover:scale-[1.02]"
           >
             <Plus className="w-4 h-4" />
             <span>New Note</span>
@@ -183,7 +235,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* 2x2 Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
           {primarySubjects.map((sub) => {
-            const subjectNotes = notes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
+            const subjectNotes = displayNotes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
             const colors = COLOR_MAP[sub.color] || COLOR_MAP.indigo
 
             return (
@@ -263,7 +315,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700">
-                  {notes.length} Total
+                  {displayNotes.length} Notes
                 </span>
               </div>
 
@@ -376,7 +428,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Notebooks Cards Grid (Same Animation & Same Style as the 3 boxes) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {subjects.map((notebook) => {
-            const count = notes.filter(n => n.category.toLowerCase() === notebook.name.toLowerCase()).length
+            const count = displayNotes.filter(n => n.category.toLowerCase() === notebook.name.toLowerCase()).length
             const colors = COLOR_MAP[notebook.color] || COLOR_MAP.indigo
 
             return (
@@ -511,3 +563,4 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     </div>
   )
 }
+

@@ -12,13 +12,15 @@ import {
   Layers,
   Filter
 } from 'lucide-react'
-import { Note, PageRoute } from '../types'
+import { Note, PageRoute, UserProfile } from '../types'
 import { NoteCard } from './NoteCard'
 import { storageService } from '../services/storageService'
 
 interface NotesWindowProps {
   currentRoute: PageRoute
   notes: Note[]
+  activeUser: UserProfile
+  users: UserProfile[]
   onBackToHome: () => void
   onSelectNote: (noteId: string) => void
   selectedNoteId: string | null
@@ -33,6 +35,8 @@ interface NotesWindowProps {
 export const NotesWindow: React.FC<NotesWindowProps> = ({
   currentRoute,
   notes,
+  activeUser,
+  users,
   onBackToHome,
   onSelectNote,
   selectedNoteId,
@@ -45,6 +49,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
+  const [authorFilter, setAuthorFilter] = useState<'all' | string>('all')
 
   // Determine window title and icon based on route
   const windowMeta = useMemo(() => {
@@ -113,6 +118,10 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
       }
       // Favorites filter
       if (windowMeta.favoritesOnly && !n.isFavorite) {
+        return false
+      }
+      // Author filter
+      if (authorFilter !== 'all' && n.authorId !== authorFilter) {
         return false
       }
       // Tag filter
@@ -227,38 +236,80 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
         </div>
       </div>
 
-      {/* Filter by Tags Pills */}
-      {availableTags.length > 0 && (
-        <div className="flex items-center gap-1.5 flex-wrap pt-1">
-          <span className="text-xs text-stone-400 font-medium flex items-center gap-1 mr-1">
-            <Tag className="w-3 h-3" /> Filter:
-          </span>
-          {availableTags.map((t) => {
-            const isSelected = selectedTag === t
+      {/* Author and Tags Filter Bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1 border-t border-stone-100 dark:border-stone-800/80">
+        
+        {/* Author Filter Pills */}
+        <div className="flex items-center gap-1.5 flex-wrap text-xs">
+          <span className="text-stone-400 font-medium mr-1">Author:</span>
+          <button
+            onClick={() => setAuthorFilter('all')}
+            className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+              authorFilter === 'all'
+                ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+            }`}
+          >
+            All Students
+          </button>
+
+          {users.map((u) => {
+            const isSelected = authorFilter === u.id
             return (
               <button
-                key={t}
-                onClick={() => setSelectedTag(isSelected ? null : t)}
-                className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all ${
+                key={u.id}
+                onClick={() => setAuthorFilter(u.id)}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium transition-all ${
                   isSelected
-                    ? 'bg-indigo-600 text-white shadow-xs'
-                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+                    ? u.name.includes('Arshad')
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-rose-600 text-white shadow-xs'
+                    : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
                 }`}
               >
-                #{t}
+                <span className={`w-4 h-4 rounded text-[9px] font-bold flex items-center justify-center text-white bg-gradient-to-tr ${u.avatarGradient}`}>
+                  {u.initials}
+                </span>
+                <span>{u.name}</span>
               </button>
             )
           })}
-          {selectedTag && (
-            <button
-              onClick={() => setSelectedTag(null)}
-              className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 underline ml-1"
-            >
-              Reset
-            </button>
-          )}
         </div>
-      )}
+
+        {/* Filter by Tags Pills */}
+        {availableTags.length > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-xs text-stone-400 font-medium flex items-center gap-1 mr-1">
+              <Tag className="w-3 h-3" /> Tags:
+            </span>
+            {availableTags.map((t) => {
+              const isSelected = selectedTag === t
+              return (
+                <button
+                  key={t}
+                  onClick={() => setSelectedTag(isSelected ? null : t)}
+                  className={`text-xs px-2.5 py-1 rounded-lg font-medium transition-all ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white shadow-xs'
+                      : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700'
+                  }`}
+                >
+                  #{t}
+                </button>
+              )
+            })}
+            {selectedTag && (
+              <button
+                onClick={() => setSelectedTag(null)}
+                className="text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 underline ml-1"
+              >
+                Reset
+              </button>
+            )}
+          </div>
+        )}
+
+      </div>
 
       {/* Notes Grid */}
       {windowNotes.length > 0 ? (
@@ -315,3 +366,4 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
     </div>
   )
 }
+

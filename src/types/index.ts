@@ -1,5 +1,14 @@
 export type NoteColor = 'amber' | 'emerald' | 'indigo' | 'coral' | 'purple' | 'sky' | 'stone'
 
+export interface UserProfile {
+  id: string
+  name: string
+  initials: string
+  color: NoteColor
+  role: string
+  avatarGradient: string
+}
+
 export interface Note {
   id: string
   title: string
@@ -9,6 +18,8 @@ export interface Note {
   color: NoteColor
   isPinned: boolean
   isFavorite: boolean
+  authorId: string
+  authorName: string
   createdAt: number
   updatedAt: number
 }
