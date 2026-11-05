@@ -357,7 +357,7 @@ export function App() {
         onDeleteUser={handleDeleteUser}
       />
 
-      {/* Floating Bar with Prominent Ask Gemini AI Trigger */}
+      {/* Floating Bar with Prominent Ask Gemini AI Trigger & Functional User Switcher */}
       <FloatingBar
         onOpenGemini={() => handleOpenGeminiGeneral()}
         onNewNote={() => handleCreateNote()}
@@ -366,6 +366,8 @@ export function App() {
         isGeminiDrawerOpen={isGeminiDrawerOpen}
         isGeminiConfigured={geminiService.hasApiKey()}
         activeUser={activeUser}
+        users={users}
+        onSelectUser={handleSelectUser}
         theme={theme}
         onToggleTheme={handleToggleTheme}
         onOpenSettings={() => setIsSettingsOpen(true)}

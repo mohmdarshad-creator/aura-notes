@@ -364,27 +364,35 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
       {/* Notes Grid */}
       {windowNotes.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {windowNotes.map((note) => (
-            <NoteCard
+          {windowNotes.map((note, index) => (
+            <div
               key={note.id}
-              note={note}
-              isSelected={selectedNoteId === note.id}
-              onClick={() => onSelectNote(note.id)}
-              onTogglePin={(e) => onTogglePin(note.id, e)}
-              onToggleFavorite={(e) => onToggleFavorite(note.id, e)}
-              onDelete={(e) => {
-                e.stopPropagation()
-                onDeleteNote(note.id)
+              style={{
+                animationDelay: `${(index % 9) * 60 + 40}ms`,
+                animationFillMode: 'both'
               }}
-              onAskGemini={(e) => {
-                e.stopPropagation()
-                onAskGeminiAboutNote(note)
-              }}
-              onExport={(e) => {
-                e.stopPropagation()
-                storageService.exportSingleNoteMarkdown(note)
-              }}
-            />
+              className="animate-float-in"
+            >
+              <NoteCard
+                note={note}
+                isSelected={selectedNoteId === note.id}
+                onClick={() => onSelectNote(note.id)}
+                onTogglePin={(e) => onTogglePin(note.id, e)}
+                onToggleFavorite={(e) => onToggleFavorite(note.id, e)}
+                onDelete={(e) => {
+                  e.stopPropagation()
+                  onDeleteNote(note.id)
+                }}
+                onAskGemini={(e) => {
+                  e.stopPropagation()
+                  onAskGeminiAboutNote(note)
+                }}
+                onExport={(e) => {
+                  e.stopPropagation()
+                  storageService.exportSingleNoteMarkdown(note)
+                }}
+              />
+            </div>
           ))}
         </div>
       ) : (

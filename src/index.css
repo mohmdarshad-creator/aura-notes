@@ -225,3 +225,16 @@
   animation: gentleLevitate 5s ease-in-out infinite;
 }
 
+/* Scroll-triggered tile entrance animations */
+.tile-reveal {
+  opacity: 0;
+  transform: translateY(42px) scale(0.96);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.tile-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+

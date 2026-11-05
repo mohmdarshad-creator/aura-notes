@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { 
   Sparkles, 
   Plus, 
@@ -63,8 +63,41 @@ export const Navbar: React.FC<NavbarProps> = ({
     setIsSearchHovered(false)
   }
 
+  // Auto-hide taskbar on scroll down, show when scrolled back from any screen
+  const [isNavbarVisible, setIsNavbarVisible] = useState(true)
+  const lastScrollY = useRef(0)
+
+  useEffect(() => {
+    let ticking = false
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY
+          // At the very top, always show taskbar
+          if (currentScrollY <= 15) {
+            setIsNavbarVisible(true)
+          } else if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
+            // Scrolling DOWN -> automatically hide taskbar
+            setIsNavbarVisible(false)
+          } else if (currentScrollY < lastScrollY.current) {
+            // Scrolled BACK (scrolling up) from any screen -> make taskbar visible
+            setIsNavbarVisible(true)
+          }
+          lastScrollY.current = currentScrollY
+          ticking = false
+        })
+        ticking = true
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-colors">
+    <header className={`sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
+      isNavbarVisible ? 'translate-y-0 opacity-100 shadow-xs' : '-translate-y-full opacity-0 pointer-events-none'
+    }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
         {/* Brand / Logo */}

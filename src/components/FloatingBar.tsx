@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Sparkles, Plus, Home, Settings, Moon, Sun, Coffee } from 'lucide-react'
+import React, { useState, useRef, useEffect } from 'react'
+import { Sparkles, Plus, Home, Settings, Moon, Sun, Coffee, Check, Users } from 'lucide-react'
 import { UserProfile } from '../types'
 
 interface FloatingBarProps {
@@ -10,6 +10,8 @@ interface FloatingBarProps {
   isGeminiDrawerOpen?: boolean
   isGeminiConfigured?: boolean
   activeUser?: UserProfile
+  users?: UserProfile[]
+  onSelectUser?: (user: UserProfile) => void
   theme?: string
   onToggleTheme?: () => void
   onOpenSettings?: () => void
@@ -23,10 +25,26 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
   isGeminiDrawerOpen = false,
   isGeminiConfigured = true,
   activeUser,
+  users,
+  onSelectUser,
   theme,
   onToggleTheme,
   onOpenSettings
 }) => {
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Outside click to close user menu
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   // Global shortcut Cmd+K or Ctrl+K to toggle Gemini AI
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -126,13 +144,92 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
           </button>
         )}
 
-        {/* Active Scholar Initials Indicator */}
+        {/* Active Scholar Button & Interactive Popover */}
         {activeUser && (
-          <div 
-            className={`w-7 h-7 rounded-full bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white text-[10px] font-bold shadow-xs ml-0.5 flex-shrink-0 cursor-default`}
-            title={`Active Scholar: ${activeUser.name}`}
-          >
-            {activeUser.initials}
+          <div className="relative" ref={userMenuRef}>
+            <button
+              type="button"
+              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+              className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white text-[10px] sm:text-[11px] font-bold shadow-xs ml-0.5 flex-shrink-0 cursor-pointer transition-all hover:scale-110 active:scale-95 ring-2 ${
+                isUserMenuOpen ? 'ring-indigo-500 scale-105 shadow-md' : 'ring-transparent hover:ring-white/50 dark:hover:ring-stone-600'
+              }`}
+              title={`Scholar: ${activeUser.name}. Click to change user.`}
+            >
+              {activeUser.initials}
+            </button>
+
+            {/* Floating Popover to Change User */}
+            {isUserMenuOpen && (
+              <div className="absolute bottom-full mb-3 right-0 w-72 bg-white/95 dark:bg-stone-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-stone-200/90 dark:border-stone-700/80 p-2 z-50 animate-fade-in space-y-1">
+                <div className="px-3 py-1.5 flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-stone-400 border-b border-stone-100 dark:border-stone-800 pb-2">
+                  <span className="flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5" />
+                    Switch Scholar ({users?.length || 1})
+                  </span>
+                  <span className="text-[10px] text-indigo-500 font-semibold">{activeUser.name.split(' ')[0]}</span>
+                </div>
+
+                <div className="max-h-60 overflow-y-auto space-y-1 pr-0.5 pt-1">
+                  {(users || [activeUser]).map((u) => {
+                    const isSelected = u.id === activeUser.id
+                    return (
+                      <button
+                        key={u.id}
+                        type="button"
+                        onClick={() => {
+                          if (onSelectUser) onSelectUser(u)
+                          setIsUserMenuOpen(false)
+                        }}
+                        className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition-all ${
+                          isSelected
+                            ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 ring-1 ring-stone-300 dark:ring-stone-700'
+                            : 'hover:bg-stone-50 dark:hover:bg-stone-800/60 text-stone-700 dark:text-stone-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0 pr-2">
+                          <div className={`w-8 h-8 rounded-lg bg-gradient-to-tr ${u.avatarGradient} flex items-center justify-center text-white text-xs font-bold shadow-xs flex-shrink-0`}>
+                            {u.initials}
+                          </div>
+                          <div className="min-w-0">
+                            <div className="text-xs font-bold truncate flex items-center gap-1.5">
+                              <span>{u.name}</span>
+                              {isSelected && (
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 flex-shrink-0 animate-pulse" />
+                              )}
+                            </div>
+                            <div className="text-[10px] text-stone-400 truncate">
+                              {u.registerNumber ? `${u.registerNumber} • ` : ''}{u.role}
+                            </div>
+                          </div>
+                        </div>
+
+                        {isSelected && (
+                          <div className="flex-shrink-0 text-emerald-500">
+                            <Check className="w-4 h-4" />
+                          </div>
+                        )}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {onOpenSettings && (
+                  <div className="pt-1.5 border-t border-stone-100 dark:border-stone-800">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsUserMenuOpen(false)
+                        onOpenSettings()
+                      }}
+                      className="w-full py-1.5 px-3 rounded-lg text-left text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors flex items-center justify-between"
+                    >
+                      <span>Manage & Add Scholars</span>
+                      <span>→</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
 

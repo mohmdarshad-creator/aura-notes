@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { 
   BookOpen, 
   Pin, 
@@ -118,6 +118,43 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubName, setNewSubName] = useState('')
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
+
+  // Scroll reveal observer for tiles moving in as the page gets scrolled down
+  const subjectsRef = useRef<HTMLDivElement>(null)
+  const viewsRef = useRef<HTMLDivElement>(null)
+  const notebooksRef = useRef<HTMLDivElement>(null)
+  const detailsRef = useRef<HTMLDivElement>(null)
+
+  const [subjectsVisible, setSubjectsVisible] = useState(false)
+  const [viewsVisible, setViewsVisible] = useState(false)
+  const [notebooksVisible, setNotebooksVisible] = useState(false)
+  const [detailsVisible, setDetailsVisible] = useState(false)
+
+  useEffect(() => {
+    const observerCallback: IntersectionObserverCallback = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          if (entry.target === subjectsRef.current) setSubjectsVisible(true)
+          if (entry.target === viewsRef.current) setViewsVisible(true)
+          if (entry.target === notebooksRef.current) setNotebooksVisible(true)
+          if (entry.target === detailsRef.current) setDetailsVisible(true)
+          observer.unobserve(entry.target)
+        }
+      })
+    }
+
+    const observer = new IntersectionObserver(observerCallback, {
+      threshold: 0.08,
+      rootMargin: '0px 0px -30px 0px'
+    })
+
+    if (subjectsRef.current) observer.observe(subjectsRef.current)
+    if (viewsRef.current) observer.observe(viewsRef.current)
+    if (notebooksRef.current) observer.observe(notebooksRef.current)
+    if (detailsRef.current) observer.observe(detailsRef.current)
+
+    return () => observer.disconnect()
+  }, [subjects, notebooks])
 
   // Scoped notes based on userFilter
   const displayNotes = userFilter === 'mine' 
@@ -245,7 +282,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* 2x2 Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
+        <div ref={subjectsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
           {subjects.map((sub, index) => {
             const subjectNotes = displayNotes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
             const colors = COLOR_MAP[sub.color] || COLOR_MAP.indigo
@@ -255,10 +292,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 key={sub.id}
                 onClick={() => onOpenSubject(sub.name)}
                 style={{
-                  animationDelay: `${index * 120 + 80}ms`,
-                  animationFillMode: 'both'
+                  transitionDelay: `${index * 110 + 60}ms`
                 }}
-                className={`group relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden animate-float-in ${colors.border} ${colors.glow}`}
+                className={`tile-reveal ${subjectsVisible ? 'revealed' : ''} group relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border} ${colors.glow}`}
               >
                 {/* Ambient background hover gradient */}
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
@@ -316,12 +352,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
 
         {/* 3-BOX ANIMATED THING (All Notes, Pinned, Favorites) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div ref={viewsRef} className="grid grid-cols-1 md:grid-cols-3 gap-5">
           
           {/* Box 1: All Notes */}
           <div
             onClick={() => onOpenCollection('all')}
-            className="group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-600"
+            style={{ transitionDelay: '60ms' }}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
@@ -354,7 +391,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Box 2: Pinned */}
           <div
             onClick={() => onOpenCollection('pinned')}
-            className="group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600"
+            style={{ transitionDelay: '180ms' }}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
@@ -387,7 +425,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Box 3: Favorites */}
           <div
             onClick={() => onOpenCollection('favorites')}
-            className="group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-rose-400 dark:hover:border-rose-600"
+            style={{ transitionDelay: '300ms' }}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-rose-400 dark:hover:border-rose-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
@@ -444,9 +483,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </button>
         </div>
 
-        {/* Notebooks Cards Grid (Same Animation & Same Style as the 3 boxes) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {notebooks.map((notebook) => {
+        {/* Notebooks Cards Grid (Animated as Page Scrolled Down) */}
+        <div ref={notebooksRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {notebooks.map((notebook, index) => {
             const count = displayNotes.filter(n => n.category.toLowerCase() === notebook.name.toLowerCase()).length
             const colors = COLOR_MAP[notebook.color] || COLOR_MAP.indigo
 
@@ -454,7 +493,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div
                 key={notebook.id}
                 onClick={() => onOpenSubject(notebook.name)}
-                className={`group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border}`}
+                style={{
+                  transitionDelay: `${(index % 4) * 90 + 50}ms`
+                }}
+                className={`tile-reveal ${notebooksVisible ? 'revealed' : ''} group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border}`}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                 
@@ -525,8 +567,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
 
-        {/* Personal Details Aesthetic Card */}
-        <div className="relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden">
+        {/* Personal Details Aesthetic Card (Animated as Page Scrolled Down) */}
+        <div 
+          ref={detailsRef}
+          className={`tile-reveal ${detailsVisible ? 'revealed' : ''} relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
+        >
           {/* Subtle Ambient Background Tint */}
           <div className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${activeUser.avatarGradient} opacity-5 blur-3xl pointer-events-none`} />
 
