@@ -11,7 +11,7 @@ import { geminiService } from './services/geminiService'
 
 export function App() {
   const [route, setRoute] = useState<PageRoute>({ type: 'home' })
-  const [users] = useState<UserProfile[]>(() => storageService.getAllUsers())
+  const [users, setUsers] = useState<UserProfile[]>(() => storageService.getAllUsers())
   const [activeUser, setActiveUser] = useState<UserProfile>(() => storageService.getActiveUser())
   const [userFilter, setUserFilter] = useState<'all' | 'mine'>('mine')
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes())
@@ -54,6 +54,24 @@ export function App() {
   const handleSelectUser = (user: UserProfile) => {
     setActiveUser(user)
     storageService.setActiveUser(user.id)
+  }
+
+  const handleUpdateUser = (updatedUser: UserProfile) => {
+    const updatedUsers = storageService.updateUser(updatedUser)
+    setUsers(updatedUsers)
+    if (activeUser.id === updatedUser.id) {
+      setActiveUser(updatedUser)
+    }
+    // Sync note author names
+    setNotes(prev => prev.map(n => {
+      if (n.authorId === updatedUser.id) {
+        return {
+          ...n,
+          authorName: updatedUser.name
+        }
+      }
+      return n
+    }))
   }
 
   // Active note for editor
@@ -293,6 +311,9 @@ export function App() {
           setNotes(INITIAL_NOTES)
           storageService.saveNotes(INITIAL_NOTES)
         }}
+        users={users}
+        activeUser={activeUser}
+        onUpdateUser={handleUpdateUser}
       />
 
     </div>

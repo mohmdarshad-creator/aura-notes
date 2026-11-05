@@ -6,6 +6,7 @@ const CHAT_HISTORY_STORAGE_KEY = 'auranotes_doubt_history_v2'
 const THEME_STORAGE_KEY = 'auranotes_theme'
 const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
 const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
+const USERS_STORAGE_KEY = 'auranotes_users_v2'
 
 export const USERS: UserProfile[] = [
   {
@@ -242,24 +243,50 @@ export const CATEGORIES = [
 ]
 
 export const storageService = {
+  getAllUsers(): UserProfile[] {
+    try {
+      const stored = localStorage.getItem(USERS_STORAGE_KEY)
+      if (stored) {
+        return JSON.parse(stored)
+      }
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(USERS))
+      return USERS
+    } catch {
+      return USERS
+    }
+  },
+
+  saveUsers(users: UserProfile[]): void {
+    try {
+      localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+    } catch (e) {
+      console.error('Failed to save users', e)
+    }
+  },
+
+  updateUser(updated: UserProfile): UserProfile[] {
+    const current = this.getAllUsers()
+    const updatedList = current.map(u => u.id === updated.id ? updated : u)
+    this.saveUsers(updatedList)
+    return updatedList
+  },
+
   getActiveUser(): UserProfile {
     try {
+      const users = this.getAllUsers()
       const activeId = localStorage.getItem(ACTIVE_USER_STORAGE_KEY)
-      const found = USERS.find(u => u.id === activeId)
-      return found || USERS[0]
+      const found = users.find(u => u.id === activeId)
+      return found || users[0]
     } catch {
       return USERS[0]
     }
   },
 
   setActiveUser(userId: string): UserProfile {
-    const found = USERS.find(u => u.id === userId) || USERS[0]
+    const users = this.getAllUsers()
+    const found = users.find(u => u.id === userId) || users[0]
     localStorage.setItem(ACTIVE_USER_STORAGE_KEY, found.id)
     return found
-  },
-
-  getAllUsers(): UserProfile[] {
-    return USERS
   },
 
   getNotes(): Note[] {
