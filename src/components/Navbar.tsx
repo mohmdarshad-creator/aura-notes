@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useRef } from 'react'
 import { 
   Sparkles, 
   Plus, 
@@ -7,7 +7,8 @@ import {
   Moon, 
   Sun, 
   Coffee, 
-  BookMarked
+  BookMarked,
+  X
 } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 import { UserProfile, Note } from '../types'
@@ -45,6 +46,23 @@ export const Navbar: React.FC<NavbarProps> = ({
   onSelectUser,
   notes
 }) => {
+  const [isSearchHovered, setIsSearchHovered] = useState(false)
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const isSearchExpanded = isSearchHovered || isSearchFocused || Boolean(searchQuery.trim())
+
+  const handleMouseEnter = () => {
+    setIsSearchHovered(true)
+    setTimeout(() => {
+      searchInputRef.current?.focus()
+    }, 40)
+  }
+
+  const handleMouseLeave = () => {
+    setIsSearchHovered(false)
+  }
+
   return (
     <header className="sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
@@ -89,23 +107,67 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
         </div>
 
-        {/* Global Search */}
-        <div className="flex-1 max-w-md hidden sm:block">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+        {/* Expandable Search Button & Bar */}
+        <div 
+          className="relative flex items-center"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          <div
+            className={`group flex items-center relative overflow-hidden transition-all duration-300 ease-out rounded-xl border ${
+              isSearchExpanded
+                ? 'w-64 sm:w-80 md:w-96 bg-white dark:bg-stone-900 border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-400/20 dark:ring-indigo-500/20'
+                : 'w-10 h-10 bg-stone-100/90 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700/80 border-stone-200/80 dark:border-stone-700/70 shadow-xs cursor-pointer'
+            }`}
+          >
+            {/* Search Icon / Button Trigger */}
+            <button
+              type="button"
+              onClick={() => {
+                setIsSearchFocused(true)
+                searchInputRef.current?.focus()
+              }}
+              className={`w-10 h-10 flex items-center justify-center flex-shrink-0 text-stone-500 dark:text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors ${
+                isSearchExpanded ? 'pointer-events-none' : 'cursor-pointer'
+              }`}
+              title="Search notes, doubts, #tags, or topics (Hover or click to extend)"
+            >
+              <Search className={`w-4 h-4 transition-transform duration-200 ${isSearchExpanded ? 'text-indigo-500 scale-105' : 'group-hover:scale-110'}`} />
+            </button>
+
+            {/* Extended Input Field */}
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  searchInputRef.current?.blur()
+                }
+              }}
               placeholder="Search notes, doubts, #tags, or topics..."
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl bg-stone-100/80 dark:bg-stone-800/60 border border-transparent focus:border-indigo-400 focus:bg-white dark:focus:bg-stone-900 outline-none transition-all placeholder:text-stone-400"
+              className={`w-full pr-8 py-2 text-sm bg-transparent outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100 transition-opacity duration-200 ${
+                isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none w-0'
+              }`}
+              tabIndex={isSearchExpanded ? 0 : -1}
             />
-            {searchQuery && (
-              <button 
-                onClick={() => onSearchChange('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-600"
+
+            {/* Clear Button (Visible when text entered) */}
+            {isSearchExpanded && searchQuery && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onSearchChange('')
+                  searchInputRef.current?.focus()
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+                title="Clear search query"
               >
-                Clear
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>

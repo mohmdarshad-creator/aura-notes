@@ -140,3 +140,4 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
     </aside>
   )
 }
+

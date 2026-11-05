@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import { 
   ArrowLeft, 
   Plus, 
@@ -10,7 +10,8 @@ import {
   Star, 
   Folder,
   Layers,
-  Filter
+  Filter,
+  X
 } from 'lucide-react'
 import { Note, PageRoute, UserProfile } from '../types'
 import { NoteCard } from './NoteCard'
@@ -48,6 +49,11 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
   onOpenGeminiGeneral,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
+  const [isSearchHovered, setIsSearchHovered] = useState(false)
+  const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const searchInputRef = useRef<HTMLInputElement>(null)
+  const isSearchExpanded = isSearchHovered || isSearchFocused || Boolean(searchQuery.trim())
+
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [authorFilter, setAuthorFilter] = useState<'all' | string>('all')
 
@@ -213,23 +219,69 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           </div>
         </div>
 
-        {/* In-window Search Bar */}
-        <div className="w-full md:w-72">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-stone-400" />
+        {/* In-window Expandable Search Button & Bar */}
+        <div 
+          className="relative flex items-center justify-end"
+          onMouseEnter={() => {
+            setIsSearchHovered(true)
+            setTimeout(() => {
+              searchInputRef.current?.focus()
+            }, 40)
+          }}
+          onMouseLeave={() => setIsSearchHovered(false)}
+        >
+          <div
+            className={`group flex items-center relative overflow-hidden transition-all duration-300 ease-out rounded-xl border ${
+              isSearchExpanded
+                ? 'w-full md:w-80 bg-white dark:bg-stone-900 border-indigo-400 dark:border-indigo-500 shadow-sm ring-2 ring-indigo-400/20'
+                : 'w-10 h-10 bg-white dark:bg-stone-900 hover:bg-stone-100 dark:hover:bg-stone-800 border-stone-200 dark:border-stone-800 shadow-xs cursor-pointer'
+            }`}
+          >
+            <button
+              type="button"
+              onClick={() => {
+                setIsSearchFocused(true)
+                searchInputRef.current?.focus()
+              }}
+              className={`w-10 h-10 flex items-center justify-center flex-shrink-0 text-stone-400 hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors ${
+                isSearchExpanded ? 'pointer-events-none' : 'cursor-pointer'
+              }`}
+              title="Search in this window (Hover or click to extend)"
+            >
+              <Search className={`w-4 h-4 transition-transform duration-200 ${isSearchExpanded ? 'text-indigo-500 scale-105' : 'group-hover:scale-110'}`} />
+            </button>
+
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onFocus={() => setIsSearchFocused(true)}
+              onBlur={() => setIsSearchFocused(false)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape') {
+                  searchInputRef.current?.blur()
+                }
+              }}
               placeholder="Search in this window..."
-              className="w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 focus:border-indigo-500 outline-none transition-colors shadow-xs"
+              className={`w-full pr-8 py-2 text-xs sm:text-sm bg-transparent outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100 transition-opacity duration-200 ${
+                isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none w-0'
+              }`}
+              tabIndex={isSearchExpanded ? 0 : -1}
             />
-            {searchQuery && (
+
+            {isSearchExpanded && searchQuery && (
               <button
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-stone-400 hover:text-stone-600"
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setSearchQuery('')
+                  searchInputRef.current?.focus()
+                }}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200"
+                title="Clear"
               >
-                Clear
+                <X className="w-3.5 h-3.5" />
               </button>
             )}
           </div>
