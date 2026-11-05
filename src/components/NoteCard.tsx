@@ -154,3 +154,4 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     </div>
   )
 }
+

@@ -1,4 +1,4 @@
-# 🌸 AuraNotes — Aesthetic Study Notes & Gemini AI Doubt Solver
+# 🌸 AURA Notes — Aesthetic Study Notes & Gemini AI Doubt Solver
 
 A modern, distraction-free study space designed for learners who love aesthetic typography, organized notes, and real-time AI assistance powered by **Google Gemini**.
 
@@ -48,3 +48,4 @@ Open **[http://localhost:3000](http://localhost:3000)** in your browser.
 2. Click the ⚙️ **Settings** button in the top right.
 3. Paste your Gemini API key (get one for free at [Google AI Studio](https://aistudio.google.com/app/apikey)).
 4. Click **Save**. Your key is stored securely inside your browser's `localStorage` and is never sent to any third-party backend.
+

@@ -402,3 +402,4 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
     </div>
   )
 }
+

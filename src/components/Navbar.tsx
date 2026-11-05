@@ -57,7 +57,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
             <div>
               <span className="font-serif font-bold text-xl tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
-                Aura<span className="text-indigo-600 dark:text-indigo-400 font-sans text-xs uppercase tracking-widest px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 font-semibold">Notes</span>
+                AURA<span className="text-indigo-600 dark:text-indigo-400 font-sans text-xs uppercase tracking-widest px-1.5 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950/60 font-semibold">Notes</span>
               </span>
             </div>
           </div>
@@ -163,3 +163,4 @@ export const Navbar: React.FC<NavbarProps> = ({
     </header>
   )
 }
+

@@ -36,7 +36,7 @@ export const geminiService = {
       return this.generateSimulatedResponse(prompt, noteContext)
     }
 
-    const systemInstruction = `You are Aura AI, an aesthetic, friendly, and exceptionally clear academic mentor and doubt solver.
+    const systemInstruction = `You are AURA AI, an aesthetic, friendly, and exceptionally clear academic mentor and doubt solver.
 Your mission is to clarify doubts, demystify complex concepts, provide memorable analogies, and format explanations with crystal-clear Markdown, LaTeX formulas, bullet points, and code blocks where applicable.
 Always be encouraging, precise, and structured. When answering doubts about a specific note, directly connect your answer to the concepts in the note.`
 
@@ -164,3 +164,4 @@ Thank you for bringing up this doubt! Here is a structured breakdown:
 > 🚀 *This is a preview response. Connect your free Google Gemini API Key in **Settings** to chat with **Gemini 2.5 Flash** in real-time!*`
   }
 }
+

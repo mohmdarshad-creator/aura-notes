@@ -35,3 +35,4 @@ export interface CategoryItem {
   icon: string
   color: string
 }
+

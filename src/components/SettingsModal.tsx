@@ -81,7 +81,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">
-                AuraSettings & Gemini AI
+                AURA Settings & Gemini AI
               </h2>
               <p className="text-xs text-stone-400">Configure AI tutor, appearance, and backups</p>
             </div>
@@ -247,3 +247,4 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     </div>
   )
 }
+

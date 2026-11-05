@@ -240,3 +240,4 @@ date: ${new Date(note.updatedAt).toISOString()}
     downloadAnchor.remove()
   }
 }
+
