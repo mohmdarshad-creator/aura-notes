@@ -29,12 +29,12 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  // Extract display name: "Arshad" or "Raniya"
+  // Extract display name: "Arshad", "Raniya" or first name
   const displayName = activeUser.name.includes('Arshad')
     ? 'Arshad'
     : activeUser.name.includes('Raniya')
     ? 'Raniya'
-    : activeUser.name.split(' ')[0]
+    : activeUser.name.trim().split(' ')[0]
 
   // Calculate split translation and opacity based on scroll
   // As user scrolls down from 0 to 280px:
@@ -48,15 +48,9 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
   const opacity = Math.max(0, 1 - progress * 1.35)
   const scale = 1 - progress * 0.08
 
-  // Color accents based on user
-  const isArshad = activeUser.name.includes('Arshad')
-  const glowGradient = isArshad
-    ? 'from-indigo-500/20 via-sky-500/15 to-transparent'
-    : 'from-rose-500/20 via-pink-500/15 to-transparent'
-
-  const nameGradient = isArshad
-    ? 'from-indigo-600 via-indigo-500 to-amber-500 dark:from-indigo-400 dark:via-sky-300 dark:to-amber-300'
-    : 'from-rose-600 via-pink-500 to-amber-500 dark:from-rose-400 dark:via-pink-300 dark:to-amber-300'
+  // Color accents based on active user's gradient
+  const glowGradient = activeUser.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'
+  const nameGradient = activeUser.avatarGradient || 'from-indigo-600 via-indigo-500 to-amber-500'
 
   return (
     <div className="relative w-full overflow-hidden pt-8 pb-10 sm:pt-14 sm:pb-16 flex flex-col items-center justify-center text-center select-none pointer-events-none">

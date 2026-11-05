@@ -24,6 +24,22 @@ export const USERS: UserProfile[] = [
     color: 'coral',
     role: 'Physics & Life Sciences Scholar',
     avatarGradient: 'from-rose-500 via-pink-500 to-amber-300'
+  },
+  {
+    id: 'user-zayd',
+    name: 'Zayd Al-Mansoor',
+    initials: 'ZA',
+    color: 'sky',
+    role: 'Pure Mathematics & Cryptography',
+    avatarGradient: 'from-cyan-500 via-sky-500 to-indigo-500'
+  },
+  {
+    id: 'user-ayesha',
+    name: 'Ayesha Siddiqua',
+    initials: 'AS',
+    color: 'emerald',
+    role: 'Astronomy & Astrophysics Scholar',
+    avatarGradient: 'from-emerald-600 via-teal-500 to-sky-400'
   }
 ]
 
@@ -267,6 +283,25 @@ export const storageService = {
   updateUser(updated: UserProfile): UserProfile[] {
     const current = this.getAllUsers()
     const updatedList = current.map(u => u.id === updated.id ? updated : u)
+    this.saveUsers(updatedList)
+    return updatedList
+  },
+
+  addUser(newUser: Omit<UserProfile, 'id'>): { user: UserProfile; users: UserProfile[] } {
+    const current = this.getAllUsers()
+    const created: UserProfile = {
+      ...newUser,
+      id: `user-${Date.now()}`
+    }
+    const updatedList = [...current, created]
+    this.saveUsers(updatedList)
+    return { user: created, users: updatedList }
+  },
+
+  deleteUser(userId: string): UserProfile[] {
+    const current = this.getAllUsers()
+    if (current.length <= 1) return current // keep at least 1 user
+    const updatedList = current.filter(u => u.id !== userId)
     this.saveUsers(updatedList)
     return updatedList
   },

@@ -141,6 +141,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             activeUser={activeUser}
             onSelectUser={onSelectUser}
             notes={notes}
+            onOpenSettings={onOpenSettings}
           />
 
           {/* Theme switcher */}

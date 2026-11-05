@@ -261,9 +261,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
                 onClick={() => setAuthorFilter(u.id)}
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg font-medium transition-all ${
                   isSelected
-                    ? u.name.includes('Arshad')
-                      ? 'bg-indigo-600 text-white shadow-xs'
-                      : 'bg-rose-600 text-white shadow-xs'
+                    ? `bg-gradient-to-r ${u.avatarGradient} text-white shadow-xs`
                     : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
                 }`}
               >

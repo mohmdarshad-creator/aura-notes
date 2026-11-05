@@ -74,6 +74,22 @@ export function App() {
     }))
   }
 
+  const handleAddUser = (newUser: Omit<UserProfile, 'id'>) => {
+    const { user, users: updated } = storageService.addUser(newUser)
+    setUsers(updated)
+    setActiveUser(user)
+    storageService.setActiveUser(user.id)
+  }
+
+  const handleDeleteUser = (userId: string) => {
+    const updated = storageService.deleteUser(userId)
+    setUsers(updated)
+    if (activeUser.id === userId && updated.length > 0) {
+      setActiveUser(updated[0])
+      storageService.setActiveUser(updated[0].id)
+    }
+  }
+
   // Active note for editor
   const activeNote = useMemo(() => {
     return notes.find(n => n.id === selectedNoteId) || null
@@ -315,6 +331,8 @@ export function App() {
         users={users}
         activeUser={activeUser}
         onUpdateUser={handleUpdateUser}
+        onAddUser={handleAddUser}
+        onDeleteUser={handleDeleteUser}
       />
 
     </div>

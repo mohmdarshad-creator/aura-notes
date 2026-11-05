@@ -480,14 +480,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           {/* Student Profile Tabs */}
-          <div className="flex items-center bg-stone-100 dark:bg-stone-800/80 rounded-xl p-1 border border-stone-200/80 dark:border-stone-700/60 text-xs self-start sm:self-auto">
+          <div className="flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 rounded-xl p-1 border border-stone-200/80 dark:border-stone-700/60 text-xs self-start sm:self-auto overflow-x-auto max-w-full">
             {users.map((u) => {
               const isSelected = activeUser.id === u.id
               return (
                 <button
                   key={u.id}
                   onClick={() => onSelectUser(u)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold flex-shrink-0 whitespace-nowrap transition-all ${
                     isSelected
                       ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs'
                       : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
@@ -530,7 +530,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 flex items-center gap-2 flex-wrap">
                   <span className="font-semibold text-stone-700 dark:text-stone-300">{activeUser.role}</span>
                   <span className="text-stone-300 dark:text-stone-600">•</span>
-                  <span>Student ID: {activeUser.id === 'user-arshad' ? 'STU-ARSHAD-2026' : 'STU-RANIYA-2026'}</span>
+                  <span>Student ID: {`STU-${activeUser.name.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 8) || 'SCHOLAR'}-2026`}</span>
                 </p>
 
                 <div className="flex items-center gap-2 mt-2 text-[11px] text-stone-400">

@@ -12,13 +12,13 @@ import {
   ShieldCheck,
   Palette,
   Bot,
-  User,
   Users,
-  Sparkles,
-  Sliders
+  Sliders,
+  Plus,
+  Trash2
 } from 'lucide-react'
 import { storageService } from '../services/storageService'
-import { Note, UserProfile } from '../types'
+import { Note, UserProfile, NoteColor } from '../types'
 
 interface SettingsModalProps {
   isOpen: boolean
@@ -31,15 +31,17 @@ interface SettingsModalProps {
   users: UserProfile[]
   activeUser: UserProfile
   onUpdateUser: (updatedUser: UserProfile) => void
+  onAddUser: (newUser: Omit<UserProfile, 'id'>) => void
+  onDeleteUser: (userId: string) => void
 }
 
-const GRADIENT_PRESETS = [
-  { id: 'indigo', name: 'Indigo Amber', gradient: 'from-indigo-600 via-indigo-500 to-amber-400' },
-  { id: 'rose', name: 'Rose Pink', gradient: 'from-rose-500 via-pink-500 to-amber-300' },
-  { id: 'emerald', name: 'Emerald Teal', gradient: 'from-emerald-600 via-teal-500 to-sky-400' },
-  { id: 'purple', name: 'Purple Violet', gradient: 'from-purple-600 via-violet-500 to-pink-400' },
-  { id: 'amber', name: 'Amber Orange', gradient: 'from-amber-500 via-orange-500 to-rose-400' },
-  { id: 'cyan', name: 'Cyan Sky', gradient: 'from-cyan-500 via-sky-500 to-indigo-500' },
+const GRADIENT_PRESETS: { id: string; name: string; gradient: string; color: NoteColor }[] = [
+  { id: 'indigo', name: 'Indigo Amber', gradient: 'from-indigo-600 via-indigo-500 to-amber-400', color: 'indigo' },
+  { id: 'rose', name: 'Rose Pink', gradient: 'from-rose-500 via-pink-500 to-amber-300', color: 'coral' },
+  { id: 'emerald', name: 'Emerald Teal', gradient: 'from-emerald-600 via-teal-500 to-sky-400', color: 'emerald' },
+  { id: 'purple', name: 'Purple Violet', gradient: 'from-purple-600 via-violet-500 to-pink-400', color: 'purple' },
+  { id: 'amber', name: 'Amber Orange', gradient: 'from-amber-500 via-orange-500 to-rose-400', color: 'amber' },
+  { id: 'cyan', name: 'Cyan Sky', gradient: 'from-cyan-500 via-sky-500 to-indigo-500', color: 'sky' },
 ]
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
@@ -52,7 +54,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   onResetSampleNotes,
   users,
   activeUser,
-  onUpdateUser
+  onUpdateUser,
+  onAddUser,
+  onDeleteUser
 }) => {
   const [apiKey, setApiKey] = useState(() => storageService.getApiKey())
   const [showKey, setShowKey] = useState(false)
@@ -61,23 +65,37 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   // Edit Mode state for User Profiles
   const [isUserEditMode, setIsUserEditMode] = useState(false)
-  const [selectedEditUserId, setSelectedEditUserId] = useState<string>(activeUser.id)
+  const [editTab, setEditTab] = useState<string>(activeUser.id) // userId or 'new'
+  
+  // Edit existing user state
   const [editName, setEditName] = useState('')
   const [editInitials, setEditInitials] = useState('')
   const [editRole, setEditRole] = useState('')
-  const [editGradient, setEditGradient] = useState('')
+  const [editGradient, setEditGradient] = useState(GRADIENT_PRESETS[0].gradient)
+  const [editColor, setEditColor] = useState<NoteColor>('indigo')
   const [userProfileSaved, setUserProfileSaved] = useState(false)
 
-  // Sync edit form when selected user or edit mode changes
+  // New user state
+  const [newName, setNewName] = useState('')
+  const [newInitials, setNewInitials] = useState('')
+  const [newRole, setNewRole] = useState('')
+  const [newGradient, setNewGradient] = useState(GRADIENT_PRESETS[0].gradient)
+  const [newColor, setNewColor] = useState<NoteColor>('indigo')
+  const [userCreatedNotice, setUserCreatedNotice] = useState(false)
+
+  // Sync edit form when selected user changes
   useEffect(() => {
-    const target = users.find(u => u.id === selectedEditUserId) || activeUser
-    if (target) {
-      setEditName(target.name)
-      setEditInitials(target.initials)
-      setEditRole(target.role)
-      setEditGradient(target.avatarGradient)
+    if (editTab !== 'new') {
+      const target = users.find(u => u.id === editTab) || activeUser
+      if (target) {
+        setEditName(target.name)
+        setEditInitials(target.initials)
+        setEditRole(target.role)
+        setEditGradient(target.avatarGradient)
+        setEditColor(target.color || 'indigo')
+      }
     }
-  }, [selectedEditUserId, isUserEditMode, users, activeUser])
+  }, [editTab, users, activeUser])
 
   if (!isOpen) return null
 
@@ -89,7 +107,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   const handleSaveUserProfile = (e: React.FormEvent) => {
     e.preventDefault()
-    const target = users.find(u => u.id === selectedEditUserId)
+    const target = users.find(u => u.id === editTab)
     if (!target || !editName.trim()) return
 
     const updated: UserProfile = {
@@ -97,12 +115,47 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       name: editName.trim(),
       initials: editInitials.trim() || editName.trim().slice(0, 2).toUpperCase(),
       role: editRole.trim() || 'Student Scholar',
+      color: editColor,
       avatarGradient: editGradient || target.avatarGradient
     }
 
     onUpdateUser(updated)
     setUserProfileSaved(true)
     setTimeout(() => setUserProfileSaved(false), 2000)
+  }
+
+  const handleCreateNewUser = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newName.trim()) return
+
+    onAddUser({
+      name: newName.trim(),
+      initials: newInitials.trim() || newName.trim().slice(0, 2).toUpperCase(),
+      role: newRole.trim() || 'Academic Scholar',
+      color: newColor,
+      avatarGradient: newGradient
+    })
+
+    setNewName('')
+    setNewInitials('')
+    setNewRole('')
+    setUserCreatedNotice(true)
+    setTimeout(() => {
+      setUserCreatedNotice(false)
+      setEditTab(activeUser.id)
+    }, 1500)
+  }
+
+  const handleDeleteProfile = (userId: string) => {
+    if (users.length <= 1) {
+      alert('You must have at least one student profile.')
+      return
+    }
+    const target = users.find(u => u.id === userId)
+    if (confirm(`Are you sure you want to delete profile for "${target?.name}"?`)) {
+      onDeleteUser(userId)
+      setEditTab(users.find(u => u.id !== userId)?.id || '')
+    }
   }
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -140,7 +193,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <h2 className="text-base font-bold text-stone-900 dark:text-stone-100">
                 AURA Settings & Profiles
               </h2>
-              <p className="text-xs text-stone-400">Manage user details, AI tutor, and appearance</p>
+              <p className="text-xs text-stone-400">Manage user profiles, AI tutor, and appearance</p>
             </div>
           </div>
           <button
@@ -160,7 +213,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-indigo-500" />
                 <span className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                  Student Profiles
+                  Student Profiles ({users.length})
                 </span>
               </div>
 
@@ -180,7 +233,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
             {/* If Edit Mode is OFF: show current details cleanly */}
             {!isUserEditMode ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 max-h-52 overflow-y-auto pr-1">
                 {users.map((u) => {
                   const isActive = u.id === activeUser.id
                   return (
@@ -209,116 +262,224 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 })}
               </div>
             ) : (
-              /* If Edit Mode is ON: render full editor form */
-              <form onSubmit={handleSaveUserProfile} className="space-y-4 pt-2 border-t border-stone-200 dark:border-stone-700">
+              /* If Edit Mode is ON: tabs for each user + "+ Add New Student" */
+              <div className="space-y-4 pt-2 border-t border-stone-200 dark:border-stone-700">
                 
-                {/* Select which user to edit */}
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-stone-500 font-medium">Select Student:</span>
-                  <div className="flex gap-1.5 flex-1">
-                    {users.map((u) => (
-                      <button
-                        key={u.id}
-                        type="button"
-                        onClick={() => setSelectedEditUserId(u.id)}
-                        className={`flex-1 py-1.5 px-2 text-xs font-semibold rounded-lg transition-all ${
-                          selectedEditUserId === u.id
-                            ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
-                            : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700'
-                        }`}
-                      >
-                        {u.name}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Edit Name */}
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                    Full Name
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editName}
-                    onChange={(e) => setEditName(e.target.value)}
-                    placeholder="Enter full name"
-                    className="w-full mt-1 px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none"
-                  />
-                </div>
-
-                {/* Edit Initials & Role */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="col-span-1">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                      Initials
-                    </label>
-                    <input
-                      type="text"
-                      maxLength={3}
-                      value={editInitials}
-                      onChange={(e) => setEditInitials(e.target.value.toUpperCase())}
-                      placeholder="e.g. MA"
-                      className="w-full mt-1 px-3 py-2 text-xs sm:text-sm font-mono font-bold rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none uppercase text-center"
-                    />
-                  </div>
-
-                  <div className="col-span-2">
-                    <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                      Academic Role / Field
-                    </label>
-                    <input
-                      type="text"
-                      value={editRole}
-                      onChange={(e) => setEditRole(e.target.value)}
-                      placeholder="e.g. Computer Science & AI"
-                      className="w-full mt-1 px-3 py-2 text-xs sm:text-sm rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none"
-                    />
-                  </div>
-                </div>
-
-                {/* Avatar Color / Gradient preset */}
-                <div>
-                  <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                    Avatar Theme Gradient
-                  </label>
-                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
-                    {GRADIENT_PRESETS.map((p) => {
-                      const isSelected = editGradient === p.gradient
-                      return (
-                        <button
-                          key={p.id}
-                          type="button"
-                          onClick={() => setEditGradient(p.gradient)}
-                          className={`w-7 h-7 rounded-lg bg-gradient-to-tr ${p.gradient} transition-transform ${
-                            isSelected ? 'ring-2 ring-stone-900 dark:ring-white scale-110 shadow-xs' : 'opacity-70 hover:opacity-100'
-                          }`}
-                          title={p.name}
-                        />
-                      )
-                    })}
-                  </div>
-                </div>
-
-                {/* Submit & Cancel Buttons */}
-                <div className="flex items-center justify-end gap-2 pt-2">
+                {/* Horizontal scrollable tabs */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+                  {users.map((u) => (
+                    <button
+                      key={u.id}
+                      type="button"
+                      onClick={() => setEditTab(u.id)}
+                      className={`py-1 px-2.5 text-xs font-semibold rounded-lg whitespace-nowrap transition-all ${
+                        editTab === u.id
+                          ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                          : 'bg-white dark:bg-stone-800 text-stone-600 dark:text-stone-400 border border-stone-200 dark:border-stone-700'
+                      }`}
+                    >
+                      {u.name.split(' ')[0]}
+                    </button>
+                  ))}
                   <button
                     type="button"
-                    onClick={() => setIsUserEditMode(false)}
-                    className="px-3 py-1.5 text-xs font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg"
+                    onClick={() => setEditTab('new')}
+                    className={`py-1 px-2.5 text-xs font-semibold rounded-lg whitespace-nowrap flex items-center gap-1 transition-all ${
+                      editTab === 'new'
+                        ? 'bg-indigo-600 text-white shadow-xs'
+                        : 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800'
+                    }`}
                   >
-                    Done
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-3.5 py-1.5 text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
-                  >
-                    {userProfileSaved ? <Check className="w-3.5 h-3.5" /> : null}
-                    <span>{userProfileSaved ? 'Saved!' : 'Save Details'}</span>
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add New</span>
                   </button>
                 </div>
-              </form>
+
+                {/* Form: Add New User */}
+                {editTab === 'new' ? (
+                  <form onSubmit={handleCreateNewUser} className="space-y-3 bg-white dark:bg-stone-800/90 p-4 rounded-xl border border-stone-200 dark:border-stone-700">
+                    <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                      Create New Student Profile
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={newName}
+                        onChange={(e) => {
+                          setNewName(e.target.value)
+                          if (!newInitials) {
+                            setNewInitials(e.target.value.slice(0, 2).toUpperCase())
+                          }
+                        }}
+                        placeholder="e.g. Zayd Al-Mansoor"
+                        className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="col-span-1">
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Initials
+                        </label>
+                        <input
+                          type="text"
+                          maxLength={3}
+                          value={newInitials}
+                          onChange={(e) => setNewInitials(e.target.value.toUpperCase())}
+                          placeholder="ZA"
+                          className="w-full mt-1 px-3 py-1.5 text-xs font-mono font-bold rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none uppercase text-center"
+                        />
+                      </div>
+                      <div className="col-span-2">
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Field / Role
+                        </label>
+                        <input
+                          type="text"
+                          value={newRole}
+                          onChange={(e) => setNewRole(e.target.value)}
+                          placeholder="e.g. Pure Mathematics & Logic"
+                          className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                        Theme Color Gradient
+                      </label>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        {GRADIENT_PRESETS.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setNewGradient(p.gradient)
+                              setNewColor(p.color)
+                            }}
+                            className={`w-7 h-7 rounded-lg bg-gradient-to-tr ${p.gradient} transition-transform ${
+                              newGradient === p.gradient ? 'ring-2 ring-stone-900 dark:ring-white scale-110 shadow-xs' : 'opacity-70 hover:opacity-100'
+                            }`}
+                            title={p.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-end gap-2 pt-2">
+                      <button
+                        type="submit"
+                        className="px-3 py-1.5 text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+                      >
+                        {userCreatedNotice ? <Check className="w-3.5 h-3.5" /> : <Plus className="w-3.5 h-3.5" />}
+                        <span>{userCreatedNotice ? 'Added!' : 'Create Profile'}</span>
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  /* Form: Edit Existing User */
+                  <form onSubmit={handleSaveUserProfile} className="space-y-3 bg-white dark:bg-stone-800/90 p-4 rounded-xl border border-stone-200 dark:border-stone-700">
+                    <div>
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        placeholder="Enter full name"
+                        className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="col-span-1">
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Initials
+                        </label>
+                        <input
+                          type="text"
+                          maxLength={3}
+                          value={editInitials}
+                          onChange={(e) => setEditInitials(e.target.value.toUpperCase())}
+                          placeholder="e.g. MA"
+                          className="w-full mt-1 px-3 py-1.5 text-xs font-mono font-bold rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none uppercase text-center"
+                        />
+                      </div>
+
+                      <div className="col-span-2">
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Academic Role / Field
+                        </label>
+                        <input
+                          type="text"
+                          value={editRole}
+                          onChange={(e) => setEditRole(e.target.value)}
+                          placeholder="e.g. Computer Science & AI"
+                          className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                        Theme Color Gradient
+                      </label>
+                      <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                        {GRADIENT_PRESETS.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setEditGradient(p.gradient)
+                              setEditColor(p.color)
+                            }}
+                            className={`w-7 h-7 rounded-lg bg-gradient-to-tr ${p.gradient} transition-transform ${
+                              editGradient === p.gradient ? 'ring-2 ring-stone-900 dark:ring-white scale-110 shadow-xs' : 'opacity-70 hover:opacity-100'
+                            }`}
+                            title={p.name}
+                          />
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2">
+                      {users.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteProfile(editTab)}
+                          className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1 font-medium"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          <span>Delete Profile</span>
+                        </button>
+                      )}
+                      <div className="flex items-center gap-2 ml-auto">
+                        <button
+                          type="button"
+                          onClick={() => setIsUserEditMode(false)}
+                          className="px-3 py-1.5 text-xs font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 rounded-lg"
+                        >
+                          Done
+                        </button>
+                        <button
+                          type="submit"
+                          className="px-3.5 py-1.5 text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-lg shadow-xs transition-colors flex items-center gap-1.5"
+                        >
+                          {userProfileSaved ? <Check className="w-3.5 h-3.5" /> : null}
+                          <span>{userProfileSaved ? 'Saved!' : 'Save Details'}</span>
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                )}
+              </div>
             )}
           </div>
 
