@@ -108,3 +108,4 @@ export const UserSwitcher: React.FC<UserSwitcherProps> = ({
     </div>
   )
 }
+

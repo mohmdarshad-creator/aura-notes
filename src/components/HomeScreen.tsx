@@ -19,6 +19,7 @@ import {
   X
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
+import { HeroWelcome } from './HeroWelcome'
 
 interface HomeScreenProps {
   subjects: SubjectItem[]
@@ -139,32 +140,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const primarySubjects = subjects.slice(0, 4)
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-12 animate-fade-in">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-10 animate-fade-in">
       
-      {/* Hero Welcome Banner - Personalized */}
+      {/* Front Screen Animated Split Welcome Hero */}
+      <HeroWelcome activeUser={activeUser} />
+
+      {/* Control Bar: Scope Toggle (My Notes vs Combined) & Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1.5">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span>Active Student Profile: <strong className="text-stone-800 dark:text-stone-200">{activeUser.name}</strong></span>
           </div>
-
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-2xl bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white font-bold text-sm shadow-sm`}>
-              {activeUser.initials}
-            </div>
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-serif font-bold tracking-tight text-stone-900 dark:text-stone-100 flex items-center gap-2">
-                <span>Welcome back, {activeUser.name}</span>
-                <span className="text-sm font-sans font-normal text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-full">
-                  {activeUser.role}
-                </span>
-              </h1>
-              <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">
-                Organized study workspace & instant Gemini AI doubt solver.
-              </p>
-            </div>
-          </div>
+          <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400">
+            {userFilter === 'mine' 
+              ? `Displaying ${myNotesCount} personal notes authored by ${activeUser.name}`
+              : `Displaying all ${notes.length} notes across both students`
+            }
+          </p>
         </div>
 
         {/* User Scope Toggle & Actions */}
