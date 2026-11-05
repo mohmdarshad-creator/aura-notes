@@ -189,3 +189,39 @@
   animation: pulse-subtle 3s ease-in-out infinite;
 }
 
+/* Subject Tiles Floating In Animation */
+@keyframes floatInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(42px) scale(0.95);
+  }
+  65% {
+    opacity: 0.95;
+    transform: translateY(-5px) scale(1.008);
+  }
+  85% {
+    transform: translateY(2px) scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-float-in {
+  animation: floatInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes gentleLevitate {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-levitate {
+  animation: gentleLevitate 5s ease-in-out infinite;
+}
+

@@ -246,7 +246,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* 2x2 Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
-          {subjects.map((sub) => {
+          {subjects.map((sub, index) => {
             const subjectNotes = displayNotes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
             const colors = COLOR_MAP[sub.color] || COLOR_MAP.indigo
 
@@ -254,20 +254,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div
                 key={sub.id}
                 onClick={() => onOpenSubject(sub.name)}
-                className={`group relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border} ${colors.glow}`}
+                style={{
+                  animationDelay: `${index * 120 + 80}ms`,
+                  animationFillMode: 'both'
+                }}
+                className={`group relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden animate-float-in ${colors.border} ${colors.glow}`}
               >
                 {/* Ambient background hover gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
+                <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
 
                 <div className="relative z-10 flex flex-col justify-between h-full min-h-[160px]">
                   
                   {/* Top Bar with Icon & Note Count Badge */}
                   <div className="flex items-start justify-between gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/70 dark:border-stone-700/60 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <div className="w-12 h-12 rounded-2xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/70 dark:border-stone-700/60 flex items-center justify-center group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 shadow-xs">
                       {renderSubjectIcon(sub.icon, colors.text)}
                     </div>
                     
-                    <span className={`text-xs font-mono font-medium px-2.5 py-1 rounded-full border ${colors.badge}`}>
+                    <span className={`text-xs font-mono font-medium px-2.5 py-1 rounded-full border transition-transform duration-300 group-hover:scale-105 ${colors.badge}`}>
                       {subjectNotes.length} {subjectNotes.length === 1 ? 'note' : 'notes'}
                     </span>
                   </div>
@@ -288,7 +292,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <BookOpen className="w-3.5 h-3.5" />
                       Open Subject Window
                     </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 text-indigo-500 transition-transform" />
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 text-indigo-500 transition-transform duration-300" />
                   </div>
 
                 </div>
