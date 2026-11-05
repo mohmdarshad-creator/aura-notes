@@ -131,34 +131,51 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [detailsVisible, setDetailsVisible] = useState(false)
 
   useEffect(() => {
-    // Check initial visibility so returning to a scrolled position reveals content immediately
+    // Check initial visibility so sections currently on screen are revealed immediately
     const checkVisibility = () => {
       const vh = window.innerHeight
-      if (subjectsRef.current && subjectsRef.current.getBoundingClientRect().top < vh) setSubjectsVisible(true)
-      if (viewsRef.current && viewsRef.current.getBoundingClientRect().top < vh) setViewsVisible(true)
-      if (notebooksRef.current && notebooksRef.current.getBoundingClientRect().top < vh) setNotebooksVisible(true)
-      if (detailsRef.current && detailsRef.current.getBoundingClientRect().top < vh) setDetailsVisible(true)
+      if (subjectsRef.current) {
+        const rect = subjectsRef.current.getBoundingClientRect()
+        setSubjectsVisible(rect.top < vh && rect.bottom > 0)
+      }
+      if (viewsRef.current) {
+        const rect = viewsRef.current.getBoundingClientRect()
+        setViewsVisible(rect.top < vh && rect.bottom > 0)
+      }
+      if (notebooksRef.current) {
+        const rect = notebooksRef.current.getBoundingClientRect()
+        setNotebooksVisible(rect.top < vh && rect.bottom > 0)
+      }
+      if (detailsRef.current) {
+        const rect = detailsRef.current.getBoundingClientRect()
+        setDetailsVisible(rect.top < vh && rect.bottom > 0)
+      }
     }
 
     checkVisibility()
     const timer = setTimeout(checkVisibility, 60)
-    const timer2 = setTimeout(checkVisibility, 200)
 
-    const observerCallback: IntersectionObserverCallback = (entries, observer) => {
+    // Continuous scroll observer: triggers animations every time user scrolls up or down into view
+    const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          if (entry.target === subjectsRef.current) setSubjectsVisible(true)
-          if (entry.target === viewsRef.current) setViewsVisible(true)
-          if (entry.target === notebooksRef.current) setNotebooksVisible(true)
-          if (entry.target === detailsRef.current) setDetailsVisible(true)
-          observer.unobserve(entry.target)
+        if (entry.target === subjectsRef.current) {
+          setSubjectsVisible(entry.isIntersecting)
+        }
+        if (entry.target === viewsRef.current) {
+          setViewsVisible(entry.isIntersecting)
+        }
+        if (entry.target === notebooksRef.current) {
+          setNotebooksVisible(entry.isIntersecting)
+        }
+        if (entry.target === detailsRef.current) {
+          setDetailsVisible(entry.isIntersecting)
         }
       })
     }
 
     const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.08,
-      rootMargin: '0px 0px -30px 0px'
+      threshold: 0.05,
+      rootMargin: '0px 0px -20px 0px'
     })
 
     if (subjectsRef.current) observer.observe(subjectsRef.current)
@@ -168,7 +185,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
     return () => {
       clearTimeout(timer)
-      clearTimeout(timer2)
       observer.disconnect()
     }
   }, [subjects, notebooks])
