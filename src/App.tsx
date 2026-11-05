@@ -5,6 +5,7 @@ import { NotesWindow } from './components/NotesWindow'
 import { NoteEditor } from './components/NoteEditor'
 import { GeminiDrawer } from './components/GeminiDrawer'
 import { SettingsModal } from './components/SettingsModal'
+import { FloatingBar } from './components/FloatingBar'
 import { Note, PageRoute, SubjectItem, NoteColor, UserProfile } from './types'
 import { storageService, INITIAL_NOTES, USERS } from './services/storageService'
 import { geminiService } from './services/geminiService'
@@ -354,6 +355,20 @@ export function App() {
         onUpdateUser={handleUpdateUser}
         onAddUser={handleAddUser}
         onDeleteUser={handleDeleteUser}
+      />
+
+      {/* Floating Bar with Prominent Ask Gemini AI Trigger */}
+      <FloatingBar
+        onOpenGemini={() => handleOpenGeminiGeneral()}
+        onNewNote={() => handleCreateNote()}
+        onNavigateHome={handleBackToHome}
+        isAtHome={route.type === 'home'}
+        isGeminiDrawerOpen={isGeminiDrawerOpen}
+        isGeminiConfigured={geminiService.hasApiKey()}
+        activeUser={activeUser}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
+        onOpenSettings={() => setIsSettingsOpen(true)}
       />
 
     </div>
