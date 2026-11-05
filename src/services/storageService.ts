@@ -553,5 +553,43 @@ date: ${new Date(note.updatedAt).toISOString()}
     document.body.appendChild(downloadAnchor)
     downloadAnchor.click()
     downloadAnchor.remove()
+  },
+
+  getStorageStats(notesList?: Note[]) {
+    let totalBytes = 0
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i)
+        if (key) {
+          const val = localStorage.getItem(key) || ''
+          totalBytes += (key.length + val.length) * 2 // UTF-16 character size in browser
+        }
+      }
+    } catch {
+      totalBytes = 32000
+    }
+
+    const totalCapacityBytes = 5 * 1024 * 1024 // 5.0 MB standard HTML5 localStorage quota
+    const usedKb = totalBytes / 1024
+    const usedMb = usedKb / 1024
+    const usedFormatted = usedMb >= 1 ? `${usedMb.toFixed(2)} MB` : `${usedKb.toFixed(1)} KB`
+    const percentUsed = Math.min(100, Math.max(0.4, (totalBytes / totalCapacityBytes) * 100))
+    const freeMb = Math.max(0, 5.0 - usedMb).toFixed(2)
+    const notesCount = notesList ? notesList.length : this.getNotes().length
+    const notebooksCount = this.getNotebooks().length
+    const subjectsCount = this.getSubjects().length
+
+    return {
+      totalCapacity: '5.0 MB',
+      totalCapacityBytes,
+      usedBytes: totalBytes,
+      usedFormatted,
+      freeFormatted: `${freeMb} MB`,
+      percentUsed: Number(percentUsed.toFixed(1)),
+      notesCount,
+      notebooksCount,
+      subjectsCount,
+      totalFilesCount: notesCount
+    }
   }
 }

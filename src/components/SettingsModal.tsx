@@ -15,7 +15,9 @@ import {
   Plus,
   Trash2,
   Sun,
-  Moon
+  Moon,
+  HardDrive,
+  Database
 } from 'lucide-react'
 import { storageService } from '../services/storageService'
 import { Note, UserProfile, NoteColor } from '../types'
@@ -739,43 +741,117 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
-          {/* Data Backup & Restore */}
-          <div className="space-y-2 pt-2 border-t border-stone-100 dark:border-stone-800">
-            <label className="text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-400">
-              Data & Storage
-            </label>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => storageService.exportNotesJson(notes)}
-                className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Export JSON Backup</span>
-              </button>
+          {/* NOTICEABLE STORAGE SECTION: Settings > Storage */}
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-50/60 via-stone-50 to-amber-50/40 dark:from-indigo-950/25 dark:via-stone-800/70 dark:to-stone-800/50 border border-indigo-200/80 dark:border-indigo-800/70 space-y-3.5 shadow-xs">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
+                  <HardDrive className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-xs font-bold uppercase tracking-wider text-stone-900 dark:text-stone-100 flex items-center gap-1.5">
+                    Storage Capacity & Usage
+                  </div>
+                  <div className="text-[10px] text-indigo-600 dark:text-indigo-400 font-mono font-medium">
+                    Settings &gt; Storage &gt; ({notes.length} files • {storageService.getStorageStats(notes).usedFormatted} / {storageService.getStorageStats(notes).totalCapacity})
+                  </div>
+                </div>
+              </div>
 
-              <label className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium rounded-xl border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer">
-                <Upload className="w-3.5 h-3.5" />
-                <span>Import Backup</span>
-                <input
-                  type="file"
-                  accept=".json"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
-              </label>
+              <div className="text-right">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded-md bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+                  {storageService.getStorageStats(notes).percentUsed}% Used
+                </span>
+              </div>
             </div>
 
-            <button
-              onClick={() => {
-                if (confirm('Reset to initial sample notes? Your custom notes will be backed up or overwritten.')) {
-                  onResetSampleNotes()
-                }
-              }}
-              className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-xs text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition-colors"
-            >
-              <RotateCcw className="w-3 h-3" />
-              <span>Restore Sample Study Notes</span>
-            </button>
+            {/* Prominent Storage Capacity & Files Metric Cards */}
+            <div className="grid grid-cols-3 gap-2 pt-1">
+              {/* Total Storage Capacity */}
+              <div className="p-3 bg-white dark:bg-stone-800 rounded-xl border border-stone-200/80 dark:border-stone-700 shadow-xs">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                  Total Capacity
+                </div>
+                <div className="text-sm sm:text-base font-bold text-stone-900 dark:text-stone-100 font-mono mt-0.5">
+                  {storageService.getStorageStats(notes).totalCapacity}
+                </div>
+                <div className="text-[10px] text-stone-400">HTML5 Storage</div>
+              </div>
+
+              {/* Files Stored */}
+              <div className="p-3 bg-white dark:bg-stone-800 rounded-xl border border-stone-200/80 dark:border-stone-700 shadow-xs">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                  Files Stored
+                </div>
+                <div className="text-sm sm:text-base font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-0.5">
+                  {notes.length} Notes
+                </div>
+                <div className="text-[10px] text-stone-400">Saved in browser</div>
+              </div>
+
+              {/* Free Remaining */}
+              <div className="p-3 bg-white dark:bg-stone-800 rounded-xl border border-stone-200/80 dark:border-stone-700 shadow-xs">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                  Free Space
+                </div>
+                <div className="text-sm sm:text-base font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-0.5">
+                  {storageService.getStorageStats(notes).freeFormatted}
+                </div>
+                <div className="text-[10px] text-stone-400">Available</div>
+              </div>
+            </div>
+
+            {/* Visual Storage Meter Bar */}
+            <div className="space-y-1.5 pt-1">
+              <div className="w-full h-2.5 bg-stone-200/80 dark:bg-stone-700 rounded-full overflow-hidden p-0.5">
+                <div 
+                  className="h-full bg-gradient-to-r from-indigo-500 via-indigo-600 to-amber-500 rounded-full transition-all duration-500"
+                  style={{ width: `${Math.max(4, storageService.getStorageStats(notes).percentUsed)}%` }}
+                />
+              </div>
+              <div className="flex items-center justify-between text-[11px] text-stone-500 dark:text-stone-400 font-mono">
+                <span>Used: <strong>{storageService.getStorageStats(notes).usedFormatted}</strong> ({storageService.getStorageStats(notes).percentUsed}%)</span>
+                <span>Capacity: <strong>{storageService.getStorageStats(notes).totalCapacity}</strong></span>
+              </div>
+            </div>
+
+            {/* Data Backup & Restore Action Buttons */}
+            <div className="pt-2 border-t border-stone-200/80 dark:border-stone-700/80 space-y-2">
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => storageService.exportNotesJson(notes)}
+                  className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-xs"
+                >
+                  <Download className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Export JSON Backup</span>
+                </button>
+
+                <label className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-xs cursor-pointer">
+                  <Upload className="w-3.5 h-3.5 text-indigo-500" />
+                  <span>Import Backup</span>
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileUpload}
+                    className="hidden"
+                  />
+                </label>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  if (confirm('Reset to initial sample notes? Your custom notes will be backed up or overwritten.')) {
+                    onResetSampleNotes()
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs text-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                <span>Restore Sample Study Notes</span>
+              </button>
+            </div>
           </div>
 
         </div>

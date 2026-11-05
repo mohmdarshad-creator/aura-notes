@@ -4,10 +4,12 @@ import {
   Search, 
   Settings, 
   BookMarked,
-  X
+  X,
+  HardDrive
 } from 'lucide-react'
 import { UserSwitcher } from './UserSwitcher'
 import { UserProfile, Note } from '../types'
+import { storageService } from '../services/storageService'
 
 interface NavbarProps {
   searchQuery: string
@@ -35,9 +37,12 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isSearchHovered, setIsSearchHovered] = useState(false)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [isSettingsHovered, setIsSettingsHovered] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const isSearchExpanded = isSearchHovered || isSearchFocused || Boolean(searchQuery.trim())
+
+  const storageStats = storageService.getStorageStats(notes)
 
   const handleMouseEnter = () => {
     setIsSearchHovered(true)
@@ -87,11 +92,13 @@ export const Navbar: React.FC<NavbarProps> = ({
     }`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
         
-        {/* Brand / Logo */}
-        <div className="flex items-center gap-3">
+        {/* LEFT GROUP: AURANotes Logo at the far left + Search extending to the right */}
+        <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+          
+          {/* Brand / Logo (End Left) */}
           <div 
             onClick={onNavigateHome}
-            className="flex items-center gap-2.5 cursor-pointer group"
+            className="flex items-center gap-2.5 cursor-pointer group flex-shrink-0"
           >
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-amber-400 p-[1px] shadow-sm group-hover:scale-105 transition-transform">
               <div className="w-full h-full bg-white dark:bg-stone-900 rounded-[11px] flex items-center justify-center">
@@ -104,83 +111,85 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
           </div>
-        </div>
 
-        {/* Expandable Search Button & Bar */}
-        <div 
-          className="relative flex items-center"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-        >
-          <div
-            className={`group flex items-center relative overflow-hidden transition-all duration-300 ease-out rounded-xl border ${
-              isSearchExpanded
-                ? 'w-64 sm:w-80 md:w-96 bg-white dark:bg-stone-900 border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-400/20 dark:ring-indigo-500/20'
-                : 'w-10 h-10 bg-stone-100/90 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700/80 border-stone-200/80 dark:border-stone-700/70 shadow-xs cursor-pointer'
-            }`}
+          {/* Search Button moved to the left, extends smoothly to the right */}
+          <div 
+            className="relative flex items-center"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
           >
-            {/* Search Icon / Button Trigger */}
-            <button
-              type="button"
-              onClick={() => {
-                setIsSearchFocused(true)
-                searchInputRef.current?.focus()
-              }}
-              className={`w-10 h-10 flex items-center justify-center flex-shrink-0 text-stone-500 dark:text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors ${
-                isSearchExpanded ? 'pointer-events-none' : 'cursor-pointer'
+            <div
+              className={`group flex items-center relative overflow-hidden transition-all duration-300 ease-out rounded-xl border origin-left ${
+                isSearchExpanded
+                  ? 'w-64 sm:w-80 md:w-96 bg-white dark:bg-stone-900 border-indigo-400 dark:border-indigo-500 shadow-md ring-2 ring-indigo-400/20 dark:ring-indigo-500/20'
+                  : 'w-10 h-10 bg-stone-100/90 dark:bg-stone-800/80 hover:bg-stone-200 dark:hover:bg-stone-700/80 border-stone-200/80 dark:border-stone-700/70 shadow-xs cursor-pointer'
               }`}
-              title="Search notes, doubts, #tags, or topics (Hover or click to extend)"
             >
-              <Search className={`w-4 h-4 transition-transform duration-200 ${isSearchExpanded ? 'text-indigo-500 scale-105' : 'group-hover:scale-110'}`} />
-            </button>
-
-            {/* Extended Input Field */}
-            <input
-              ref={searchInputRef}
-              type="text"
-              value={searchQuery}
-              onChange={(e) => onSearchChange(e.target.value)}
-              onFocus={() => setIsSearchFocused(true)}
-              onBlur={() => setIsSearchFocused(false)}
-              onKeyDown={(e) => {
-                if (e.key === 'Escape') {
-                  searchInputRef.current?.blur()
-                }
-              }}
-              placeholder="Search notes, doubts, #tags, or topics..."
-              className={`w-full pr-8 py-2 text-sm bg-transparent outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100 transition-opacity duration-200 ${
-                isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none w-0'
-              }`}
-              tabIndex={isSearchExpanded ? 0 : -1}
-            />
-
-            {/* Clear Button (Visible when text entered) */}
-            {isSearchExpanded && searchQuery && (
+              {/* Search Icon / Button Trigger */}
               <button
                 type="button"
-                onClick={(e) => {
-                  e.stopPropagation()
-                  onSearchChange('')
+                onClick={() => {
+                  setIsSearchFocused(true)
                   searchInputRef.current?.focus()
                 }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-                title="Clear search query"
+                className={`w-10 h-10 flex items-center justify-center flex-shrink-0 text-stone-500 dark:text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors ${
+                  isSearchExpanded ? 'pointer-events-none' : 'cursor-pointer'
+                }`}
+                title="Search notes, doubts, #tags, or topics (Hover or click to extend right)"
               >
-                <X className="w-3.5 h-3.5" />
+                <Search className={`w-4 h-4 transition-transform duration-200 ${isSearchExpanded ? 'text-indigo-500 scale-105' : 'group-hover:scale-110'}`} />
               </button>
-            )}
+
+              {/* Extended Input Field */}
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onFocus={() => setIsSearchFocused(true)}
+                onBlur={() => setIsSearchFocused(false)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Escape') {
+                    searchInputRef.current?.blur()
+                  }
+                }}
+                placeholder="Search notes, doubts, #tags, or topics..."
+                className={`w-full pr-8 py-2 text-sm bg-transparent outline-none placeholder:text-stone-400 text-stone-900 dark:text-stone-100 transition-opacity duration-200 ${
+                  isSearchExpanded ? 'opacity-100' : 'opacity-0 pointer-events-none w-0'
+                }`}
+                tabIndex={isSearchExpanded ? 0 : -1}
+              />
+
+              {/* Clear Button */}
+              {isSearchExpanded && searchQuery && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onSearchChange('')
+                    searchInputRef.current?.focus()
+                  }}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 p-1 rounded-md text-xs text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+                  title="Clear search query"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
           </div>
+
         </div>
 
-        {/* Action Controls */}
-        <div className="flex items-center gap-2">
+        {/* RIGHT GROUP: New Note, User Switcher, and Settings at the right most end */}
+        <div className="flex items-center gap-2 flex-shrink-0">
           {/* New Note Button */}
           <button
             onClick={onNewNote}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-sm transition-all hover:shadow-md"
           >
             <Plus className="w-4 h-4" />
-            <span>New Note</span>
+            <span className="hidden sm:inline">New Note</span>
+            <span className="sm:hidden">New</span>
           </button>
 
           {/* User Profile Switcher */}
@@ -192,14 +201,66 @@ export const Navbar: React.FC<NavbarProps> = ({
             onOpenSettings={onOpenSettings}
           />
 
-          {/* Settings */}
-          <button
-            onClick={onOpenSettings}
-            className="p-2 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-            title="Settings & Appearance"
+          {/* Settings Button: Right Most End with noticeable Storage details on touch/hover */}
+          <div 
+            className="relative"
+            onMouseEnter={() => setIsSettingsHovered(true)}
+            onMouseLeave={() => setIsSettingsHovered(false)}
           >
-            <Settings className="w-4 h-4" />
-          </button>
+            <button
+              onClick={onOpenSettings}
+              className={`p-2 rounded-xl transition-all relative ${
+                isSettingsHovered 
+                  ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 ring-2 ring-indigo-500/20 shadow-xs' 
+                  : 'text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800'
+              }`}
+              title={`Settings > Storage (${storageStats.notesCount} notes • ${storageStats.usedFormatted} / ${storageStats.totalCapacity})`}
+            >
+              <Settings className="w-4 h-4" />
+            </button>
+
+            {/* Storage popover visible when touching/hovering the settings button */}
+            {isSettingsHovered && (
+              <div className="absolute right-0 top-12 z-50 w-64 p-3.5 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md rounded-2xl border border-indigo-200/80 dark:border-indigo-800/80 shadow-2xl pointer-events-none animate-fade-in text-left">
+                <div className="flex items-center justify-between text-xs font-bold text-stone-900 dark:text-stone-100 mb-2">
+                  <span className="flex items-center gap-1.5">
+                    <HardDrive className="w-3.5 h-3.5 text-indigo-500" />
+                    Settings &gt; Storage
+                  </span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-mono font-semibold">
+                    {storageStats.percentUsed}%
+                  </span>
+                </div>
+                
+                <div className="text-[11px] text-stone-600 dark:text-stone-300 mb-2 space-y-1">
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Total Capacity:</span>
+                    <strong className="font-mono text-stone-800 dark:text-stone-200">{storageStats.totalCapacity}</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Files Stored:</span>
+                    <strong className="font-mono text-indigo-600 dark:text-indigo-400">{storageStats.notesCount} Notes</strong>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-stone-400">Used Space:</span>
+                    <strong className="font-mono text-stone-800 dark:text-stone-200">{storageStats.usedFormatted}</strong>
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div className="w-full h-1.5 bg-stone-100 dark:bg-stone-800 rounded-full overflow-hidden mb-1.5">
+                  <div 
+                    className="h-full bg-gradient-to-r from-indigo-500 to-amber-500 rounded-full"
+                    style={{ width: `${Math.max(4, storageStats.percentUsed)}%` }}
+                  />
+                </div>
+
+                <div className="text-[10px] text-stone-400 text-center font-mono">
+                  Click to open full Storage manager
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
       </div>
