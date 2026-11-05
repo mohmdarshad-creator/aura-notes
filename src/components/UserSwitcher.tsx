@@ -34,7 +34,9 @@ export const UserSwitcher: React.FC<UserSwitcherProps> = ({
 
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(filterQuery.toLowerCase()) ||
-    u.role.toLowerCase().includes(filterQuery.toLowerCase())
+    u.role.toLowerCase().includes(filterQuery.toLowerCase()) ||
+    (u.registerNumber && u.registerNumber.toLowerCase().includes(filterQuery.toLowerCase())) ||
+    (u.college && u.college.toLowerCase().includes(filterQuery.toLowerCase()))
   )
 
   return (
@@ -115,7 +117,7 @@ export const UserSwitcher: React.FC<UserSwitcherProps> = ({
                         )}
                       </div>
                       <div className="text-[10px] text-stone-400 truncate">
-                        {u.role}
+                        {u.registerNumber ? `${u.registerNumber} • ${u.role}` : u.role}
                       </div>
                     </div>
                   </div>

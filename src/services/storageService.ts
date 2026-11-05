@@ -5,6 +5,7 @@ const API_KEY_STORAGE_KEY = 'auranotes_gemini_api_key'
 const CHAT_HISTORY_STORAGE_KEY = 'auranotes_doubt_history_v2'
 const THEME_STORAGE_KEY = 'auranotes_theme'
 const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
+const NOTEBOOKS_STORAGE_KEY = 'auranotes_notebooks_v2'
 const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
 const USERS_STORAGE_KEY = 'auranotes_users_v2'
 
@@ -14,16 +15,20 @@ export const USERS: UserProfile[] = [
     name: 'Mohamed Arshad',
     initials: 'MA',
     color: 'indigo',
-    role: 'Computer Science & AI Researcher',
-    avatarGradient: 'from-indigo-600 via-indigo-500 to-amber-400'
+    role: 'Computer Science & Engineering',
+    avatarGradient: 'from-indigo-600 via-indigo-500 to-amber-400',
+    registerNumber: 'RA2511028020147',
+    college: 'SRM Engineering College, Ramapuram, Chennai'
   },
   {
     id: 'user-raniya',
     name: 'Raniya Parveen',
     initials: 'RP',
     color: 'coral',
-    role: 'Physics & Life Sciences Scholar',
-    avatarGradient: 'from-rose-500 via-pink-500 to-amber-300'
+    role: 'Engineering Scholar',
+    avatarGradient: 'from-rose-500 via-pink-500 to-amber-300',
+    registerNumber: '9602104171',
+    college: 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
   },
   {
     id: 'user-zayd',
@@ -31,7 +36,9 @@ export const USERS: UserProfile[] = [
     initials: 'ZA',
     color: 'sky',
     role: 'Pure Mathematics & Cryptography',
-    avatarGradient: 'from-cyan-500 via-sky-500 to-indigo-500'
+    avatarGradient: 'from-cyan-500 via-sky-500 to-indigo-500',
+    registerNumber: 'RA2511028020992',
+    college: 'SRM Engineering College, Ramapuram, Chennai'
   },
   {
     id: 'user-ayesha',
@@ -39,7 +46,9 @@ export const USERS: UserProfile[] = [
     initials: 'AS',
     color: 'emerald',
     role: 'Astronomy & Astrophysics Scholar',
-    avatarGradient: 'from-emerald-600 via-teal-500 to-sky-400'
+    avatarGradient: 'from-emerald-600 via-teal-500 to-sky-400',
+    registerNumber: '9602104188',
+    college: 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
   }
 ]
 
@@ -72,6 +81,37 @@ export const DEFAULT_SUBJECTS: SubjectItem[] = [
     color: 'emerald', 
     icon: 'Feather' 
   },
+]
+
+export const DEFAULT_NOTEBOOKS: SubjectItem[] = [
+  {
+    id: 'nb-ai-lab',
+    name: 'AI & Neural Networks Lab',
+    description: 'Deep Learning, Backpropagation & PyTorch architectures',
+    color: 'indigo',
+    icon: 'Code'
+  },
+  {
+    id: 'nb-quantum',
+    name: 'Quantum Mechanics & Relativity',
+    description: 'Wave equations, state vectors & spacetime experiments',
+    color: 'purple',
+    icon: 'Atom'
+  },
+  {
+    id: 'nb-crypto',
+    name: 'Discrete Math & Cryptography',
+    description: 'Number theory, RSA algorithms & logic proofs',
+    color: 'sky',
+    icon: 'Sigma'
+  },
+  {
+    id: 'nb-stoic',
+    name: 'Stoic Wisdom & Study Protocols',
+    description: 'Cognitive focus, deep work habits & mental models',
+    color: 'emerald',
+    icon: 'Feather'
+  }
 ]
 
 export const INITIAL_NOTES: Note[] = [
@@ -263,7 +303,31 @@ export const storageService = {
     try {
       const stored = localStorage.getItem(USERS_STORAGE_KEY)
       if (stored) {
-        return JSON.parse(stored)
+        const parsed: UserProfile[] = JSON.parse(stored)
+        let changed = false
+        const updated = parsed.map(u => {
+          if ((u.id === 'user-arshad' || u.name.includes('Arshad')) && (!u.registerNumber || !u.college)) {
+            changed = true
+            return {
+              ...u,
+              registerNumber: 'RA2511028020147',
+              college: 'SRM Engineering College, Ramapuram, Chennai'
+            }
+          }
+          if ((u.id === 'user-raniya' || u.name.includes('Raniya')) && (!u.registerNumber || !u.college)) {
+            changed = true
+            return {
+              ...u,
+              registerNumber: '9602104171',
+              college: 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
+            }
+          }
+          return u
+        })
+        if (changed) {
+          localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(updated))
+        }
+        return updated
       }
       localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(USERS))
       return USERS
@@ -421,6 +485,43 @@ export const storageService = {
     const updated = [...current, newSubject]
     this.saveSubjects(updated)
     return newSubject
+  },
+
+  getNotebooks(): SubjectItem[] {
+    try {
+      const stored = localStorage.getItem(NOTEBOOKS_STORAGE_KEY)
+      if (!stored) {
+        localStorage.setItem(NOTEBOOKS_STORAGE_KEY, JSON.stringify(DEFAULT_NOTEBOOKS))
+        return DEFAULT_NOTEBOOKS
+      }
+      return JSON.parse(stored)
+    } catch (e) {
+      console.error('Failed to load notebooks', e)
+      return DEFAULT_NOTEBOOKS
+    }
+  },
+
+  saveNotebooks(notebooks: SubjectItem[]): void {
+    try {
+      localStorage.setItem(NOTEBOOKS_STORAGE_KEY, JSON.stringify(notebooks))
+    } catch (e) {
+      console.error('Failed to save notebooks', e)
+    }
+  },
+
+  addNotebook(name: string, description: string = '', color: any = 'indigo', icon: string = 'BookMarked'): SubjectItem {
+    const current = this.getNotebooks()
+    const newNotebook: SubjectItem = {
+      id: `nb-${Date.now()}`,
+      name: name.trim(),
+      description: description.trim() || 'Specialized notebook folder',
+      color,
+      icon,
+      createdAt: Date.now()
+    }
+    const updated = [...current, newNotebook]
+    this.saveNotebooks(updated)
+    return newNotebook
   },
 
   exportNotesJson(notes: Note[]): void {

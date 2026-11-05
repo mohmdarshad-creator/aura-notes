@@ -18,13 +18,17 @@ import {
   PlusCircle,
   X,
   User,
-  CheckCircle2
+  CheckCircle2,
+  GraduationCap,
+  Building2,
+  Hash
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
 
 interface HomeScreenProps {
   subjects: SubjectItem[]
+  notebooks: SubjectItem[]
   notes: Note[]
   activeUser: UserProfile
   users: UserProfile[]
@@ -34,6 +38,7 @@ interface HomeScreenProps {
   onOpenCollection: (view: 'all' | 'pinned' | 'favorites') => void
   onOpenSubject: (subjectName: string) => void
   onAddSubject: (name: string, description: string, color: NoteColor, icon: string) => void
+  onAddNotebook: (name: string, description: string, color: NoteColor, icon: string) => void
   onOpenGemini: () => void
   onNewNote: () => void
   onOpenSettings?: () => void
@@ -93,6 +98,7 @@ const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; g
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
   subjects,
+  notebooks,
   notes,
   activeUser,
   users,
@@ -102,11 +108,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenCollection,
   onOpenSubject,
   onAddSubject,
+  onAddNotebook,
   onOpenGemini,
   onNewNote,
   onOpenSettings
 }) => {
   const [showAddModal, setShowAddModal] = useState(false)
+  const [addModalTarget, setAddModalTarget] = useState<'subject' | 'notebook'>('subject')
   const [newSubName, setNewSubName] = useState('')
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
@@ -123,7 +131,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newSubName.trim()) return
-    onAddSubject(newSubName.trim(), newSubDesc.trim(), newSubColor, 'BookOpen')
+    if (addModalTarget === 'subject') {
+      onAddSubject(newSubName.trim(), newSubDesc.trim(), newSubColor, 'BookOpen')
+    } else {
+      onAddNotebook(newSubName.trim(), newSubDesc.trim(), newSubColor, 'BookMarked')
+    }
     setNewSubName('')
     setNewSubDesc('')
     setShowAddModal(false)
@@ -139,9 +151,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       default: return <BookMarked className={`w-6 h-6 ${colorClass}`} />
     }
   }
-
-  // The 2x2 grid features the primary 4 subjects
-  const primarySubjects = subjects.slice(0, 4)
 
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-10 animate-fade-in">
@@ -191,7 +200,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
 
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setAddModalTarget('subject')
+              setShowAddModal(true)
+            }}
             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 transition-colors border border-stone-200 dark:border-stone-700 shadow-xs"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -221,7 +233,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </p>
           </div>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setAddModalTarget('subject')
+              setShowAddModal(true)
+            }}
             className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -231,7 +246,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* 2x2 Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
-          {primarySubjects.map((sub) => {
+          {subjects.map((sub) => {
             const subjectNotes = displayNotes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
             const colors = COLOR_MAP[sub.color] || COLOR_MAP.indigo
 
@@ -414,7 +429,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </p>
           </div>
           <button
-            onClick={() => setShowAddModal(true)}
+            onClick={() => {
+              setAddModalTarget('notebook')
+              setShowAddModal(true)
+            }}
             className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" />
@@ -424,7 +442,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Notebooks Cards Grid (Same Animation & Same Style as the 3 boxes) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {subjects.map((notebook) => {
+          {notebooks.map((notebook) => {
             const count = displayNotes.filter(n => n.category.toLowerCase() === notebook.name.toLowerCase()).length
             const colors = COLOR_MAP[notebook.color] || COLOR_MAP.indigo
 
@@ -527,13 +545,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </span>
                 </div>
 
-                <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1 flex items-center gap-2 flex-wrap">
-                  <span className="font-semibold text-stone-700 dark:text-stone-300">{activeUser.role}</span>
-                  <span className="text-stone-300 dark:text-stone-600">•</span>
-                  <span>Student ID: {`STU-${activeUser.name.replace(/[^a-zA-Z]/g, '').toUpperCase().slice(0, 8) || 'SCHOLAR'}-2026`}</span>
-                </p>
+                {/* Academic Credentials: Register Number & College */}
+                <div className="flex items-center gap-2 mt-2 flex-wrap">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 shadow-xs">
+                    <Hash className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>Reg No: {activeUser.registerNumber || (activeUser.name.includes('Arshad') ? 'RA2511028020147' : '9602104171')}</span>
+                  </div>
 
-                <div className="flex items-center gap-2 mt-2 text-[11px] text-stone-400">
+                  <span className="text-stone-300 dark:text-stone-600 hidden sm:inline">•</span>
+
+                  <div className="flex items-center gap-1.5 text-xs text-stone-700 dark:text-stone-200 font-medium">
+                    <GraduationCap className="w-4 h-4 text-amber-500 flex-shrink-0" />
+                    <span>{activeUser.college || (activeUser.name.includes('Arshad') ? 'SRM Engineering College, Ramapuram, Chennai' : 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari')}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 mt-2 text-[11px] text-stone-400 flex-wrap">
+                  <span className="font-semibold text-stone-600 dark:text-stone-300">{activeUser.role}</span>
+                  <span>•</span>
                   <span className="flex items-center gap-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-indigo-500" />
                     Verified Local Study Space
@@ -593,7 +622,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-      {/* INSERT SUBJECT MODAL */}
+      {/* INSERT SUBJECT OR NOTEBOOK MODAL */}
       {showAddModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
           <div className="w-full max-w-md bg-white dark:bg-stone-900 rounded-3xl border border-stone-200 dark:border-stone-800 shadow-2xl overflow-hidden p-6 space-y-5">
@@ -602,9 +631,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center">
                   <PlusCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                 </div>
-                <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100">
-                  Insert New Subject
-                </h3>
+                <div>
+                  <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100">
+                    {addModalTarget === 'subject' ? 'Insert New Subject' : 'Insert New Notebook Folder'}
+                  </h3>
+                  <p className="text-[11px] text-stone-400">
+                    {addModalTarget === 'subject'
+                      ? 'Adds directly to your Subjects section above'
+                      : 'Adds directly to your Notebooks section below'
+                    }
+                  </p>
+                </div>
               </div>
               <button
                 onClick={() => setShowAddModal(false)}
@@ -617,14 +654,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <form onSubmit={handleAddSubmit} className="space-y-4">
               <div>
                 <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
-                  Subject Name
+                  {addModalTarget === 'subject' ? 'Subject Name' : 'Notebook Folder Name'}
                 </label>
                 <input
                   type="text"
                   required
                   value={newSubName}
                   onChange={(e) => setNewSubName(e.target.value)}
-                  placeholder="e.g. Neuroscience, Macroeconomics, Chemistry..."
+                  placeholder={addModalTarget === 'subject' ? 'e.g. Neuroscience, Macroeconomics, Chemistry...' : 'e.g. AI Lab, Embedded Systems, Quantum Notes...'}
                   className="w-full mt-1.5 px-3.5 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none"
                 />
               </div>
@@ -637,7 +674,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   type="text"
                   value={newSubDesc}
                   onChange={(e) => setNewSubDesc(e.target.value)}
-                  placeholder="e.g. Brain networks, synaptic plasticity & cognitive science"
+                  placeholder={addModalTarget === 'subject' ? 'e.g. Brain networks, synaptic plasticity & cognitive science' : 'e.g. Code snippets, lab experiments & assignments'}
                   className="w-full mt-1.5 px-3.5 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none"
                 />
               </div>
@@ -676,7 +713,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   type="submit"
                   className="px-4 py-2 text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-sm transition-colors"
                 >
-                  Insert Subject
+                  {addModalTarget === 'subject' ? 'Insert Subject' : 'Create Notebook'}
                 </button>
               </div>
             </form>

@@ -7,6 +7,8 @@ export interface UserProfile {
   color: NoteColor
   role: string
   avatarGradient: string
+  registerNumber?: string
+  college?: string
 }
 
 export interface Note {

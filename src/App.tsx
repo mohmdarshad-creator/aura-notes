@@ -16,6 +16,7 @@ export function App() {
   const [userFilter, setUserFilter] = useState<'all' | 'mine'>('mine')
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes())
   const [subjects, setSubjects] = useState<SubjectItem[]>(() => storageService.getSubjects())
+  const [notebooks, setNotebooks] = useState<SubjectItem[]>(() => storageService.getNotebooks())
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isGeminiDrawerOpen, setIsGeminiDrawerOpen] = useState(false)
@@ -32,6 +33,11 @@ export function App() {
   useEffect(() => {
     storageService.saveSubjects(subjects)
   }, [subjects])
+
+  // Persist notebooks
+  useEffect(() => {
+    storageService.saveNotebooks(notebooks)
+  }, [notebooks])
 
   // Apply theme
   useEffect(() => {
@@ -111,7 +117,7 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Add new subject dynamically
+  // Add new subject dynamically (for Subjects section)
   const handleAddSubject = (name: string, description: string, color: NoteColor, icon: string) => {
     const newSub: SubjectItem = {
       id: `sub-${Date.now()}`,
@@ -122,6 +128,19 @@ export function App() {
       createdAt: Date.now()
     }
     setSubjects(prev => [...prev, newSub])
+  }
+
+  // Add new notebook dynamically (for Notebooks section)
+  const handleAddNotebook = (name: string, description: string, color: NoteColor, icon: string) => {
+    const newNb: SubjectItem = {
+      id: `nb-${Date.now()}`,
+      name,
+      description,
+      color,
+      icon,
+      createdAt: Date.now()
+    }
+    setNotebooks(prev => [...prev, newNb])
   }
 
   // Create Note
@@ -249,6 +268,7 @@ export function App() {
           /* Page 1: Home Screen with 2x2 Subjects, Views Bar, 3-Box Animated Cards, and Notebooks */
           <HomeScreen
             subjects={subjects}
+            notebooks={notebooks}
             notes={notes}
             activeUser={activeUser}
             users={users}
@@ -258,6 +278,7 @@ export function App() {
             onOpenCollection={handleOpenCollection}
             onOpenSubject={handleOpenSubject}
             onAddSubject={handleAddSubject}
+            onAddNotebook={handleAddNotebook}
             onOpenGemini={() => handleOpenGeminiGeneral()}
             onNewNote={() => handleCreateNote()}
             onOpenSettings={() => setIsSettingsOpen(true)}

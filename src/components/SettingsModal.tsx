@@ -71,6 +71,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [editName, setEditName] = useState('')
   const [editInitials, setEditInitials] = useState('')
   const [editRole, setEditRole] = useState('')
+  const [editRegisterNumber, setEditRegisterNumber] = useState('')
+  const [editCollege, setEditCollege] = useState('')
   const [editGradient, setEditGradient] = useState(GRADIENT_PRESETS[0].gradient)
   const [editColor, setEditColor] = useState<NoteColor>('indigo')
   const [userProfileSaved, setUserProfileSaved] = useState(false)
@@ -79,6 +81,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [newName, setNewName] = useState('')
   const [newInitials, setNewInitials] = useState('')
   const [newRole, setNewRole] = useState('')
+  const [newRegisterNumber, setNewRegisterNumber] = useState('')
+  const [newCollege, setNewCollege] = useState('')
   const [newGradient, setNewGradient] = useState(GRADIENT_PRESETS[0].gradient)
   const [newColor, setNewColor] = useState<NoteColor>('indigo')
   const [userCreatedNotice, setUserCreatedNotice] = useState(false)
@@ -91,6 +95,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         setEditName(target.name)
         setEditInitials(target.initials)
         setEditRole(target.role)
+        setEditRegisterNumber(target.registerNumber || '')
+        setEditCollege(target.college || '')
         setEditGradient(target.avatarGradient)
         setEditColor(target.color || 'indigo')
       }
@@ -115,6 +121,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       name: editName.trim(),
       initials: editInitials.trim() || editName.trim().slice(0, 2).toUpperCase(),
       role: editRole.trim() || 'Student Scholar',
+      registerNumber: editRegisterNumber.trim(),
+      college: editCollege.trim(),
       color: editColor,
       avatarGradient: editGradient || target.avatarGradient
     }
@@ -132,6 +140,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       name: newName.trim(),
       initials: newInitials.trim() || newName.trim().slice(0, 2).toUpperCase(),
       role: newRole.trim() || 'Academic Scholar',
+      registerNumber: newRegisterNumber.trim(),
+      college: newCollege.trim(),
       color: newColor,
       avatarGradient: newGradient
     })
@@ -139,6 +149,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     setNewName('')
     setNewInitials('')
     setNewRole('')
+    setNewRegisterNumber('')
+    setNewCollege('')
     setUserCreatedNotice(true)
     setTimeout(() => {
       setUserCreatedNotice(false)
@@ -349,6 +361,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                       </div>
                     </div>
 
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Register Number
+                        </label>
+                        <input
+                          type="text"
+                          value={newRegisterNumber}
+                          onChange={(e) => setNewRegisterNumber(e.target.value)}
+                          placeholder="e.g. RA2511028020147"
+                          className="w-full mt-1 px-3 py-1.5 text-xs font-mono rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          College / Institution
+                        </label>
+                        <input
+                          type="text"
+                          value={newCollege}
+                          onChange={(e) => setNewCollege(e.target.value)}
+                          placeholder="e.g. SRM Engineering College"
+                          className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                    </div>
+
                     <div>
                       <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
                         Theme Color Gradient
@@ -422,6 +461,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           value={editRole}
                           onChange={(e) => setEditRole(e.target.value)}
                           placeholder="e.g. Computer Science & AI"
+                          className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <div>
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          Register Number
+                        </label>
+                        <input
+                          type="text"
+                          value={editRegisterNumber}
+                          onChange={(e) => setEditRegisterNumber(e.target.value)}
+                          placeholder="e.g. RA2511028020147"
+                          className="w-full mt-1 px-3 py-1.5 text-xs font-mono rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[11px] font-semibold uppercase tracking-wider text-stone-500">
+                          College / Institution
+                        </label>
+                        <input
+                          type="text"
+                          value={editCollege}
+                          onChange={(e) => setEditCollege(e.target.value)}
+                          placeholder="e.g. SRM Engineering College, Ramapuram, Chennai"
                           className="w-full mt-1 px-3 py-1.5 text-xs rounded-lg bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none"
                         />
                       </div>
