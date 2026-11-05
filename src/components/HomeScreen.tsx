@@ -210,7 +210,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
               <Layers className="w-4 h-4 text-indigo-500" />
-              Subjects (2x2 Grid)
+              Subjects
             </h2>
             <p className="text-xs text-stone-400 mt-0.5">
               Select any subject to open its dedicated notes window
