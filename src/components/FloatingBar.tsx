@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
-import { Sparkles, Plus, Home, Settings, Moon, Sun, Coffee, Check, Users } from 'lucide-react'
+import { Sparkles, Plus, Home, Settings, Moon, Sun, Check, Users } from 'lucide-react'
 import { UserProfile } from '../types'
 
 interface FloatingBarProps {
@@ -116,17 +116,15 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
         {/* Divider */}
         <div className="h-5 w-[1px] bg-stone-200 dark:bg-stone-700 mx-0.5 hidden xs:block" />
 
-        {/* Theme Toggle */}
+        {/* Theme Toggle (Light / Dark) */}
         {onToggleTheme && (
           <button
             onClick={onToggleTheme}
             className="p-2 rounded-full text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors hidden xs:flex items-center justify-center"
-            title={`Current theme: ${theme}. Click to switch.`}
+            title={`Switch to ${theme === 'dark' ? 'Light Mode' : 'Dark Mode'}`}
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 text-amber-400" />
-            ) : theme === 'sepia' ? (
-              <Coffee className="w-4 h-4 text-amber-600" />
             ) : (
               <Moon className="w-4 h-4 text-stone-600" />
             )}

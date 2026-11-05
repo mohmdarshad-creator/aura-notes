@@ -131,6 +131,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [detailsVisible, setDetailsVisible] = useState(false)
 
   useEffect(() => {
+    // Check initial visibility so returning to a scrolled position reveals content immediately
+    const checkVisibility = () => {
+      const vh = window.innerHeight
+      if (subjectsRef.current && subjectsRef.current.getBoundingClientRect().top < vh) setSubjectsVisible(true)
+      if (viewsRef.current && viewsRef.current.getBoundingClientRect().top < vh) setViewsVisible(true)
+      if (notebooksRef.current && notebooksRef.current.getBoundingClientRect().top < vh) setNotebooksVisible(true)
+      if (detailsRef.current && detailsRef.current.getBoundingClientRect().top < vh) setDetailsVisible(true)
+    }
+
+    checkVisibility()
+    const timer = setTimeout(checkVisibility, 60)
+    const timer2 = setTimeout(checkVisibility, 200)
+
     const observerCallback: IntersectionObserverCallback = (entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -153,7 +166,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     if (notebooksRef.current) observer.observe(notebooksRef.current)
     if (detailsRef.current) observer.observe(detailsRef.current)
 
-    return () => observer.disconnect()
+    return () => {
+      clearTimeout(timer)
+      clearTimeout(timer2)
+      observer.disconnect()
+    }
   }, [subjects, notebooks])
 
   // Scoped notes based on userFilter

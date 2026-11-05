@@ -1,12 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { 
-  Sparkles, 
   Plus, 
   Search, 
   Settings, 
-  Moon, 
-  Sun, 
-  Coffee, 
   BookMarked,
   X
 } from 'lucide-react'
@@ -17,13 +13,9 @@ interface NavbarProps {
   searchQuery: string
   onSearchChange: (q: string) => void
   onNewNote: () => void
-  onOpenGemini: () => void
   onOpenSettings: () => void
-  theme: string
-  onToggleTheme: () => void
-  isGeminiConfigured: boolean
   onNavigateHome: () => void
-  isAtHome: boolean
+  isAtHome?: boolean
   users: UserProfile[]
   activeUser: UserProfile
   onSelectUser: (user: UserProfile) => void
@@ -34,13 +26,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   searchQuery,
   onSearchChange,
   onNewNote,
-  onOpenGemini,
   onOpenSettings,
-  theme,
-  onToggleTheme,
-  isGeminiConfigured,
   onNavigateHome,
-  isAtHome,
   users,
   activeUser,
   onSelectUser,
@@ -117,27 +104,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </div>
           </div>
-
-          {/* Navigation Tabs */}
-          <nav className="hidden md:flex items-center gap-1 ml-4 pl-4 border-l border-stone-200 dark:border-stone-800">
-            <button
-              onClick={onNavigateHome}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-all ${
-                isAtHome
-                  ? 'bg-stone-100 dark:bg-stone-800 text-stone-900 dark:text-stone-100 shadow-xs'
-                  : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200'
-              }`}
-            >
-              Home
-            </button>
-            <button
-              onClick={onOpenGemini}
-              className="px-3 py-1.5 rounded-lg text-sm font-medium flex items-center gap-1.5 transition-all text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200"
-            >
-              <Sparkles className="w-4 h-4 text-amber-500" />
-              Doubt Solver
-            </button>
-          </nav>
         </div>
 
         {/* Expandable Search Button & Bar */}
@@ -208,19 +174,6 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Action Controls */}
         <div className="flex items-center gap-2">
-          {/* Quick AI Trigger */}
-          <button
-            onClick={onOpenGemini}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-medium bg-gradient-to-r from-indigo-50 to-amber-50 hover:from-indigo-100 hover:to-amber-100 dark:from-indigo-950/40 dark:to-amber-950/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/50 shadow-sm transition-all hover:shadow"
-            title="Ask Gemini a question or clear a doubt"
-          >
-            <Sparkles className="w-4 h-4 text-amber-500" />
-            <span className="hidden sm:inline">Ask</span> Gemini
-            {!isGeminiConfigured && (
-              <span className="w-2 h-2 rounded-full bg-amber-400 animate-ping" />
-            )}
-          </button>
-
           {/* New Note Button */}
           <button
             onClick={onNewNote}
@@ -239,26 +192,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             onOpenSettings={onOpenSettings}
           />
 
-          {/* Theme switcher */}
-          <button
-            onClick={onToggleTheme}
-            className="p-2 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-            title={`Current theme: ${theme}. Click to switch.`}
-          >
-            {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-amber-400" />
-            ) : theme === 'sepia' ? (
-              <Coffee className="w-4 h-4 text-amber-600" />
-            ) : (
-              <Moon className="w-4 h-4 text-stone-600" />
-            )}
-          </button>
-
           {/* Settings */}
           <button
             onClick={onOpenSettings}
             className="p-2 rounded-xl text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
-            title="Settings & Gemini API Key"
+            title="Settings & Appearance"
           >
             <Settings className="w-4 h-4" />
           </button>

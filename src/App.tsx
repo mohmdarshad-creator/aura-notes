@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { Navbar } from './components/Navbar'
 import { HomeScreen } from './components/HomeScreen'
 import { NotesWindow } from './components/NotesWindow'
@@ -23,7 +23,13 @@ export function App() {
   const [isGeminiDrawerOpen, setIsGeminiDrawerOpen] = useState(false)
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
   const [geminiInitialPrompt, setGeminiInitialPrompt] = useState<string | undefined>(undefined)
-  const [theme, setTheme] = useState(() => storageService.getTheme())
+  const [theme, setTheme] = useState(() => {
+    const saved = storageService.getTheme()
+    return saved === 'sepia' || !saved ? 'light' : saved
+  })
+  
+  // Track scroll position when opening a tile so Back to Home returns where entered
+  const homeScrollPos = useRef<number>(0)
 
   // Persist notes
   useEffect(() => {
@@ -40,22 +46,18 @@ export function App() {
     storageService.saveNotebooks(notebooks)
   }, [notebooks])
 
-  // Apply theme
+  // Apply theme (Light Mode or Dark Mode only)
   useEffect(() => {
     const root = document.documentElement
     root.classList.remove('dark', 'sepia')
     if (theme === 'dark') {
       root.classList.add('dark')
-    } else if (theme === 'sepia') {
-      root.classList.add('sepia')
     }
     storageService.saveTheme(theme)
   }, [theme])
 
   const handleToggleTheme = () => {
-    if (theme === 'light') setTheme('dark')
-    else if (theme === 'dark') setTheme('sepia')
-    else setTheme('light')
+    setTheme(prev => prev === 'light' ? 'dark' : 'light')
   }
 
   const handleSelectUser = (user: UserProfile) => {
@@ -102,20 +104,26 @@ export function App() {
     return notes.find(n => n.id === selectedNoteId) || null
   }, [notes, selectedNoteId])
 
-  // Navigation handlers
+  // Navigation handlers with scroll-position memory
   const handleOpenCollection = (view: 'all' | 'pinned' | 'favorites') => {
+    homeScrollPos.current = window.scrollY
     setRoute({ type: 'collection', view })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const handleOpenSubject = (subjectName: string) => {
+    homeScrollPos.current = window.scrollY
     setRoute({ type: 'subject', subjectName })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
 
   const handleBackToHome = () => {
+    const targetY = homeScrollPos.current
     setRoute({ type: 'home' })
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // Return smoothly to where the user entered the tile instead of top of page
+    setTimeout(() => {
+      window.scrollTo({ top: targetY, behavior: 'smooth' })
+    }, 40)
   }
 
   // Add new subject dynamically (for Subjects section)
@@ -250,11 +258,7 @@ export function App() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onNewNote={() => handleCreateNote()}
-        onOpenGemini={() => handleOpenGeminiGeneral()}
         onOpenSettings={() => setIsSettingsOpen(true)}
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
-        isGeminiConfigured={geminiService.hasApiKey()}
         onNavigateHome={handleBackToHome}
         isAtHome={route.type === 'home'}
         users={users}
