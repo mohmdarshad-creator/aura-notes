@@ -2005,6 +2005,147 @@ html.theme-steel-gold .motivational-spark-card .quote-action-btn:hover {
 }
 
 /* ============================================================
+   MOTIVATIONAL CARD ANIMATIONS & 30-SECOND VANISH EFFECTS
+   ============================================================ */
+@keyframes sparkCardEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0px);
+  }
+}
+
+.animate-spark-card-entrance {
+  animation: sparkCardEntrance 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes sparkCardVanish {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    max-height: 260px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    filter: blur(0px);
+  }
+  35% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.975);
+    filter: blur(3px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.95);
+    max-height: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-top-width: 0px;
+    border-bottom-width: 0px;
+    filter: blur(6px);
+    pointer-events: none;
+  }
+}
+
+.motivational-spark-card.is-vanishing {
+  animation: sparkCardVanish 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  overflow: hidden !important;
+}
+
+/* Hairline Shimmer Line on Top Border */
+@keyframes luxuryBorderGleam {
+  0% {
+    transform: translateX(-100%);
+  }
+  60%, 100% {
+    transform: translateX(200%);
+  }
+}
+
+.spark-card-shimmer-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.85) 50%, transparent 100%);
+  animation: luxuryBorderGleam 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.dark .spark-card-shimmer-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(129, 140, 248, 0.85) 50%, transparent 100%);
+}
+
+html.theme-steel-gold .spark-card-shimmer-line {
+  background: linear-gradient(90deg, transparent 0%, rgba(240, 196, 91, 0.95) 50%, transparent 100%) !important;
+}
+
+/* 30s Countdown Bar */
+.spark-progress-bar {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+.dark .spark-progress-bar {
+  background: linear-gradient(90deg, #818CF8 0%, #F59E0B 100%);
+  box-shadow: 0 0 10px rgba(129, 140, 248, 0.6);
+}
+
+html.theme-steel-gold .spark-progress-bar {
+  background: linear-gradient(90deg, #F0C45B 0%, #E5B84B 50%, #F59E0B 100%) !important;
+  box-shadow: 0 0 12px rgba(229, 184, 75, 0.8) !important;
+}
+
+/* Post-Vanish Restore Pill */
+.spark-restore-pill {
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(217, 119, 6, 0.25);
+  color: #57534E;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.spark-restore-pill:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(217, 119, 6, 0.45);
+  color: #1C1917;
+  box-shadow: 0 4px 16px rgba(217, 119, 6, 0.14);
+}
+.dark .spark-restore-pill {
+  background: rgba(28, 25, 23, 0.82);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #A8A29E;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.dark .spark-restore-pill:hover {
+  background: rgba(41, 37, 36, 0.95);
+  border-color: rgba(129, 140, 248, 0.4);
+  color: #FAF5FF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+}
+html.theme-steel-gold .spark-restore-pill {
+  background: rgba(29, 24, 18, 0.88) !important;
+  border: 1px solid rgba(229, 184, 75, 0.32) !important;
+  color: #D6C9B6 !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+html.theme-steel-gold .spark-restore-pill:hover {
+  background: rgba(38, 31, 23, 0.98) !important;
+  border-color: rgba(229, 184, 75, 0.65) !important;
+  color: #FAF6EE !important;
+  box-shadow: 0 4px 18px rgba(229, 184, 75, 0.28) !important;
+}
+
+/* ============================================================
    DARK MODE UPLOAD BUTTONS - CRISP WHITE STYLING
    In Dark Mode, all device and file upload buttons render in
    pure white with dark high-contrast text and dark icons.
