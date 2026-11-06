@@ -8,6 +8,7 @@ const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
 const NOTEBOOKS_STORAGE_KEY = 'auranotes_notebooks_v2'
 const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
 const USERS_STORAGE_KEY = 'auranotes_users_v2'
+const COURSES_STORAGE_KEY = 'auranotes_courses_v2'
 
 export const fileBlobCache = new Map<string, string>()
 
@@ -440,10 +441,99 @@ export const storageService = {
   getCoursesForUser(userId: string): CourseItem[] {
     const user = this.getAllUsers().find(u => u.id === userId)
     if (userId === 'user-arshad' || (user && user.name.toLowerCase().includes('arshad'))) {
+      try {
+        const stored = localStorage.getItem(`${COURSES_STORAGE_KEY}_${userId}`)
+        if (stored) {
+          const parsed = JSON.parse(stored)
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load courses from storage', e)
+      }
       return ARSHAD_COURSES
     }
-    // For Raniya Parveen: empty course details as requested
+    // For Raniya Parveen or other users: check if custom courses were added, else empty
+    try {
+      const stored = localStorage.getItem(`${COURSES_STORAGE_KEY}_${userId}`)
+      if (stored) {
+        const parsed = JSON.parse(stored)
+        if (Array.isArray(parsed)) return parsed
+      }
+    } catch {}
     return []
+  },
+
+  saveCoursesForUser(userId: string, courses: CourseItem[]): void {
+    try {
+      localStorage.setItem(`${COURSES_STORAGE_KEY}_${userId}`, JSON.stringify(courses))
+    } catch (e) {
+      console.error('Failed to save courses for user', e)
+    }
+  },
+
+  renameSubjectOrCourse(oldName: string, newName: string, userId?: string): {
+    updatedSubjects: SubjectItem[]
+    updatedNotebooks: SubjectItem[]
+    updatedCourses: CourseItem[]
+    updatedNotes: Note[]
+  } {
+    const trimmedNew = newName.trim()
+    const trimmedOld = oldName.trim()
+    if (!trimmedNew || trimmedNew.toLowerCase() === trimmedOld.toLowerCase()) {
+      return {
+        updatedSubjects: this.getSubjects(),
+        updatedNotebooks: this.getNotebooks(),
+        updatedCourses: this.getCoursesForUser(userId || 'user-arshad'),
+        updatedNotes: this.getNotes()
+      }
+    }
+
+    // 1. Rename in subjects if present
+    const currentSubjects = this.getSubjects()
+    const updatedSubjects = currentSubjects.map(s => 
+      s.name.trim().toLowerCase() === trimmedOld.toLowerCase() 
+        ? { ...s, name: trimmedNew } 
+        : s
+    )
+    this.saveSubjects(updatedSubjects)
+
+    // 2. Rename in notebooks if present
+    const currentNotebooks = this.getNotebooks()
+    const updatedNotebooks = currentNotebooks.map(nb => 
+      nb.name.trim().toLowerCase() === trimmedOld.toLowerCase() 
+        ? { ...nb, name: trimmedNew } 
+        : nb
+    )
+    this.saveNotebooks(updatedNotebooks)
+
+    // 3. Rename in courses if present
+    const targetUserId = userId || 'user-arshad'
+    const currentCourses = this.getCoursesForUser(targetUserId)
+    const updatedCourses = currentCourses.map(c => 
+      c.title.trim().toLowerCase() === trimmedOld.toLowerCase() 
+        ? { ...c, title: trimmedNew } 
+        : c
+    )
+    this.saveCoursesForUser(targetUserId, updatedCourses)
+
+    // 4. Rename category in all notes
+    const currentNotes = this.getNotes()
+    const updatedNotes = currentNotes.map(n => {
+      if (n.category && n.category.trim().toLowerCase() === trimmedOld.toLowerCase()) {
+        return { ...n, category: trimmedNew, updatedAt: Date.now() }
+      }
+      return n
+    })
+    this.saveNotes(updatedNotes)
+
+    return {
+      updatedSubjects,
+      updatedNotebooks,
+      updatedCourses,
+      updatedNotes
+    }
   },
 
   getCoursesBySemester(userId: string, semester: number): CourseItem[] {

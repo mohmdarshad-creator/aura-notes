@@ -28,7 +28,8 @@ import {
   FileUp,
   Cpu,
   Table,
-  LayoutGrid
+  LayoutGrid,
+  Pencil
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
@@ -51,6 +52,7 @@ interface HomeScreenProps {
   onNewNote: () => void
   onOpenSettings?: () => void
   onUploadFileNote?: (file: File, category: string) => void
+  onRenameSubject?: (oldName: string, newName: string) => void
 }
 
 const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; glow: string; badge: string }> = {
@@ -121,7 +123,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenGemini,
   onNewNote,
   onOpenSettings,
-  onUploadFileNote
+  onUploadFileNote,
+  onRenameSubject
 }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [addModalTarget, setAddModalTarget] = useState<'subject' | 'notebook'>('subject')

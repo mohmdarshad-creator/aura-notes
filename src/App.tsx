@@ -126,6 +126,21 @@ export function App() {
     }, 40)
   }
 
+  // Rename a subject, notebook, or course and sync notes & active route
+  const handleRenameSubject = (oldName: string, newName: string) => {
+    const { updatedSubjects, updatedNotebooks, updatedCourses, updatedNotes } = 
+      storageService.renameSubjectOrCourse(oldName, newName, activeUser.id)
+    
+    setSubjects(updatedSubjects)
+    setNotebooks(updatedNotebooks)
+    setNotes(updatedNotes)
+    
+    // If currently inside this subject's window, update the active route smoothly
+    if (route.type === 'subject' && route.subjectName.toLowerCase() === oldName.toLowerCase()) {
+      setRoute({ type: 'subject', subjectName: newName.trim() })
+    }
+  }
+
   // Add new subject dynamically (for Subjects section)
   const handleAddSubject = (name: string, description: string, color: NoteColor, icon: string) => {
     const newSub: SubjectItem = {
@@ -307,6 +322,7 @@ export function App() {
             onNewNote={() => handleCreateNote()}
             onOpenSettings={() => setIsSettingsOpen(true)}
             onUploadFileNote={handleUploadFileNote}
+            onRenameSubject={handleRenameSubject}
           />
         ) : (
           /* Page 2: Dedicated Notes Window */
@@ -325,6 +341,7 @@ export function App() {
             onDeleteNote={handleDeleteNote}
             onAskGeminiAboutNote={handleAskGeminiAboutNote}
             onOpenGeminiGeneral={handleOpenGeminiGeneral}
+            onRenameSubject={handleRenameSubject}
           />
         )}
       </main>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { 
   ArrowLeft, 
   Plus, 
@@ -15,7 +15,9 @@ import {
   Upload,
   FileText,
   FileUp,
-  CheckCircle2
+  CheckCircle2,
+  Pencil,
+  Check
 } from 'lucide-react'
 import { Note, PageRoute, UserProfile } from '../types'
 import { NoteCard } from './NoteCard'
@@ -36,6 +38,7 @@ interface NotesWindowProps {
   onDeleteNote: (id: string) => void
   onAskGeminiAboutNote: (note: Note) => void
   onOpenGeminiGeneral: (contextTitle?: string) => void
+  onRenameSubject?: (oldName: string, newName: string) => void
 }
 
 export const NotesWindow: React.FC<NotesWindowProps> = ({
@@ -53,6 +56,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
   onDeleteNote,
   onAskGeminiAboutNote,
   onOpenGeminiGeneral,
+  onRenameSubject,
 }) => {
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchHovered, setIsSearchHovered] = useState(false)
@@ -66,6 +70,64 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [authorFilter, setAuthorFilter] = useState<'all' | string>('all')
+
+  // Subject inline rename state
+  const [isEditingSubject, setIsEditingSubject] = useState(false)
+  const [editingSubjectName, setEditingSubjectName] = useState('')
+  const editSubjectInputRef = useRef<HTMLInputElement>(null)
+
+  // When route changes, sync edit input and reset edit mode
+  useEffect(() => {
+    setIsEditingSubject(false)
+    if (currentRoute.type === 'subject') {
+      setEditingSubjectName(currentRoute.subjectName)
+    }
+  }, [currentRoute])
+
+  const handleStartEditing = () => {
+    if (currentRoute.type !== 'subject') return
+    setEditingSubjectName(currentRoute.subjectName)
+    setIsEditingSubject(true)
+    setTimeout(() => {
+      editSubjectInputRef.current?.focus()
+      editSubjectInputRef.current?.select()
+    }, 40)
+  }
+
+  const handleSaveSubjectName = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (currentRoute.type !== 'subject') return
+
+    const trimmed = editingSubjectName.trim()
+    if (!trimmed) {
+      setIsEditingSubject(false)
+      return
+    }
+
+    if (trimmed !== currentRoute.subjectName) {
+      if (onRenameSubject) {
+        onRenameSubject(currentRoute.subjectName, trimmed)
+      }
+      setUploadSuccessToast(`Subject renamed to "${trimmed}"`)
+      setTimeout(() => setUploadSuccessToast(null), 3000)
+    }
+    setIsEditingSubject(false)
+  }
+
+  const handleCancelEditing = () => {
+    setIsEditingSubject(false)
+    if (currentRoute.type === 'subject') {
+      setEditingSubjectName(currentRoute.subjectName)
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSaveSubjectName()
+    } else if (e.key === 'Escape') {
+      handleCancelEditing()
+    }
+  }
 
   const handleFilesSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -133,7 +195,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
     if (currentRoute.type === 'subject') {
       return {
-        title: `${currentRoute.subjectName} Notebook`,
+        title: currentRoute.subjectName,
         subtitle: `Lecture notes, concept summaries, and exercises for ${currentRoute.subjectName}`,
         icon: <Folder className="w-6 h-6 text-indigo-500" />,
         categoryFilter: currentRoute.subjectName,
@@ -297,23 +359,88 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
       </div>
 
-      {/* Window Header Title */}
+      {/* Window Header Title with Click-to-Edit for Subjects */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-12 h-12 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm flex items-center justify-center">
+        <div className="flex items-center gap-3.5 flex-1 min-w-0">
+          <div className="w-12 h-12 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm flex items-center justify-center flex-shrink-0">
             {windowMeta.icon}
           </div>
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="font-serif font-bold text-2xl sm:text-3xl text-stone-900 dark:text-stone-100">
-                {windowMeta.title}
-              </h1>
-              <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
-                {windowNotes.length} {windowNotes.length === 1 ? 'note' : 'notes'}
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-0.5">
-              {windowMeta.subtitle}
+          <div className="flex-1 min-w-0">
+            {currentRoute.type === 'subject' && isEditingSubject ? (
+              /* Inline Edit Mode */
+              <form onSubmit={handleSaveSubjectName} className="flex items-center gap-2 flex-wrap animate-fade-in">
+                <input
+                  ref={editSubjectInputRef}
+                  type="text"
+                  value={editingSubjectName}
+                  onChange={(e) => setEditingSubjectName(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="font-serif font-bold text-xl sm:text-2xl text-stone-900 dark:text-stone-100 bg-white dark:bg-stone-800 border-2 border-indigo-500 rounded-xl px-3 py-1.5 shadow-inner outline-none ring-2 ring-indigo-500/20 w-full sm:w-auto sm:min-w-[360px]"
+                  placeholder="Enter subject name..."
+                />
+                <div className="flex items-center gap-1.5">
+                  <button
+                    type="submit"
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all hover:scale-[1.02]"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>Save</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancelEditing}
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 transition-colors"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                    <span>Cancel</span>
+                  </button>
+                </div>
+              </form>
+            ) : (
+              /* Normal View: Click Subject Name to Edit */
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <div
+                  onClick={currentRoute.type === 'subject' ? handleStartEditing : undefined}
+                  className={currentRoute.type === 'subject' 
+                    ? 'group/title cursor-pointer flex items-center gap-2.5 hover:opacity-90 transition-all' 
+                    : 'flex items-center gap-2.5'
+                  }
+                  title={currentRoute.type === 'subject' ? 'Click to edit subject name' : undefined}
+                >
+                  <h1 className="font-serif font-bold text-2xl sm:text-3xl text-stone-900 dark:text-stone-100 group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 transition-colors">
+                    {windowMeta.title}
+                  </h1>
+                  {currentRoute.type === 'subject' && (
+                    <span 
+                      className="p-1 rounded-md text-stone-400 group-hover/title:text-indigo-600 dark:group-hover/title:text-indigo-400 group-hover/title:bg-indigo-50 dark:group-hover/title:bg-indigo-950/60 transition-all opacity-60 group-hover/title:opacity-100" 
+                      title="Click to edit subject name"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </span>
+                  )}
+                </div>
+                <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700">
+                  {windowNotes.length} {windowNotes.length === 1 ? 'note' : 'notes'}
+                </span>
+              </div>
+            )}
+
+            <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 mt-1">
+              {currentRoute.type === 'subject' && !isEditingSubject ? (
+                <span className="inline-flex items-center gap-2">
+                  <span>{windowMeta.subtitle}</span>
+                  <span className="text-stone-300 dark:text-stone-600">•</span>
+                  <button
+                    onClick={handleStartEditing}
+                    className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
+                  >
+                    <Pencil className="w-3 h-3" />
+                    <span>Rename Subject</span>
+                  </button>
+                </span>
+              ) : (
+                windowMeta.subtitle
+              )}
             </p>
           </div>
         </div>
