@@ -183,18 +183,27 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* RIGHT GROUP: New Note, User Switcher, and Settings at the right most end */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          {/* New Note Button: Bubble that expands on cursor hover to reveal 'New Note' */}
+          {/* New Note Button: Bubble that expands on cursor hover to reveal 'New Note' with glowing aura outline */}
           <div
-            className="relative flex items-center"
+            className="relative flex items-center group animate-bubble-spring"
             onMouseEnter={() => setIsNewNoteHovered(true)}
             onMouseLeave={() => setIsNewNoteHovered(false)}
           >
+            {/* Glowing outline matching the aura behind the welcome name page */}
+            <div 
+              className={`absolute -inset-[1.5px] rounded-full bg-gradient-to-r ${activeUser?.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'} transition-all duration-300 pointer-events-none ${
+                isNewNoteHovered 
+                  ? 'opacity-100 blur-[4px] scale-105' 
+                  : 'opacity-70 blur-[2.5px] animate-pulse'
+              }`}
+            />
+
             <button
               type="button"
               onClick={onNewNote}
-              className={`group flex items-center justify-center h-9 sm:h-10 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-sm hover:shadow-lg transition-all duration-300 ease-out cursor-pointer active:scale-95 border border-stone-800/80 dark:border-stone-200/80 ${
+              className={`relative group flex items-center justify-center h-9 sm:h-10 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-sm hover:shadow-lg transition-all duration-300 ease-out cursor-pointer active:scale-95 border border-white/20 dark:border-stone-800/40 ${
                 isNewNoteHovered
-                  ? 'px-3.5 gap-1.5 ring-2 ring-indigo-500/20'
+                  ? 'px-3.5 gap-1.5'
                   : 'w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5'
               }`}
               title="Create New Note"

@@ -177,7 +177,15 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] md:w-[540px] bg-white dark:bg-stone-900 border-l border-stone-200 dark:border-stone-800 shadow-2xl flex flex-col transition-transform duration-300">
+    <>
+      {/* Semi-transparent backdrop blur overlay with fade-in */}
+      <div 
+        onClick={onClose}
+        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] animate-backdrop-fade-in"
+      />
+
+      {/* Side Drawer with Elastic Pop-In Animation */}
+      <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] md:w-[540px] bg-white dark:bg-stone-900 border-l border-stone-200 dark:border-stone-800 shadow-2xl flex flex-col animate-drawer-pop-in">
       
       {/* Drawer Header */}
       <div className="p-4 border-b border-stone-200/80 dark:border-stone-800 flex items-center justify-between gap-3 bg-stone-50/70 dark:bg-stone-900/70">
@@ -437,6 +445,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
       </div>
 
     </div>
+    </>
   )
 }
 

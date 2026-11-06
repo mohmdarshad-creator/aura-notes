@@ -32,7 +32,11 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
   onOpenSettings
 }) => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
+  const [isNoteHovered, setIsNoteHovered] = useState(false)
   const userMenuRef = useRef<HTMLDivElement>(null)
+
+  // Glow gradient matching the aura behind the welcome name page
+  const auraGradient = activeUser?.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'
 
   // Outside click to close user menu
   useEffect(() => {
@@ -103,17 +107,39 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
           </div>
         </button>
 
-        {/* Quick New Note Trigger: Bubble that expands on hover */}
-        <button
-          onClick={onNewNote}
-          className="group flex items-center justify-center h-8 sm:h-9 w-8 sm:w-9 hover:w-auto px-2 hover:px-3 hover:gap-1.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-300 ease-out overflow-hidden active:scale-95"
-          title="Create a new study note"
+        {/* Quick New Note Trigger: Bubble down below with outline glow matching welcome name page aura & expansion */}
+        <div 
+          className="relative flex items-center group animate-bubble-spring"
+          onMouseEnter={() => setIsNoteHovered(true)}
+          onMouseLeave={() => setIsNoteHovered(false)}
         >
-          <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
-          <span className="max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 ease-out whitespace-nowrap overflow-hidden">
-            New Note
-          </span>
-        </button>
+          {/* Glowing outline matching the aura behind the welcome name page */}
+          <div 
+            className={`absolute -inset-[1.5px] rounded-full bg-gradient-to-r ${auraGradient} transition-all duration-300 pointer-events-none ${
+              isNoteHovered 
+                ? 'opacity-100 blur-[4px] scale-105' 
+                : 'opacity-75 blur-[2.5px] animate-pulse'
+            }`}
+          />
+
+          <button
+            type="button"
+            onClick={onNewNote}
+            className={`relative flex items-center justify-center h-8 sm:h-9 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 text-xs sm:text-sm font-semibold shadow-md transition-all duration-300 ease-out overflow-hidden active:scale-95 border border-white/20 dark:border-stone-800/40 cursor-pointer ${
+              isNoteHovered
+                ? 'px-3 gap-1.5'
+                : 'w-8 sm:w-9 px-0'
+            }`}
+            title="Create a new study note"
+          >
+            <Plus className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ${isNoteHovered ? 'rotate-90 scale-105' : 'group-hover:rotate-90'}`} />
+            <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ease-out font-medium text-xs ${
+              isNoteHovered ? 'max-w-[100px] opacity-100' : 'max-w-0 opacity-0 pointer-events-none'
+            }`}>
+              New Note
+            </span>
+          </button>
+        </div>
 
         {/* Divider */}
         <div className="h-5 w-[1px] bg-stone-200 dark:bg-stone-700 mx-0.5 hidden xs:block" />
