@@ -38,6 +38,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isSearchHovered, setIsSearchHovered] = useState(false)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
   const [isSettingsHovered, setIsSettingsHovered] = useState(false)
+  const [isNewNoteHovered, setIsNewNoteHovered] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const isSearchExpanded = isSearchHovered || isSearchFocused || Boolean(searchQuery.trim())
@@ -182,15 +183,33 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* RIGHT GROUP: New Note, User Switcher, and Settings at the right most end */}
         <div className="flex items-center gap-2 flex-shrink-0">
-          {/* New Note Button */}
-          <button
-            onClick={onNewNote}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-sm transition-all hover:shadow-md"
+          {/* New Note Button: Bubble that expands on cursor hover to reveal 'New Note' */}
+          <div
+            className="relative flex items-center"
+            onMouseEnter={() => setIsNewNoteHovered(true)}
+            onMouseLeave={() => setIsNewNoteHovered(false)}
           >
-            <Plus className="w-4 h-4" />
-            <span className="hidden sm:inline">New Note</span>
-            <span className="sm:hidden">New</span>
-          </button>
+            <button
+              type="button"
+              onClick={onNewNote}
+              className={`group flex items-center justify-center h-9 sm:h-10 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-sm hover:shadow-lg transition-all duration-300 ease-out cursor-pointer active:scale-95 border border-stone-800/80 dark:border-stone-200/80 ${
+                isNewNoteHovered
+                  ? 'px-3.5 gap-1.5 ring-2 ring-indigo-500/20'
+                  : 'w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5'
+              }`}
+              title="Create New Note"
+            >
+              <Plus className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ${isNewNoteHovered ? 'rotate-90 scale-105' : 'group-hover:rotate-90'}`} />
+              
+              <span className={`overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out ${
+                isNewNoteHovered 
+                  ? 'max-w-[120px] opacity-100' 
+                  : 'max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100'
+              }`}>
+                New Note
+              </span>
+            </button>
+          </div>
 
           {/* User Profile Switcher */}
           <UserSwitcher

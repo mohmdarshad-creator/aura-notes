@@ -103,14 +103,16 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
           </div>
         </button>
 
-        {/* Quick New Note Trigger */}
+        {/* Quick New Note Trigger: Bubble that expands on hover */}
         <button
           onClick={onNewNote}
-          className="flex items-center gap-1.5 px-3 py-2 sm:px-3.5 sm:py-2 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 text-xs sm:text-sm font-semibold shadow-xs transition-all hover:scale-[1.02]"
+          className="group flex items-center justify-center h-8 sm:h-9 w-8 sm:w-9 hover:w-auto px-2 hover:px-3 hover:gap-1.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 text-xs sm:text-sm font-semibold shadow-xs transition-all duration-300 ease-out overflow-hidden active:scale-95"
           title="Create a new study note"
         >
-          <Plus className="w-4 h-4" />
-          <span className="hidden sm:inline">New Note</span>
+          <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+          <span className="max-w-0 opacity-0 group-hover:max-w-[100px] group-hover:opacity-100 transition-all duration-300 ease-out whitespace-nowrap overflow-hidden">
+            New Note
+          </span>
         </button>
 
         {/* Divider */}
