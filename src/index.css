@@ -164,19 +164,37 @@
   background: rgba(27, 27, 25, 0.75);
 }
 
-@keyframes heroRevealUp {
+/* Global smooth fade in animation */
+@keyframes fadeIn {
   0% {
     opacity: 0;
-    transform: translateY(28px) scale(0.96);
+    transform: translateY(6px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: opacity, transform;
+}
+
+@keyframes heroRevealUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .animate-hero-reveal {
-  animation: heroRevealUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: heroRevealUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
 }
 
 /* Subtle glow animations */
@@ -189,27 +207,21 @@
   animation: pulse-subtle 3s ease-in-out infinite;
 }
 
-/* Subject Tiles Floating In Animation */
+/* Subject & Note Tiles Floating In Animation */
 @keyframes floatInUp {
   0% {
     opacity: 0;
-    transform: translateY(42px) scale(0.95);
-  }
-  65% {
-    opacity: 0.95;
-    transform: translateY(-5px) scale(1.008);
-  }
-  85% {
-    transform: translateY(2px) scale(0.998);
+    transform: translateY(18px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
   }
 }
 
 .animate-float-in {
-  animation: floatInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: floatInUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 @keyframes gentleLevitate {
@@ -225,25 +237,27 @@
   animation: gentleLevitate 5s ease-in-out infinite;
 }
 
-/* Scroll-triggered tile entrance animations (smooth up & down) */
+/* Scroll-triggered tile entrance animations (smooth once) */
 .tile-reveal {
   opacity: 0;
-  transform: translateY(38px) scale(0.97);
-  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(22px);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1), transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: transform, opacity;
+  backface-visibility: hidden;
 }
 
 .tile-reveal.revealed {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(0);
 }
 
-/* Personal Details Tile dedicated Fade In & Fade Out on scroll */
+/* Personal Details Tile dedicated Fade In once on scroll */
 .details-tile-fade {
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1), transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(18px);
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
+  backface-visibility: hidden;
 }
 
 .details-tile-fade.faded-in {
@@ -253,31 +267,23 @@
 
 .details-tile-fade.faded-out {
   opacity: 0;
-  transform: translateY(8px);
+  transform: translateY(18px);
 }
 
-/* Gemini Side Drawer Elastic Pop-in Animation */
+/* Gemini Side Drawer Smooth Pop-in Animation */
 @keyframes drawerPopIn {
   0% {
-    opacity: 0;
-    transform: translateX(100%) scale(0.92);
-  }
-  65% {
-    opacity: 1;
-    transform: translateX(-10px) scale(1.008);
-  }
-  85% {
-    opacity: 1;
-    transform: translateX(3px) scale(0.998);
+    opacity: 0.6;
+    transform: translateX(100%);
   }
   100% {
     opacity: 1;
-    transform: translateX(0) scale(1);
+    transform: translateX(0);
   }
 }
 
 .animate-drawer-pop-in {
-  animation: drawerPopIn 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: drawerPopIn 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
 
@@ -291,73 +297,57 @@
 }
 
 .animate-backdrop-fade-in {
-  animation: backdropFadeIn 0.28s ease-out both;
+  animation: backdropFadeIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Bubble pop animation */
 @keyframes bubblePopSpring {
   0% {
-    transform: scale(0.85);
-  }
-  65% {
-    transform: scale(1.06);
+    opacity: 0;
+    transform: scale(0.92);
   }
   100% {
+    opacity: 1;
     transform: scale(1);
   }
 }
 
 .animate-bubble-spring {
-  animation: bubblePopSpring 0.32s cubic-bezier(0.175, 0.885, 0.32, 1.25) both;
+  animation: bubblePopSpring 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
-/* Personal Details: Courses Completed Tab Open Down Animation */
+/* Personal Details & Semester: Courses Completed Tab Open Down Animation */
 @keyframes tabOpenDown {
   0% {
     opacity: 0;
-    transform: translateY(-24px) scaleY(0.92);
-    transform-origin: top center;
-  }
-  65% {
-    opacity: 1;
-    transform: translateY(3px) scaleY(1.008);
-  }
-  85% {
-    opacity: 1;
-    transform: translateY(-1px) scaleY(0.998);
+    transform: translateY(-16px);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
-    transform-origin: top center;
+    transform: translateY(0);
   }
 }
 
 .animate-tab-open-down {
-  animation: tabOpenDown 0.48s cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: tabOpenDown 0.38s cubic-bezier(0.16, 1, 0.3, 1) both;
   will-change: transform, opacity;
 }
 
-/* Personal Details: Courses Completed Tab Close Up Animation */
+/* Personal Details & Semester: Courses Completed Tab Close Up Animation */
 @keyframes tabCloseUp {
   0% {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
-    transform-origin: top center;
-  }
-  30% {
-    opacity: 0.8;
-    transform: translateY(-4px) scaleY(0.97);
+    transform: translateY(0);
   }
   100% {
     opacity: 0;
-    transform: translateY(-28px) scaleY(0.88);
-    transform-origin: top center;
+    transform: translateY(-16px);
   }
 }
 
 .animate-tab-close-up {
-  animation: tabCloseUp 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: tabCloseUp 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: transform, opacity;
   pointer-events: none;
 }

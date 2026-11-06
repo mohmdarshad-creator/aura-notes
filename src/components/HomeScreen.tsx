@@ -240,43 +240,49 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       const vh = window.innerHeight
       if (semestersRef.current) {
         const rect = semestersRef.current.getBoundingClientRect()
-        setSemestersVisible(rect.top < vh && rect.bottom > 0)
+        if (rect.top < vh && rect.bottom > 0) setSemestersVisible(true)
       }
       if (subjectsRef.current) {
         const rect = subjectsRef.current.getBoundingClientRect()
-        setSubjectsVisible(rect.top < vh && rect.bottom > 0)
+        if (rect.top < vh && rect.bottom > 0) setSubjectsVisible(true)
       }
       if (viewsRef.current) {
         const rect = viewsRef.current.getBoundingClientRect()
-        setViewsVisible(rect.top < vh && rect.bottom > 0)
+        if (rect.top < vh && rect.bottom > 0) setViewsVisible(true)
       }
       if (notebooksRef.current) {
         const rect = notebooksRef.current.getBoundingClientRect()
-        setNotebooksVisible(rect.top < vh && rect.bottom > 0)
+        if (rect.top < vh && rect.bottom > 0) setNotebooksVisible(true)
       }
       if (detailsRef.current) {
         const rect = detailsRef.current.getBoundingClientRect()
-        setDetailsVisible(rect.top < (vh - 40) && rect.bottom > 40)
+        if (rect.top < vh && rect.bottom > 0) setDetailsVisible(true)
       }
     }
 
     checkVisibility()
     const timer = setTimeout(checkVisibility, 60)
 
-    // Continuous scroll observer for Semester, Subject & Notebook tiles: triggers animations when scrolled up or down
-    const observerCallback: IntersectionObserverCallback = (entries) => {
+    // Smooth scroll reveal observer: triggers once when each section scrolls into view
+    const observerCallback: IntersectionObserverCallback = (entries, obs) => {
       entries.forEach(entry => {
-        if (entry.target === semestersRef.current) {
-          setSemestersVisible(entry.isIntersecting)
-        }
-        if (entry.target === subjectsRef.current) {
-          setSubjectsVisible(entry.isIntersecting)
-        }
-        if (entry.target === viewsRef.current) {
-          setViewsVisible(entry.isIntersecting)
-        }
-        if (entry.target === notebooksRef.current) {
-          setNotebooksVisible(entry.isIntersecting)
+        if (entry.isIntersecting) {
+          if (entry.target === semestersRef.current) {
+            setSemestersVisible(true)
+            obs.unobserve(entry.target)
+          }
+          if (entry.target === subjectsRef.current) {
+            setSubjectsVisible(true)
+            obs.unobserve(entry.target)
+          }
+          if (entry.target === viewsRef.current) {
+            setViewsVisible(true)
+            obs.unobserve(entry.target)
+          }
+          if (entry.target === notebooksRef.current) {
+            setNotebooksVisible(true)
+            obs.unobserve(entry.target)
+          }
         }
       })
     }
@@ -291,18 +297,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     if (viewsRef.current) observer.observe(viewsRef.current)
     if (notebooksRef.current) observer.observe(notebooksRef.current)
 
-    // Dedicated observer for Personal Details Tile: Fades In when scrolled in, Fades Out when scrolled out
-    const detailsObserverCallback: IntersectionObserverCallback = (entries) => {
+    // Dedicated observer for Personal Details Tile: Fades in smoothly once
+    const detailsObserverCallback: IntersectionObserverCallback = (entries, obs) => {
       entries.forEach(entry => {
-        if (entry.target === detailsRef.current) {
-          setDetailsVisible(entry.isIntersecting)
+        if (entry.isIntersecting) {
+          setDetailsVisible(true)
+          obs.unobserve(entry.target)
         }
       })
     }
 
     const detailsObserver = new IntersectionObserver(detailsObserverCallback, {
-      threshold: 0.12,
-      rootMargin: '0px 0px -40px 0px'
+      threshold: 0.08,
+      rootMargin: '0px 0px -20px 0px'
     })
 
     if (detailsRef.current) detailsObserver.observe(detailsRef.current)
@@ -491,7 +498,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div
                 key={semNum}
                 onClick={() => handleSemesterTileClick(semNum)}
-                style={{ transitionDelay: semestersVisible ? `${index * 60}ms` : '0ms' }}
+                style={{ transitionDelay: semestersVisible ? `${index * 40}ms` : '0ms' }}
                 className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
                   isSelected && !isClosingSemester
                     ? 'bg-indigo-50/50 dark:bg-indigo-950/50 border-indigo-500 shadow-md ring-2 ring-indigo-500/30 -translate-y-1'
@@ -634,7 +641,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         key={course.code}
                         onClick={() => onOpenSubject(course.title)}
                         style={{
-                          transitionDelay: `${index * 50 + 40}ms`
+                          transitionDelay: subjectsVisible ? `${Math.min(index * 40, 400)}ms` : '0ms'
                         }}
                         className={`tile-reveal ${subjectsVisible ? 'revealed' : ''} group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-indigo-400 dark:hover:border-indigo-600`}
                       >
