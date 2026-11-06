@@ -705,34 +705,34 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => onThemeChange('steel-gold')}
-                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
+                className={`theme-tile-steel-gold group/themetile p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all duration-300 cursor-pointer text-left ${
                   theme === 'steel-gold'
-                    ? 'border-amber-500 bg-white dark:bg-stone-800 ring-2 ring-amber-500/25 shadow-md -translate-y-0.5'
-                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
+                    ? 'border-amber-500 bg-amber-50/40 dark:bg-amber-950/20 ring-2 ring-amber-500/25 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-amber-400 dark:hover:border-amber-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
                   {/* 5 Swatches Preview matching user's uploaded color palette */}
                   <div className="flex items-center -space-x-1.5 py-1">
-                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#0D131A' }} title="#0D131A Obsidian Navy Steel" />
-                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E5B84B' }} title="#E5B84B Golden Ochre Honey" />
-                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E5E2DC' }} title="#E5E2DC Bone Linen Parchment" />
-                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E8B078' }} title="#E8B078 Apricot Clay Tan" />
-                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#4E3E34' }} title="#4E3E34 Espresso Umber" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs group-hover/themetile:scale-105 transition-transform" style={{ backgroundColor: '#0D131A' }} title="#0D131A Obsidian Navy Steel" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs group-hover/themetile:scale-105 transition-transform" style={{ backgroundColor: '#E5B84B' }} title="#E5B84B Golden Ochre Honey" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs group-hover/themetile:scale-105 transition-transform" style={{ backgroundColor: '#E5E2DC' }} title="#E5E2DC Bone Linen Parchment" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs group-hover/themetile:scale-105 transition-transform" style={{ backgroundColor: '#E8B078' }} title="#E8B078 Apricot Clay Tan" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs group-hover/themetile:scale-105 transition-transform" style={{ backgroundColor: '#4E3E34' }} title="#4E3E34 Espresso Umber" />
                   </div>
                   {theme === 'steel-gold' ? (
                     <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
                       <Check className="w-3.5 h-3.5" />
                     </span>
                   ) : (
-                    <Sparkles className="w-4 h-4 text-amber-500/70" />
+                    <Sparkles className="w-4 h-4 text-amber-500 group-hover/themetile:rotate-12 group-hover/themetile:scale-125 transition-transform" />
                   )}
                 </div>
 
                 <div className="w-full">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-bold text-stone-900 dark:text-stone-100">Steel & Gold</span>
-                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">Default</span>
+                    <span className="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover/themetile:text-amber-500 transition-colors">Steel & Gold</span>
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-700/60">Default</span>
                   </div>
                   <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-tight">
                     Dark golden obsidian, ochre gold & apricot clay
@@ -744,25 +744,25 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => onThemeChange('light')}
-                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
+                className={`theme-tile-light group/themetile p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all duration-300 cursor-pointer text-left ${
                   theme === 'light'
-                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-md -translate-y-0.5'
-                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
+                    ? 'border-amber-400 bg-amber-50/50 dark:bg-stone-800 ring-2 ring-amber-400/25 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-amber-400 dark:hover:border-amber-300'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-600 shadow-xs">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 dark:bg-stone-800 border border-amber-200/80 dark:border-amber-700/50 flex items-center justify-center text-amber-600 dark:text-amber-400 shadow-xs group-hover/themetile:scale-110 group-hover/themetile:rotate-45 transition-transform">
                     <Sun className="w-4 h-4" />
                   </div>
                   {theme === 'light' && (
-                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                    <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
                       <Check className="w-3.5 h-3.5" />
                     </span>
                   )}
                 </div>
 
                 <div className="w-full">
-                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Light Mode</div>
+                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover/themetile:text-amber-600 dark:group-hover/themetile:text-amber-400 transition-colors">Light Mode</div>
                   <div className="text-[11px] text-stone-400 mt-0.5 leading-tight">
                     Clean Paper White
                   </div>
@@ -773,14 +773,14 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <button
                 type="button"
                 onClick={() => onThemeChange('dark')}
-                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
+                className={`theme-tile-dark group/themetile p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all duration-300 cursor-pointer text-left ${
                   theme === 'dark'
-                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-md -translate-y-0.5'
-                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
+                    ? 'border-indigo-500 bg-indigo-50/30 dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-indigo-400 dark:hover:border-indigo-400'
                 }`}
               >
                 <div className="flex items-center justify-between w-full">
-                  <div className="w-8 h-8 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-center text-amber-400 shadow-xs">
+                  <div className="w-8 h-8 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-center text-amber-400 shadow-xs group-hover/themetile:scale-110 group-hover/themetile:-rotate-12 transition-transform">
                     <Moon className="w-4 h-4" />
                   </div>
                   {theme === 'dark' && (
@@ -791,7 +791,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                 </div>
 
                 <div className="w-full">
-                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Dark Mode</div>
+                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100 group-hover/themetile:text-indigo-600 dark:group-hover/themetile:text-indigo-400 transition-colors">Dark Mode</div>
                   <div className="text-[11px] text-stone-400 mt-0.5 leading-tight">
                     Obsidian Night Dark
                   </div>

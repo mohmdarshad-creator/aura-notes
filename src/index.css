@@ -1287,4 +1287,47 @@ section,
               box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* ============================================================
+   SETTINGS: THEME TILES INTERACTIVE HOVER COLOR FEEDBACK
+   Changes color dynamically when cursor is placed on each tile
+   (Storage tile remains completely untouched as requested)
+   ============================================================ */
+.theme-tile-steel-gold:hover {
+  background-color: rgba(229, 184, 75, 0.16) !important;
+  border-color: #E5B84B !important;
+  box-shadow: 0 10px 25px -4px rgba(229, 184, 75, 0.3) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+.theme-tile-light:hover {
+  background-color: #FEF3C7 !important;
+  border-color: #D97706 !important;
+  box-shadow: 0 10px 25px -4px rgba(217, 119, 6, 0.25) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+.dark .theme-tile-light:hover,
+html.theme-steel-gold .theme-tile-light:hover {
+  background-color: rgba(245, 158, 11, 0.18) !important;
+  border-color: #FBBF24 !important;
+  box-shadow: 0 10px 25px -4px rgba(245, 158, 11, 0.3) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+.theme-tile-dark:hover {
+  background-color: rgba(79, 70, 229, 0.16) !important;
+  border-color: #6366F1 !important;
+  box-shadow: 0 10px 25px -4px rgba(99, 102, 241, 0.35) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+.dark .theme-tile-dark:hover,
+html.theme-steel-gold .theme-tile-dark:hover {
+  background-color: rgba(13, 19, 26, 0.95) !important;
+  border-color: #818CF8 !important;
+  box-shadow: 0 10px 25px -4px rgba(129, 140, 248, 0.35) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+}
+
+
 
