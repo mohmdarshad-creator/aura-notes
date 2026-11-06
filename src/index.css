@@ -119,6 +119,7 @@ html.theme-steel-gold .hover\:bg-stone-50:hover {
 
 /* Hairline Antique Golden Borders */
 html.theme-steel-gold .border-stone-200,
+html.theme-steel-gold .border-stone-200\/90,
 html.theme-steel-gold .border-stone-200\/80,
 html.theme-steel-gold .border-stone-200\/70,
 html.theme-steel-gold .border-stone-200\/60,
@@ -399,7 +400,7 @@ html.theme-steel-gold .semester-tile-selected .text-stone-400 {
 
 /* Outer Section & Student Tab Bar */
 html.theme-steel-gold .personal-details-section {
-  border-color: rgba(78, 62, 52, 0.3) !important;
+  border-color: rgba(229, 184, 75, 0.22) !important;
 }
 html.theme-steel-gold .personal-details-section h2 {
   color: #8C7E6E !important;

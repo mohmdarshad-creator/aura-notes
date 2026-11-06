@@ -36,15 +36,10 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
     ? 'Raniya'
     : activeUser.name.trim().split(' ')[0]
 
-  // Calculate split translation and opacity based on scroll
-  // As user scrolls down from 0 to 280px:
-  // - "Welcome back" shifts LEFT
-  // - Name shifts RIGHT
+  // Calculate opacity and scale based on scroll
   const maxScroll = 260
   const progress = Math.min(1, Math.max(0, scrollY / maxScroll))
 
-  const leftOffset = progress * 320 // pixels to shift left
-  const rightOffset = progress * 320 // pixels to shift right
   const opacity = Math.max(0, 1 - progress * 1.35)
   const scale = 1 - progress * 0.08
 
@@ -81,7 +76,7 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
         </span>
       </div>
 
-      {/* Cinematic Split Typography Container */}
+      {/* Unified Centered Typography Container: Perfectly Aligned */}
       <div 
         className={`relative flex flex-col items-center justify-center transition-transform duration-75 will-change-transform ${
           isMounted ? 'animate-hero-reveal' : 'opacity-0 scale-95'
@@ -91,24 +86,13 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
           transform: `scale(${scale})`
         }}
       >
-        {/* Line 1: "Welcome back" (Shifts LEFT on scroll) */}
-        <div
-          className="will-change-transform transition-transform duration-75 tracking-tight font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-900 dark:text-stone-100 leading-none drop-shadow-xs"
-          style={{
-            transform: `translateX(-${leftOffset}px)`
-          }}
-        >
+        {/* Line 1: "Welcome back" (Centered and Aligned with Username) */}
+        <div className="tracking-tight font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-900 dark:text-stone-100 leading-none drop-shadow-xs">
           Welcome back
         </div>
 
-        {/* Line 2: Name ("Arshad" or "Raniya") (Shifts RIGHT on scroll) */}
-        <div
-          className="will-change-transform transition-transform duration-75 tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-1 sm:mt-2 bg-gradient-to-r bg-clip-text text-transparent pb-2"
-          style={{
-            backgroundImage: undefined, // handled by classes below
-            transform: `translateX(${rightOffset}px)`
-          }}
-        >
+        {/* Line 2: Name ("Arshad" or "Raniya") (Centered and Aligned) */}
+        <div className="tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-2 sm:mt-3 bg-gradient-to-r bg-clip-text text-transparent pb-2">
           <span className={`bg-gradient-to-r ${nameGradient} bg-clip-text text-transparent`}>
             {displayName}
           </span>

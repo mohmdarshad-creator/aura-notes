@@ -418,9 +418,29 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       {/* Control Bar: Scope Toggle (My Notes vs Combined) & Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">
         <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1">
+          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-stone-400 dark:text-stone-500 mb-1 flex-wrap">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Active Student Profile: <strong className="text-stone-800 dark:text-stone-200">{activeUser.name}</strong></span>
+            <span>Active Student Profile:</span>
+            <div className="inline-flex items-center gap-1 bg-stone-100 dark:bg-stone-800/80 rounded-xl p-0.5 border border-stone-200/80 dark:border-stone-700/60 ml-0.5">
+              {users.map(u => {
+                const isSelected = u.id === activeUser.id
+                return (
+                  <button
+                    key={u.id}
+                    type="button"
+                    onClick={() => onSelectUser(u)}
+                    className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                      isSelected
+                        ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-stone-100 shadow-xs'
+                        : 'text-stone-500 hover:text-stone-800 dark:hover:text-stone-200'
+                    }`}
+                  >
+                    <span className={`w-2.5 h-2.5 rounded-full bg-gradient-to-tr ${u.avatarGradient}`} />
+                    <span>{u.name}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
           <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400">
             {userFilter === 'mine' 

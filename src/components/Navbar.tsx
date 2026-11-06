@@ -91,7 +91,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className={`sticky top-0 z-30 border-b border-stone-200/80 dark:border-stone-800/80 bg-white/80 dark:bg-stone-900/80 backdrop-blur-md transition-all duration-300 ease-in-out ${
       isNavbarVisible ? 'translate-y-0 opacity-100 shadow-xs' : '-translate-y-full opacity-0 pointer-events-none'
     }`}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
         
         {/* LEFT GROUP: AURANotes Logo at the far left + Search extending to the right */}
         <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
