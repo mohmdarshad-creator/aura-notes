@@ -148,14 +148,14 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       }
       if (detailsRef.current) {
         const rect = detailsRef.current.getBoundingClientRect()
-        setDetailsVisible(rect.top < vh && rect.bottom > 0)
+        setDetailsVisible(rect.top < (vh - 40) && rect.bottom > 40)
       }
     }
 
     checkVisibility()
     const timer = setTimeout(checkVisibility, 60)
 
-    // Continuous scroll observer: triggers animations every time user scrolls up or down into view
+    // Continuous scroll observer for Subject & Notebook tiles: triggers animations when scrolled up or down
     const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
         if (entry.target === subjectsRef.current) {
@@ -166,9 +166,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         }
         if (entry.target === notebooksRef.current) {
           setNotebooksVisible(entry.isIntersecting)
-        }
-        if (entry.target === detailsRef.current) {
-          setDetailsVisible(entry.isIntersecting)
         }
       })
     }
@@ -181,11 +178,27 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     if (subjectsRef.current) observer.observe(subjectsRef.current)
     if (viewsRef.current) observer.observe(viewsRef.current)
     if (notebooksRef.current) observer.observe(notebooksRef.current)
-    if (detailsRef.current) observer.observe(detailsRef.current)
+
+    // Dedicated observer for Personal Details Tile: Fades In when scrolled in, Fades Out when scrolled out
+    const detailsObserverCallback: IntersectionObserverCallback = (entries) => {
+      entries.forEach(entry => {
+        if (entry.target === detailsRef.current) {
+          setDetailsVisible(entry.isIntersecting)
+        }
+      })
+    }
+
+    const detailsObserver = new IntersectionObserver(detailsObserverCallback, {
+      threshold: 0.12,
+      rootMargin: '0px 0px -40px 0px'
+    })
+
+    if (detailsRef.current) detailsObserver.observe(detailsRef.current)
 
     return () => {
       clearTimeout(timer)
       observer.disconnect()
+      detailsObserver.disconnect()
     }
   }, [subjects, notebooks])
 
@@ -600,10 +613,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </div>
         </div>
 
-        {/* Personal Details Aesthetic Card (Animated as Page Scrolled Down) */}
+        {/* Personal Details Aesthetic Card (Fade In when Scrolled In, Fade Out when Scrolled Out) */}
         <div 
           ref={detailsRef}
-          className={`tile-reveal ${detailsVisible ? 'revealed' : ''} relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
+          className={`details-tile-fade ${detailsVisible ? 'faded-in' : 'faded-out'} relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
         >
           {/* Subtle Ambient Background Tint */}
           <div className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${activeUser.avatarGradient} opacity-5 blur-3xl pointer-events-none`} />
