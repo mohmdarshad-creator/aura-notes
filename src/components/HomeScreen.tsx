@@ -35,6 +35,7 @@ import {
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile, CourseItem } from '../types'
 import { HeroWelcome } from './HeroWelcome'
+import { MotivationalCard } from './MotivationalCard'
 import { storageService } from '../services/storageService'
 
 interface HomeScreenProps {
@@ -515,6 +516,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Aesthetic Motivational Card (Inspirational Spark Bridge between Welcome & Semester Section) */}
+      <div className="pt-1">
+        <MotivationalCard />
       </div>
 
       {/* SECTION: SEMESTER (8 Tiles: Semester 1 to Semester 8) */}
