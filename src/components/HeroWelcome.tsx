@@ -36,10 +36,15 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
     ? 'Raniya'
     : activeUser.name.trim().split(' ')[0]
 
-  // Calculate dynamic parallax float, scale and opacity based on scroll
+  // Calculate dynamic parallax float, scale, split translation and opacity based on scroll
+  // When scrolled down as in the earliest animation:
+  // - "Welcome back" shifts LEFT
+  // - Name shifts RIGHT
   const maxScroll = 260
   const progress = Math.min(1, Math.max(0, scrollY / maxScroll))
 
+  const leftOffset = progress * 320 // pixels "Welcome back" shifts left on scroll
+  const rightOffset = progress * 320 // pixels Name shifts right on scroll
   const floatY = progress * 65 // Smoothly floats upward as you scroll
   const opacity = Math.max(0, 1 - progress * 1.35)
   const scale = 1 - progress * 0.1
@@ -77,7 +82,7 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
         </span>
       </div>
 
-      {/* Unified Centered Typography Container: Active Parallax Motion */}
+      {/* Cinematic Split Typography Container: Dynamic Parallax Motion */}
       <div 
         className={`relative flex flex-col items-center justify-center transition-transform duration-75 will-change-transform ${
           isMounted ? 'animate-hero-reveal' : 'opacity-0 scale-95'
@@ -87,16 +92,30 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
           transform: `translateY(-${floatY}px) scale(${scale})`
         }}
       >
-        {/* Line 1: "Welcome back" (Centered and Aligned with Username) */}
-        <div className="tracking-tight font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-900 dark:text-stone-100 leading-none drop-shadow-xs">
-          Welcome back
+        {/* Line 1: "Welcome back" (Shifts LEFT on scroll & reveals with leftward slide) */}
+        <div 
+          className="will-change-transform transition-transform duration-75"
+          style={{
+            transform: `translateX(-${leftOffset}px)`
+          }}
+        >
+          <div className="tracking-tight font-serif font-bold text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-stone-900 dark:text-stone-100 leading-none drop-shadow-xs animate-welcome-slide-left">
+            Welcome back
+          </div>
         </div>
 
-        {/* Line 2: Name with Active Shimmer Gradient and Spring Pop */}
-        <div className="tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-2 sm:mt-3 pb-2 animate-name-pop">
-          <span className={`bg-gradient-to-r ${nameGradient} bg-clip-text text-transparent animate-name-shimmer inline-block`}>
-            {displayName}
-          </span>
+        {/* Line 2: Name ("Arshad" or "Raniya") (Shifts RIGHT on scroll & pops rightward with continuous shimmer) */}
+        <div 
+          className="will-change-transform transition-transform duration-75"
+          style={{
+            transform: `translateX(${rightOffset}px)`
+          }}
+        >
+          <div className="tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-1 sm:mt-2 pb-2 animate-name-pop-right">
+            <span className={`bg-gradient-to-r ${nameGradient} bg-clip-text text-transparent animate-name-shimmer inline-block`}>
+              {displayName}
+            </span>
+          </div>
         </div>
       </div>
 

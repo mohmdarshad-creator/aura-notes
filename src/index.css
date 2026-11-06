@@ -1201,6 +1201,47 @@ html.theme-steel-gold .gemini-drawer-container div.mt-2.px-1 strong {
   animation: namePopReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
 }
 
+/* Hero Split Entrance Animations on Page Open / Reload */
+@keyframes welcomeSlideLeftEntrance {
+  0% {
+    opacity: 0;
+    transform: translateX(35px);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translateX(-4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes namePopRightEntrance {
+  0% {
+    opacity: 0;
+    transform: translateX(-35px) translateY(18px) scale(0.96);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translateX(5px) translateY(-3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) translateY(0) scale(1);
+  }
+}
+
+.animate-welcome-slide-left {
+  animation: welcomeSlideLeftEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.animate-name-pop-right {
+  animation: namePopRightEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+  will-change: transform, opacity;
+}
+
 /* Gentle Float Animation on Idle */
 @keyframes gentleFloat {
   0%, 100% {
