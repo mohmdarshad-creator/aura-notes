@@ -17,7 +17,8 @@ import {
   Sun,
   Moon,
   HardDrive,
-  Database
+  Database,
+  Sparkles
 } from 'lucide-react'
 import { storageService } from '../services/storageService'
 import { Note, UserProfile, NoteColor } from '../types'
@@ -687,55 +688,113 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
           {/* THEME SECTION (Light Mode & Dark Mode only - Warm Book removed) */}
           <div className="p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-700/60 space-y-3">
-            <div className="flex items-center gap-2">
-              <Palette className="w-4 h-4 text-indigo-500" />
-              <span className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
-                Theme
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Palette className="w-4 h-4 text-amber-500" />
+                <span className="text-xs font-bold uppercase tracking-wider text-stone-700 dark:text-stone-300">
+                  Theme & Color Palette
+                </span>
+              </div>
+              <span className="text-[11px] font-mono font-medium text-stone-400">
+                Default: Steel & Gold
               </span>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              {/* Light Mode */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              {/* Option 1: Steel & Gold (Default - Exact 5-Color Theory Palette from Marcelo Design) */}
               <button
                 type="button"
-                onClick={() => onThemeChange('light')}
-                className={`p-3.5 rounded-xl border flex items-center gap-3 transition-all ${
-                  theme === 'light'
-                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-xs'
-                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300'
+                onClick={() => onThemeChange('steel-gold')}
+                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
+                  theme === 'steel-gold'
+                    ? 'border-amber-500 bg-white dark:bg-stone-800 ring-2 ring-amber-500/25 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-600 flex-shrink-0 shadow-xs">
-                  <Sun className="w-5 h-5" />
-                </div>
-                <div className="text-left min-w-0 flex-1">
-                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
-                    <span>Light Mode</span>
-                    {theme === 'light' && <Check className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />}
+                <div className="flex items-center justify-between w-full">
+                  {/* 5 Swatches Preview matching user's uploaded color palette */}
+                  <div className="flex items-center -space-x-1.5 py-1">
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#0D131A' }} title="#0D131A Obsidian Navy Steel" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E5B84B' }} title="#E5B84B Golden Ochre Honey" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E5E2DC' }} title="#E5E2DC Bone Linen Parchment" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#E8B078' }} title="#E8B078 Apricot Clay Tan" />
+                    <span className="w-6 h-6 rounded-full border-2 border-white shadow-xs" style={{ backgroundColor: '#4E3E34' }} title="#4E3E34 Espresso Umber" />
                   </div>
-                  <div className="text-[11px] text-stone-400">Clean Paper White</div>
+                  {theme === 'steel-gold' ? (
+                    <span className="w-5 h-5 rounded-full bg-amber-500 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
+                  ) : (
+                    <Sparkles className="w-4 h-4 text-amber-500/70" />
+                  )}
+                </div>
+
+                <div className="w-full">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-bold text-stone-900 dark:text-stone-100">Steel & Gold</span>
+                    <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">Default</span>
+                  </div>
+                  <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-tight">
+                    Parchment, obsidian navy & warm ochre gold
+                  </div>
                 </div>
               </button>
 
-              {/* Dark Mode */}
+              {/* Option 2: Light Mode */}
+              <button
+                type="button"
+                onClick={() => onThemeChange('light')}
+                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
+                  theme === 'light'
+                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
+                }`}
+              >
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-200/80 flex items-center justify-center text-amber-600 shadow-xs">
+                    <Sun className="w-4 h-4" />
+                  </div>
+                  {theme === 'light' && (
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </div>
+
+                <div className="w-full">
+                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Light Mode</div>
+                  <div className="text-[11px] text-stone-400 mt-0.5 leading-tight">
+                    Clean Paper White
+                  </div>
+                </div>
+              </button>
+
+              {/* Option 3: Dark Mode */}
               <button
                 type="button"
                 onClick={() => onThemeChange('dark')}
-                className={`p-3.5 rounded-xl border flex items-center gap-3 transition-all ${
+                className={`p-3.5 rounded-2xl border flex flex-col justify-between gap-3 transition-all cursor-pointer text-left ${
                   theme === 'dark'
-                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-xs'
-                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300'
+                    ? 'border-indigo-500 bg-white dark:bg-stone-800 ring-2 ring-indigo-500/20 shadow-md -translate-y-0.5'
+                    : 'border-stone-200 dark:border-stone-700/80 bg-white/60 dark:bg-stone-800/40 hover:border-stone-300 hover:bg-white dark:hover:bg-stone-800'
                 }`}
               >
-                <div className="w-10 h-10 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-xs">
-                  <Moon className="w-5 h-5" />
-                </div>
-                <div className="text-left min-w-0 flex-1">
-                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100 flex items-center justify-between">
-                    <span>Dark Mode</span>
-                    {theme === 'dark' && <Check className="w-3.5 h-3.5 text-indigo-400" />}
+                <div className="flex items-center justify-between w-full">
+                  <div className="w-8 h-8 rounded-xl bg-stone-900 border border-stone-800 flex items-center justify-center text-amber-400 shadow-xs">
+                    <Moon className="w-4 h-4" />
                   </div>
-                  <div className="text-[11px] text-stone-400">Obsidian Night Dark</div>
+                  {theme === 'dark' && (
+                    <span className="w-5 h-5 rounded-full bg-indigo-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs">
+                      <Check className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </div>
+
+                <div className="w-full">
+                  <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Dark Mode</div>
+                  <div className="text-[11px] text-stone-400 mt-0.5 leading-tight">
+                    Obsidian Night Dark
+                  </div>
                 </div>
               </button>
             </div>

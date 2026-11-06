@@ -808,7 +808,17 @@ export const storageService = {
   },
 
   getTheme(): string {
-    return localStorage.getItem(THEME_STORAGE_KEY) || 'light'
+    const initialized = localStorage.getItem('auranotes_theme_default_steel_gold_v1')
+    if (!initialized) {
+      localStorage.setItem('auranotes_theme_default_steel_gold_v1', 'true')
+      localStorage.setItem(THEME_STORAGE_KEY, 'steel-gold')
+      return 'steel-gold'
+    }
+    const saved = localStorage.getItem(THEME_STORAGE_KEY)
+    if (!saved || saved === 'sepia') {
+      return 'steel-gold'
+    }
+    return saved
   },
 
   saveTheme(theme: string): void {

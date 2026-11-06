@@ -36,12 +36,178 @@
     --accent: #C2410C;
   }
 
+  .theme-steel-gold {
+    --bg-primary: #E5E2DC;          /* Bone Linen / Technical Parchment Canvas */
+    --bg-surface: #EDEAE4;          /* Soft Ivory Surface Cards */
+    --bg-surface-elevated: #DFDBD3; /* Elevated Surface / Inset */
+    --border-subtle: #CDC7BC;       /* Subtle Warm Border */
+    --text-primary: #0D131A;        /* Deep Obsidian Steel / Navy Text */
+    --text-secondary: #4E3E34;      /* Espresso Umber / Deep Earth Bronze */
+    --text-muted: #7E7268;          /* Muted Bronze Clay */
+    --accent: #E5B84B;              /* Golden Honey / Warm Ochre */
+  }
+
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     transition: background-color 0.25s ease, color 0.25s ease;
   }
+}
+
+/* ============================================================
+   STEEL & GOLD COLOR THEORY THEME (Marcelo Design Palette)
+   Exact Colors:
+   - #0D131A: Obsidian Navy / Deep Midnight Steel
+   - #E5B84B: Golden Ochre / Warm Honey
+   - #E5E2DC: Bone Linen / Technical Parchment Canvas
+   - #E8B078: Apricot Clay / Peach Tan
+   - #4E3E34: Espresso Umber / Deep Earth Bronze
+   ============================================================ */
+
+html.theme-steel-gold {
+  --bg-primary: #E5E2DC;
+  --bg-surface: #EDEAE4;
+  --bg-surface-elevated: #DFDBD3;
+  --border-subtle: #CDC7BC;
+  --text-primary: #0D131A;
+  --text-secondary: #4E3E34;
+  --text-muted: #7E7268;
+  --accent: #E5B84B;
+  color-scheme: light;
+}
+
+html.theme-steel-gold body {
+  background-color: #E5E2DC !important;
+  background-image: radial-gradient(rgba(78, 62, 52, 0.14) 1px, transparent 1px) !important;
+  background-size: 24px 24px !important;
+  color: #0D131A !important;
+}
+
+/* Base Surfaces & Cards */
+html.theme-steel-gold .bg-white {
+  background-color: #EDEAE4;
+}
+html.theme-steel-gold .bg-white\/80,
+html.theme-steel-gold .bg-white\/85,
+html.theme-steel-gold .bg-white\/90,
+html.theme-steel-gold .bg-white\/95 {
+  background-color: rgba(237, 234, 228, 0.9);
+}
+html.theme-steel-gold .bg-stone-50 {
+  background-color: #E6E2DB;
+}
+html.theme-steel-gold .bg-stone-100 {
+  background-color: #DFDBD3;
+}
+html.theme-steel-gold .hover\:bg-stone-100:hover {
+  background-color: #DFDBD3;
+}
+html.theme-steel-gold .hover\:bg-stone-50:hover {
+  background-color: #E6E2DB;
+}
+
+/* Borders */
+html.theme-steel-gold .border-stone-200,
+html.theme-steel-gold .border-stone-200\/80,
+html.theme-steel-gold .border-stone-200\/60,
+html.theme-steel-gold .border-stone-200\/50,
+html.theme-steel-gold .border-stone-300 {
+  border-color: #CDC7BC;
+}
+html.theme-steel-gold .border-stone-100 {
+  border-color: #DFDBD3;
+}
+
+/* Typography Colors */
+html.theme-steel-gold .text-stone-900,
+html.theme-steel-gold .text-stone-800 {
+  color: #0D131A;
+}
+html.theme-steel-gold .text-stone-700,
+html.theme-steel-gold .text-stone-600 {
+  color: #4E3E34;
+}
+html.theme-steel-gold .text-stone-500,
+html.theme-steel-gold .text-stone-400 {
+  color: #7E7268;
+}
+
+/* Indigo Elements remapped to Obsidian Navy & Honey Gold */
+html.theme-steel-gold .bg-indigo-600 {
+  background-color: #0D131A;
+}
+html.theme-steel-gold .hover\:bg-indigo-700:hover,
+html.theme-steel-gold .bg-indigo-600:hover {
+  background-color: #1A2430;
+}
+html.theme-steel-gold .text-indigo-600 {
+  color: #0D131A;
+}
+html.theme-steel-gold .text-indigo-500 {
+  color: #4E3E34;
+}
+html.theme-steel-gold .bg-indigo-50 {
+  background-color: #F5E8C9;
+  color: #0D131A;
+}
+html.theme-steel-gold .text-indigo-700 {
+  color: #0D131A;
+}
+html.theme-steel-gold .border-indigo-200,
+html.theme-steel-gold .border-indigo-200\/50,
+html.theme-steel-gold .border-indigo-200\/60 {
+  border-color: #E5B84B;
+}
+
+/* Modals & Dialogs */
+html.theme-steel-gold .glass-panel {
+  background: rgba(237, 234, 228, 0.9);
+  border-color: #CDC7BC;
+}
+
+/* Form Inputs */
+html.theme-steel-gold input:not([type="checkbox"]):not([type="radio"]),
+html.theme-steel-gold textarea,
+html.theme-steel-gold select {
+  background-color: #F4F1EA;
+  color: #0D131A;
+  border-color: #CDC7BC;
+}
+html.theme-steel-gold input:focus,
+html.theme-steel-gold textarea:focus,
+html.theme-steel-gold select:focus {
+  border-color: #E5B84B;
+}
+
+/* Floating Action Dock (The Star-Chart / Instrument Capsule from the photo) */
+html.theme-steel-gold .floating-bar-dock {
+  background-color: rgba(13, 19, 26, 0.94) !important;
+  border-color: rgba(229, 184, 75, 0.45) !important;
+  box-shadow: 0 20px 45px -12px rgba(13, 19, 26, 0.5), 0 0 0 1px rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .floating-bar-dock .text-stone-600,
+html.theme-steel-gold .floating-bar-dock .text-stone-500,
+html.theme-steel-gold .floating-bar-dock .text-stone-400 {
+  color: #E5E2DC !important;
+}
+html.theme-steel-gold .floating-bar-dock button:hover {
+  background-color: rgba(229, 226, 220, 0.15) !important;
+}
+
+/* Markdown and Prose */
+html.theme-steel-gold .markdown-body blockquote {
+  border-left-color: #E5B84B;
+  color: #4E3E34;
+}
+html.theme-steel-gold .markdown-body pre {
+  background-color: #0D131A;
+  color: #EDEAE4;
+  border: 1px solid rgba(229, 184, 75, 0.3);
+}
+html.theme-steel-gold .markdown-body code:not(pre code) {
+  background-color: rgba(229, 184, 75, 0.2);
+  color: #4E3E34;
 }
 
 /* Custom Scrollbar */

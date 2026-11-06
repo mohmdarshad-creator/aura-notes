@@ -70,7 +70,7 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
           : 'opacity-100 translate-y-0'
       }`}
     >
-      <div className="flex items-center gap-1.5 p-1.5 sm:p-2 rounded-full bg-white/85 dark:bg-stone-900/85 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 shadow-2xl hover:shadow-indigo-500/10 transition-shadow">
+      <div className="floating-bar-dock flex items-center gap-1.5 p-1.5 sm:p-2 rounded-full bg-white/85 dark:bg-stone-900/85 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 shadow-2xl hover:shadow-indigo-500/10 transition-shadow">
         
         {/* Navigation Home Icon (Shown when not at home) */}
         {!isAtHome && onNavigateHome && (
@@ -144,14 +144,22 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
         {/* Divider */}
         <div className="h-5 w-[1px] bg-stone-200 dark:bg-stone-700 mx-0.5 hidden xs:block" />
 
-        {/* Theme Toggle (Light / Dark) */}
+        {/* Theme Toggle (Cycles: Steel & Gold -> Dark -> Light) */}
         {onToggleTheme && (
           <button
             onClick={onToggleTheme}
             className="p-2 rounded-full text-stone-500 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors hidden xs:flex items-center justify-center"
-            title={`Switch to ${theme === 'dark' ? 'Light Mode' : 'Dark Mode'}`}
+            title={
+              theme === 'steel-gold'
+                ? 'Theme: Steel & Gold (Click to switch to Dark Mode)'
+                : theme === 'dark'
+                ? 'Theme: Dark Mode (Click to switch to Light Mode)'
+                : 'Theme: Light Mode (Click to switch to Steel & Gold)'
+            }
           >
-            {theme === 'dark' ? (
+            {theme === 'steel-gold' ? (
+              <Sparkles className="w-4 h-4 text-amber-500 fill-amber-500/20" />
+            ) : theme === 'dark' ? (
               <Sun className="w-4 h-4 text-amber-400" />
             ) : (
               <Moon className="w-4 h-4 text-stone-600" />

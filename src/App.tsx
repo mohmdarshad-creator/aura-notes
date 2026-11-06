@@ -26,7 +26,7 @@ export function App() {
   const [geminiInitialPrompt, setGeminiInitialPrompt] = useState<string | undefined>(undefined)
   const [theme, setTheme] = useState(() => {
     const saved = storageService.getTheme()
-    return saved === 'sepia' || !saved ? 'light' : saved
+    return saved || 'steel-gold'
   })
   
   // Track scroll position when opening a tile so Back to Home returns where entered
@@ -47,18 +47,24 @@ export function App() {
     storageService.saveNotebooks(notebooks)
   }, [notebooks])
 
-  // Apply theme (Light Mode or Dark Mode only)
+  // Apply theme (Steel & Gold as default, Light Mode, or Dark Mode)
   useEffect(() => {
     const root = document.documentElement
-    root.classList.remove('dark', 'sepia')
+    root.classList.remove('dark', 'sepia', 'theme-steel-gold')
     if (theme === 'dark') {
       root.classList.add('dark')
+    } else if (theme === 'steel-gold') {
+      root.classList.add('theme-steel-gold')
     }
     storageService.saveTheme(theme)
   }, [theme])
 
   const handleToggleTheme = () => {
-    setTheme(prev => prev === 'light' ? 'dark' : 'light')
+    setTheme(prev => {
+      if (prev === 'steel-gold') return 'dark'
+      if (prev === 'dark') return 'light'
+      return 'steel-gold'
+    })
   }
 
   const handleSelectUser = (user: UserProfile) => {
