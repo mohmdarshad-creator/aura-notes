@@ -92,14 +92,14 @@ export const ARSHAD_COURSES: CourseItem[] = [
   { code: '21MAB102T', title: 'ADVANCED CALCULUS AND COMPLEX ANALYSIS', semester: 2, credits: 4, category: 'Mathematics & Complex Analysis' },
   { code: '21MES102L', title: 'ENGINEERING GRAPHICS AND DESIGN', semester: 2, credits: 2, category: 'Engineering Graphics & Design' },
 
-  // Semester 3 (7 Courses, 22 Credits)
+  // Semester 3 (7 Courses, 20 Credits)
   { code: '21CSC201J', title: 'DATA STRUCTURES AND ALGORITHMS', semester: 3, credits: 4, category: 'Professional Core' },
   { code: '21CSC202J', title: 'OPERATING SYSTEMS', semester: 3, credits: 4, category: 'Professional Core' },
   { code: '21CSC203P', title: 'ADVANCED PROGRAMMING PRACTICE', semester: 3, credits: 4, category: 'Programming Lab & Practice' },
   { code: '21CSS201T', title: 'COMPUTER ORGANIZATION AND ARCHITECTURE', semester: 3, credits: 4, category: 'Core Computer Architecture' },
   { code: '21LEM201T', title: 'PROFESSIONAL ETHICS', semester: 3, credits: 0, category: 'Professional Ethics & Audit' },
-  { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 3, category: 'Humanities & Human Values' },
-  { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 3, category: 'Mathematics & Numerical Analysis' },
+  { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 0, category: 'Humanities & Human Values' },
+  { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 4, category: 'Mathematics & Numerical Analysis' },
 ]
 
 export const USERS: UserProfile[] = [

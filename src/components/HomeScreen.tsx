@@ -26,7 +26,9 @@ import {
   Upload,
   FileText,
   FileUp,
-  Cpu
+  Cpu,
+  Table,
+  LayoutGrid
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
@@ -171,6 +173,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   // Personal Details: Courses Completed Tab state & active semester bubble
   const [showCoursesCompleted, setShowCoursesCompleted] = useState(false)
   const [selectedSemesterBubble, setSelectedSemesterBubble] = useState<number>(1)
+  const [courseViewMode, setCourseViewMode] = useState<'table' | 'cards'>('table')
+  const [showAllSemestersTranscript, setShowAllSemestersTranscript] = useState(false)
   const isArshad = activeUser.id === 'user-arshad' || activeUser.name.toLowerCase().includes('arshad')
   const userCourses = storageService.getCoursesForUser(activeUser.id)
 
@@ -395,7 +399,16 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum, index) => {
             const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
             const semCredits = semCourses.reduce((sum, c) => sum + c.credits, 0)
-            const semNotesCount = notes.filter(n => n.category.toLowerCase() === `semester ${semNum}` || n.category.toLowerCase() === `sem ${semNum}`).length
+            const semCourseTitles = new Set(semCourses.map(c => c.title.toLowerCase()))
+            const semCourseCodes = new Set(semCourses.map(c => c.code.toLowerCase()))
+            const semNotesCount = notes.filter(n => {
+              const cat = n.category.toLowerCase()
+              return cat === `semester ${semNum}` || 
+                     cat === `sem ${semNum}` || 
+                     semCourseTitles.has(cat) || 
+                     semCourseCodes.has(cat) ||
+                     semCourses.some(c => n.title.toLowerCase().includes(c.code.toLowerCase()))
+            }).length
             const isSelected = selectedSemester === semNum
 
             return (
@@ -1052,7 +1065,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* EXPANDABLE "COURSES COMPLETED" TAB */}
           {showCoursesCompleted && (
-            <div className="pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 animate-fade-in">
+            <div className="pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 animate-tab-open-down">
               
               {/* Heading & Credits Meta */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1121,9 +1134,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {isArshad ? (
                   (() => {
                     const coursesForBubble = storageService.getCoursesBySemester(activeUser.id, selectedSemesterBubble)
-                    const totalCredits = coursesForBubble.reduce((sum, c) => sum + c.credits, 0)
+                    const displayCourses = showAllSemestersTranscript ? userCourses : coursesForBubble
+                    const totalCredits = displayCourses.reduce((sum, c) => sum + c.credits, 0)
                     
-                    if (coursesForBubble.length === 0) {
+                    if (displayCourses.length === 0) {
                       return (
                         <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 border border-dashed border-stone-200 dark:border-stone-700 text-center space-y-2">
                           <div className="w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
@@ -1140,48 +1154,178 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     }
 
                     return (
-                      <div className="space-y-3">
-                        {/* Semester summary banner */}
-                        <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 px-1">
-                          <span className="font-medium">Semester {selectedSemesterBubble} Course List ({coursesForBubble.length} Subjects)</span>
-                          <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
-                            Total Semester Credits: {totalCredits} Credits
-                          </span>
-                        </div>
+                      <div className="space-y-3.5">
+                        {/* Semester summary banner with View Switcher */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-stone-500 dark:text-stone-400 px-1 gap-2.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-semibold text-stone-800 dark:text-stone-200">
+                              {showAllSemestersTranscript 
+                                ? `SRM Full Course List (${displayCourses.length} Subjects Across Semesters 1-3)`
+                                : `Semester ${selectedSemesterBubble} Course List (${displayCourses.length} Subjects)`
+                              }
+                            </span>
+                            <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-200/50 dark:border-indigo-800/50">
+                              {totalCredits} Credits
+                            </span>
+                          </div>
 
-                        {/* Grid of Course Cards */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {coursesForBubble.map((course) => (
-                            <div
-                              key={course.code}
-                              className="p-4 rounded-2xl bg-stone-50/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 transition-all flex flex-col justify-between gap-3 group"
+                          <div className="flex items-center gap-2 flex-wrap">
+                            {/* All Semesters Toggle */}
+                            <button
+                              type="button"
+                              onClick={() => setShowAllSemestersTranscript(!showAllSemestersTranscript)}
+                              className={`px-2.5 py-1 rounded-lg text-xs font-mono font-medium border transition-colors ${
+                                showAllSemestersTranscript
+                                  ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-xs'
+                                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:text-stone-900 dark:hover:text-white'
+                              }`}
                             >
-                              <div className="flex items-start justify-between gap-2">
-                                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
-                                  {course.code}
-                                </span>
-                                <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${
-                                  course.credits > 0 
-                                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50' 
-                                    : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
-                                }`}>
-                                  {course.credits > 0 ? `${course.credits} Credits` : 'Non-Credit (0)'}
-                                </span>
-                              </div>
+                              {showAllSemestersTranscript ? 'Show Single Sem' : 'All Semesters'}
+                            </button>
 
-                              <div>
-                                <h5 className="font-sans font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                  {course.title}
-                                </h5>
-                                {course.category && (
-                                  <div className="text-[11px] text-stone-400 mt-1 font-medium">
-                                    {course.category}
-                                  </div>
-                                )}
-                              </div>
+                            {/* View Switcher: Portal Table vs Cards */}
+                            <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700">
+                              <button
+                                type="button"
+                                onClick={() => setCourseViewMode('table')}
+                                className={`px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
+                                  courseViewMode === 'table'
+                                    ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
+                                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                                }`}
+                                title="SRM Official Portal Table View"
+                              >
+                                <Table className="w-3.5 h-3.5 text-indigo-500" />
+                                <span>Portal Table</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setCourseViewMode('cards')}
+                                className={`px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
+                                  courseViewMode === 'cards'
+                                    ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
+                                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                                }`}
+                                title="Aesthetic Cards View"
+                              >
+                                <LayoutGrid className="w-3.5 h-3.5 text-indigo-500" />
+                                <span>Cards</span>
+                              </button>
                             </div>
-                          ))}
+                          </div>
                         </div>
+
+                        {/* MODE 1: SRM STUDENT PORTAL OFFICIAL TABLE VIEW */}
+                        {courseViewMode === 'table' ? (
+                          <div className="overflow-x-auto rounded-2xl border border-stone-200/90 dark:border-stone-700/80 bg-white dark:bg-stone-900 shadow-xs">
+                            {/* SRM Portal header styling matching sp.srmist.edu.in */}
+                            <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-800/60 border-b border-stone-200/80 dark:border-stone-700/80 flex items-center justify-between gap-2 flex-wrap text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-stone-800 dark:text-stone-200 tracking-wide font-sans">
+                                  Faculty of Engineering and Technology, Ramapuram, Chennai
+                                </span>
+                                <span className="text-stone-400">•</span>
+                                <span className="font-semibold text-indigo-600 dark:text-indigo-400">Course List</span>
+                              </div>
+                              <span className="font-mono text-[11px] text-stone-400">
+                                sp.srmist.edu.in
+                              </span>
+                            </div>
+
+                            <table className="w-full text-left text-xs border-collapse">
+                              <thead>
+                                <tr className="bg-stone-50/70 dark:bg-stone-800/40 border-b border-stone-200 dark:border-stone-700 text-stone-600 dark:text-stone-300 font-bold text-[11px]">
+                                  <th className="py-3 px-4 w-[140px]">Code</th>
+                                  <th className="py-3 px-4">Description</th>
+                                  <th className="py-3 px-4 text-center w-[90px]">Semester</th>
+                                  <th className="py-3 px-4 text-center w-[90px]">Credit</th>
+                                </tr>
+                              </thead>
+                              <tbody className="divide-y divide-stone-100 dark:divide-stone-800/70 font-mono">
+                                {displayCourses.map((course) => (
+                                  <tr key={course.code} className="hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20 transition-colors">
+                                    <td className="py-3 px-4 font-bold text-stone-900 dark:text-stone-100 whitespace-nowrap">
+                                      {course.code}
+                                    </td>
+                                    <td className="py-3 px-4 font-sans text-stone-800 dark:text-stone-200">
+                                      <div className="font-medium text-xs text-stone-900 dark:text-stone-100">{course.title}</div>
+                                      {course.category && (
+                                        <div className="text-[10px] text-stone-400 font-sans mt-0.5">{course.category}</div>
+                                      )}
+                                    </td>
+                                    <td className="py-3 px-4 text-center font-bold text-stone-700 dark:text-stone-300">
+                                      {course.semester}
+                                    </td>
+                                    <td className="py-3 px-4 text-center">
+                                      <span className={`px-2 py-0.5 rounded font-bold text-[11px] ${
+                                        course.credits > 0 
+                                          ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50' 
+                                          : 'bg-stone-100 dark:bg-stone-800 text-stone-500'
+                                      }`}>
+                                        {course.credits}
+                                      </span>
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                              <tfoot>
+                                <tr className="bg-stone-50/80 dark:bg-stone-800/80 font-bold border-t border-stone-200 dark:border-stone-700 text-xs">
+                                  <td colSpan={2} className="py-3 px-4 text-stone-700 dark:text-stone-200 font-sans">
+                                    Total ({displayCourses.length} Subjects)
+                                  </td>
+                                  <td className="py-3 px-4 text-center text-stone-500 font-mono text-[11px]">
+                                    {showAllSemestersTranscript ? 'Sem 1-3' : `Sem ${selectedSemesterBubble}`}
+                                  </td>
+                                  <td className="py-3 px-4 text-center font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                                    {displayCourses.reduce((sum, c) => sum + c.credits, 0)} Cr
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        ) : (
+                          /* MODE 2: AESTHETIC GRID OF CARDS */
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {displayCourses.map((course) => (
+                              <div
+                                key={course.code}
+                                className="p-4 rounded-2xl bg-stone-50/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 transition-all flex flex-col justify-between gap-3 group"
+                              >
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex items-center gap-2">
+                                    <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
+                                      {course.code}
+                                    </span>
+                                    {showAllSemestersTranscript && (
+                                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300">
+                                        Sem {course.semester}
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${
+                                    course.credits > 0 
+                                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50' 
+                                      : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
+                                  }`}>
+                                    {course.credits > 0 ? `${course.credits} Credits` : 'Non-Credit (0)'}
+                                  </span>
+                                </div>
+
+                                <div>
+                                  <h5 className="font-sans font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                    {course.title}
+                                  </h5>
+                                  {course.category && (
+                                    <div className="text-[11px] text-stone-400 mt-1 font-medium">
+                                      {course.category}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )
                   })()
