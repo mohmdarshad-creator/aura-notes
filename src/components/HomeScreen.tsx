@@ -132,8 +132,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
   
-  // Selected semester for viewing subjects inside each semester tile
-  const [selectedSemester, setSelectedSemester] = useState<number | null>(1)
+  // Selected semester for viewing subjects inside each semester tile (collapsed by default)
+  const [selectedSemester, setSelectedSemester] = useState<number | null>(null)
   const [isClosingSemester, setIsClosingSemester] = useState(false)
   const closeSemesterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
