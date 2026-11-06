@@ -175,11 +175,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
   // Personal Details: Courses Completed Tab state & active semester bubble
   const [showCoursesCompleted, setShowCoursesCompleted] = useState(false)
+  const [isClosingCourses, setIsClosingCourses] = useState(false)
+  const closeCoursesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [selectedSemesterBubble, setSelectedSemesterBubble] = useState<number>(1)
   const [courseViewMode, setCourseViewMode] = useState<'table' | 'cards'>('table')
   const [showAllSemestersTranscript, setShowAllSemestersTranscript] = useState(false)
   const isArshad = activeUser.id === 'user-arshad' || activeUser.name.toLowerCase().includes('arshad')
   const userCourses = storageService.getCoursesForUser(activeUser.id)
+
+  const handleToggleCoursesCompleted = () => {
+    if (showCoursesCompleted && !isClosingCourses) {
+      setIsClosingCourses(true)
+      if (closeCoursesTimerRef.current) clearTimeout(closeCoursesTimerRef.current)
+      closeCoursesTimerRef.current = setTimeout(() => {
+        setShowCoursesCompleted(false)
+        setIsClosingCourses(false)
+      }, 300)
+    } else if (isClosingCourses) {
+      if (closeCoursesTimerRef.current) clearTimeout(closeCoursesTimerRef.current)
+      setIsClosingCourses(false)
+      setShowCoursesCompleted(true)
+    } else {
+      setShowCoursesCompleted(true)
+      setIsClosingCourses(false)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (closeCoursesTimerRef.current) clearTimeout(closeCoursesTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     // Check initial visibility so sections currently on screen are revealed immediately
@@ -1082,9 +1108,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             <div className="flex items-center gap-3">
               <button
                 type="button"
-                onClick={() => setShowCoursesCompleted(!showCoursesCompleted)}
-                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-xs ${
-                  showCoursesCompleted
+                onClick={handleToggleCoursesCompleted}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-300 shadow-xs cursor-pointer ${
+                  showCoursesCompleted && !isClosingCourses
                     ? 'bg-indigo-600 text-white shadow-indigo-500/25 shadow-md ring-2 ring-indigo-500/30'
                     : 'bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80 hover:shadow-xs'
                 }`}
@@ -1092,13 +1118,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <GraduationCap className="w-4 h-4 text-amber-500" />
                 <span>Courses Completed</span>
                 {isArshad && userCourses.length > 0 && (
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
-                    showCoursesCompleted ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold transition-colors ${
+                    showCoursesCompleted && !isClosingCourses ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
                   }`}>
                     {userCourses.length} Courses
                   </span>
                 )}
-                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showCoursesCompleted ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showCoursesCompleted && !isClosingCourses ? 'rotate-180' : ''}`} />
               </button>
             </div>
 
@@ -1119,7 +1145,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* EXPANDABLE "COURSES COMPLETED" TAB */}
           {showCoursesCompleted && (
-            <div className="pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 animate-tab-open-down">
+            <div className={`pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 overflow-hidden ${
+              isClosingCourses ? 'animate-tab-close-up' : 'animate-tab-open-down'
+            }`}>
               
               {/* Heading & Credits Meta */}
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

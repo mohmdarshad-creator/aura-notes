@@ -338,3 +338,27 @@
   will-change: transform, opacity;
 }
 
+/* Personal Details: Courses Completed Tab Close Up Animation */
+@keyframes tabCloseUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+    transform-origin: top center;
+  }
+  30% {
+    opacity: 0.8;
+    transform: translateY(-4px) scaleY(0.97);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-28px) scaleY(0.88);
+    transform-origin: top center;
+  }
+}
+
+.animate-tab-close-up {
+  animation: tabCloseUp 0.32s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
