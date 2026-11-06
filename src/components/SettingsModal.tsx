@@ -886,8 +886,8 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <span>Export JSON Backup</span>
                 </button>
 
-                <label className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-750 transition-colors shadow-xs cursor-pointer">
-                  <Upload className="w-3.5 h-3.5 text-indigo-500" />
+                <label className="flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-white border border-stone-200 dark:border-white/30 text-stone-700 dark:text-stone-900 hover:bg-stone-50 dark:hover:bg-stone-100 transition-colors shadow-xs cursor-pointer">
+                  <Upload className="w-3.5 h-3.5 text-indigo-500 dark:text-stone-900" />
                   <span>Import Backup</span>
                   <input
                     type="file"

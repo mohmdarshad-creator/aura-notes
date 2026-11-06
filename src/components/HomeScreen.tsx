@@ -877,10 +877,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           <div className="pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
                             <button
                               onClick={(e) => triggerUploadForSubject(course.title, e)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:hover:bg-amber-900/70 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 transition-all shadow-xs hover:scale-[1.03]"
+                              className="course-upload-btn flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-white dark:hover:bg-stone-100 dark:text-stone-900 border border-amber-200/80 dark:border-white/30 transition-all shadow-xs hover:scale-[1.03]"
                               title={`Upload PDF or document notes for ${course.title}`}
                             >
-                              <Upload className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                              <Upload className="w-3.5 h-3.5 text-amber-600 dark:text-stone-900" />
                               <span>+ Add Notes from Device</span>
                             </button>
 
@@ -981,7 +981,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-dashed border-amber-300 dark:border-amber-800 font-bold">
                         + NOTES & PDFS
                       </span>
-                      <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
+                      <span className="text-[11px] font-mono text-stone-400 dark:text-stone-900 bg-stone-100 dark:bg-white px-2 py-0.5 rounded-md font-semibold">
                         Upload
                       </span>
                     </div>
@@ -996,8 +996,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </div>
 
                     <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 group-hover:underline">
-                        <Upload className="w-3.5 h-3.5" />
+                      <span className="course-upload-btn inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-white text-amber-700 dark:text-stone-900 border border-amber-200/80 dark:border-white/30 group-hover:shadow-xs transition-all">
+                        <Upload className="w-3.5 h-3.5 text-amber-600 dark:text-stone-900" />
                         <span>Attach Documents</span>
                       </span>
                       <span className="text-xs text-stone-400 group-hover:text-amber-500">
@@ -1151,9 +1151,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <div className="mt-3 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
                         <button
                           onClick={(e) => triggerUploadForSubject(sub.name, e)}
-                          className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
+                          className="course-upload-btn text-[10px] font-semibold px-2 py-1 rounded-lg bg-amber-50 dark:bg-white text-amber-700 dark:text-stone-900 hover:bg-amber-100 dark:hover:bg-stone-100 border border-amber-200/60 dark:border-white/30 transition-all flex items-center gap-1 shadow-2xs"
+                          title={`Upload notes for ${sub.name}`}
                         >
-                          <Upload className="w-3 h-3" />
+                          <Upload className="w-3 h-3 text-amber-600 dark:text-stone-900" />
                           <span>+ Upload</span>
                         </button>
                         <ChevronRight className="w-3 h-3 text-stone-400 group-hover:translate-x-0.5 group-hover:text-amber-500 transition-transform" />

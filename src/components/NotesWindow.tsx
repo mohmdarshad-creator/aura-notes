@@ -369,10 +369,10 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-white dark:hover:bg-stone-100 dark:text-stone-900 border border-amber-200/80 dark:border-white/30 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden upload-btn-device"
               title="Upload PDF or notes from your device"
             >
-              <Upload className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              <Upload className="w-4 h-4 text-amber-600 dark:text-stone-900 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
               <span className="max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
                 + Add Notes from Device
               </span>
@@ -726,9 +726,9 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           <div className="flex items-center gap-2.5 flex-wrap justify-center">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700 transition-all shadow-sm hover:scale-[1.02]"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700 dark:bg-white dark:hover:bg-stone-100 dark:text-stone-900 transition-all shadow-sm hover:scale-[1.02] upload-btn-empty"
             >
-              <Upload className="w-3.5 h-3.5" />
+              <Upload className="w-3.5 h-3.5 text-white dark:text-stone-900" />
               <span>Upload PDF / Notes from Device</span>
             </button>
             <button

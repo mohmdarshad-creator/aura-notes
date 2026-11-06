@@ -1952,6 +1952,62 @@ html.theme-steel-gold .motivational-spark-card .quote-action-btn:hover {
   box-shadow: 0 2px 10px rgba(229, 184, 75, 0.25) !important;
 }
 
+/* ============================================================
+   DARK MODE UPLOAD BUTTONS - CRISP WHITE STYLING
+   In Dark Mode, all device and file upload buttons render in
+   pure white with dark high-contrast text and dark icons.
+   ============================================================ */
+html.dark:not(.theme-steel-gold) .upload-btn-device,
+html.dark:not(.theme-steel-gold) .upload-btn-empty,
+html.dark:not(.theme-steel-gold) .course-upload-btn,
+html.dark:not(.theme-steel-gold) button[title*="Upload"],
+html.dark:not(.theme-steel-gold) button[title*="upload"],
+html.dark:not(.theme-steel-gold) button[title*="Add Notes from Device"] {
+  background-color: #FFFFFF !important;
+  color: #1C1917 !important;
+  font-weight: 700 !important;
+  border-color: rgba(255, 255, 255, 0.45) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+html.dark:not(.theme-steel-gold) .upload-btn-device:hover,
+html.dark:not(.theme-steel-gold) .upload-btn-empty:hover,
+html.dark:not(.theme-steel-gold) .course-upload-btn:hover,
+html.dark:not(.theme-steel-gold) button[title*="Upload"]:hover,
+html.dark:not(.theme-steel-gold) button[title*="upload"]:hover,
+html.dark:not(.theme-steel-gold) button[title*="Add Notes from Device"]:hover {
+  background-color: #F5F5F4 !important;
+  color: #000000 !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+html.dark:not(.theme-steel-gold) .upload-btn-device svg,
+html.dark:not(.theme-steel-gold) .upload-btn-empty svg,
+html.dark:not(.theme-steel-gold) .course-upload-btn svg,
+html.dark:not(.theme-steel-gold) button[title*="Upload"] svg,
+html.dark:not(.theme-steel-gold) button[title*="upload"] svg,
+html.dark:not(.theme-steel-gold) button[title*="Add Notes from Device"] svg {
+  color: #1C1917 !important;
+}
+
+/* Steel & Gold theme retains its refined obsidian and golden amber finish */
+html.theme-steel-gold .course-upload-btn {
+  background-color: rgba(229, 184, 75, 0.14) !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.3) !important;
+}
+
+html.theme-steel-gold .course-upload-btn svg {
+  color: #E5B84B !important;
+}
+
+html.theme-steel-gold .course-upload-btn:hover {
+  background-color: rgba(229, 184, 75, 0.25) !important;
+  color: #FAF6EE !important;
+  border-color: #E5B84B !important;
+}
+
+
 
 
 
