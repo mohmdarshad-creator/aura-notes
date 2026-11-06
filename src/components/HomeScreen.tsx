@@ -62,11 +62,11 @@ interface HomeScreenProps {
 
 const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; glow: string; badge: string }> = {
   indigo: {
-    border: 'hover:border-indigo-400 dark:hover:border-indigo-600',
-    bg: 'from-indigo-500/10 via-indigo-500/5 to-transparent',
-    text: 'text-indigo-600 dark:text-indigo-400',
-    glow: 'group-hover:shadow-indigo-500/15',
-    badge: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/60 dark:text-indigo-300 border-indigo-200/60 dark:border-indigo-800'
+    border: 'hover:border-amber-400 dark:hover:border-amber-500',
+    bg: 'from-amber-500/10 via-amber-500/5 to-transparent',
+    text: 'text-amber-500 dark:text-amber-400',
+    glow: 'group-hover:shadow-amber-500/15',
+    badge: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/60 dark:border-amber-800'
   },
   purple: {
     border: 'hover:border-purple-400 dark:hover:border-purple-600',
@@ -76,11 +76,11 @@ const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; g
     badge: 'bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300 border-purple-200/60 dark:border-purple-800'
   },
   sky: {
-    border: 'hover:border-sky-400 dark:hover:border-sky-600',
-    bg: 'from-sky-500/10 via-sky-500/5 to-transparent',
-    text: 'text-sky-600 dark:text-sky-400',
-    glow: 'group-hover:shadow-sky-500/15',
-    badge: 'bg-sky-50 text-sky-700 dark:bg-sky-950/60 dark:text-sky-300 border-sky-200/60 dark:border-sky-800'
+    border: 'hover:border-amber-400 dark:hover:border-amber-500',
+    bg: 'from-amber-500/10 via-amber-500/5 to-transparent',
+    text: 'text-amber-500 dark:text-amber-400',
+    glow: 'group-hover:shadow-amber-500/15',
+    badge: 'bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border-amber-200/60 dark:border-amber-800'
   },
   emerald: {
     border: 'hover:border-emerald-400 dark:hover:border-emerald-600',
@@ -623,7 +623,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {/* Header for Active Semester Subjects */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-xs">
+                <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500 text-stone-950 shadow-xs">
                   Semester 0{selectedSemester}
                 </span>
                 <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
@@ -635,8 +635,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {courses.filter(c => c.semester === selectedSemester).length > 0 ? (
                   <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border ${
                     isArshad && selectedSemester <= 3
-                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
-                      : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/50'
+                      ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200/50 dark:border-amber-800/50'
+                      : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/50 dark:border-amber-800/50'
                   }`}>
                     {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits {isArshad && selectedSemester <= 3 ? '• Cleared' : ''}
                   </span>
@@ -669,7 +669,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {/* Add Subject Bubble Button */}
                 <div className="relative flex items-center group animate-bubble-spring">
                   <div 
-                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-amber-500 via-[#E8B078] to-[#E5B84B] opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
                   />
                   <button
                     type="button"
@@ -677,7 +677,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       setAddModalTarget('subject')
                       setShowAddModal(true)
                     }}
-                    className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                    className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
                     title="Add Subject Tile"
                   >
                     <Plus className="w-3.5 h-3.5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
@@ -733,10 +733,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         style={{
                           animationDelay: `${Math.min(index * 35, 300)}ms`
                         }}
-                        className="animate-fade-in group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-indigo-400 dark:hover:border-indigo-600"
+                        className="animate-fade-in group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-amber-400 dark:hover:border-amber-500"
                       >
                         {/* Ambient subtle glow */}
-                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
 
                         <div className="relative z-10 flex flex-col justify-between h-full space-y-3">
                           {/* Top row: Code Badge, Credits, Notes count */}
@@ -745,7 +745,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                               {course.code}
                             </span>
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
+                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800">
                                 {course.credits} Cr
                               </span>
                               <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
@@ -793,7 +793,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                               </div>
                             ) : (
                               <div className="flex items-start justify-between gap-1 group/rename">
-                                <h3 className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">
+                                <h3 className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors leading-snug line-clamp-2">
                                   {course.title}
                                 </h3>
                                 <div className="flex items-center gap-1">
@@ -805,7 +805,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                         setEditingCourseCode(course.code)
                                         setEditingCourseTitle(course.title)
                                       }}
-                                      className="opacity-0 group-hover/rename:opacity-100 p-1 rounded-md text-stone-400 hover:text-indigo-600 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer flex-shrink-0"
+                                      className="opacity-0 group-hover/rename:opacity-100 p-1 rounded-md text-stone-400 hover:text-amber-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer flex-shrink-0"
                                       title="Rename course"
                                     >
                                       <Edit3 className="w-3.5 h-3.5" />
@@ -853,7 +853,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                               <span>+ Add Notes from Device</span>
                             </button>
 
-                            <span className="text-xs font-medium text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                            <span className="text-xs font-medium text-stone-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 flex items-center gap-1 transition-colors">
                               <span>Open</span>
                               <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                             </span>
@@ -1051,11 +1051,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     <div
                       key={sub.id}
                       onClick={() => onOpenSubject(sub.name)}
-                      className="group p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-indigo-400 dark:hover:border-indigo-600 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between"
+                      className="group p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-500 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="w-8 h-8 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 dark:text-stone-300">
-                          {renderSubjectIcon(sub.icon, 'text-indigo-600 dark:text-indigo-400')}
+                          {renderSubjectIcon(sub.icon, 'text-amber-500 dark:text-amber-400')}
                         </div>
                         <span className="text-[10px] font-mono text-stone-400">{subNotes.length} notes</span>
                       </div>
@@ -1076,13 +1076,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                   setEditingCourseCode(null)
                                 }
                               }}
-                              className="w-full text-xs font-semibold px-2 py-1 rounded-lg border-2 border-indigo-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
+                              className="w-full text-xs font-semibold px-2 py-1 rounded-lg border-2 border-amber-500 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 outline-none"
                             />
                             <div className="flex items-center gap-1">
                               <button
                                 type="button"
                                 onClick={() => handleSaveCourseRename(sub.name, editingCourseTitle)}
-                                className="px-2 py-0.5 rounded bg-indigo-600 text-white text-[10px] font-semibold cursor-pointer"
+                                className="px-2 py-0.5 rounded bg-amber-500 text-stone-950 text-[10px] font-bold cursor-pointer"
                               >
                                 Save
                               </button>
@@ -1097,7 +1097,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           </div>
                         ) : (
                           <div className="flex items-center justify-between gap-1 group/rename">
-                            <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                            <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors truncate">
                               {sub.name}
                             </h4>
                             {onRenameSubject && (
@@ -1108,7 +1108,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                   setEditingCourseCode(sub.id)
                                   setEditingCourseTitle(sub.name)
                                 }}
-                                className="opacity-0 group-hover:opacity-100 p-0.5 text-stone-400 hover:text-indigo-600 transition-all cursor-pointer"
+                                className="opacity-0 group-hover:opacity-100 p-0.5 text-stone-400 hover:text-amber-500 transition-all cursor-pointer"
                                 title="Rename subject"
                               >
                                 <Edit3 className="w-3 h-3" />
@@ -1120,12 +1120,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <div className="mt-3 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
                         <button
                           onClick={(e) => triggerUploadForSubject(sub.name, e)}
-                          className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1"
+                          className="text-[10px] font-semibold text-amber-600 dark:text-amber-400 hover:underline flex items-center gap-1"
                         >
                           <Upload className="w-3 h-3" />
                           <span>+ Upload</span>
                         </button>
-                        <ChevronRight className="w-3 h-3 text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500 transition-transform" />
+                        <ChevronRight className="w-3 h-3 text-stone-400 group-hover:translate-x-0.5 group-hover:text-amber-500 transition-transform" />
                       </div>
                     </div>
                   )
@@ -1308,7 +1308,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </div>
 
                   <div className="my-2">
-                    <h4 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    <h4 className="font-serif font-bold text-base text-stone-900 dark:text-stone-100 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
                       {notebook.name}
                     </h4>
                     <p className="text-[11px] text-stone-500 dark:text-stone-400 truncate mt-0.5">
@@ -1316,7 +1316,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </p>
                   </div>
 
-                  <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-stone-800/80 text-[11px] font-medium text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <div className="flex items-center justify-between pt-2 border-t border-stone-100 dark:border-stone-800/80 text-[11px] font-medium text-stone-400 group-hover:text-amber-500 dark:group-hover:text-amber-400 transition-colors">
                     <span>Open Notebook</span>
                     <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
                   </div>

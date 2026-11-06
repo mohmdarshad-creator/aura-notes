@@ -184,6 +184,48 @@ html.theme-steel-gold .dark\:border-indigo-800\/50 {
   border-color: rgba(229, 184, 75, 0.4);
 }
 
+/* Remap All Blue, Indigo & Sky Hover/Accent Shades in Subject Tiles to Theme Gold */
+html.theme-steel-gold .hover\:border-indigo-400:hover,
+html.theme-steel-gold .dark\:hover\:border-indigo-600:hover,
+html.theme-steel-gold .hover\:border-sky-400:hover,
+html.theme-steel-gold .dark\:hover\:border-sky-600:hover {
+  border-color: #E5B84B !important;
+  box-shadow: 0 0 20px -3px rgba(229, 184, 75, 0.28) !important;
+}
+
+html.theme-steel-gold .group:hover .group-hover\:text-indigo-600,
+html.theme-steel-gold .group:hover .group-hover\:text-indigo-400,
+html.theme-steel-gold .group:hover .group-hover\:text-indigo-500,
+html.theme-steel-gold .group:hover .group-hover\:text-sky-600,
+html.theme-steel-gold .group:hover .group-hover\:text-sky-400 {
+  color: #F0C45B !important;
+}
+
+html.theme-steel-gold .from-indigo-500\/5,
+html.theme-steel-gold .from-indigo-500\/10,
+html.theme-steel-gold .from-sky-500\/10 {
+  --tw-gradient-from: rgba(229, 184, 75, 0.12) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: transparent var(--tw-gradient-to-position) !important;
+  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important;
+}
+
+html.theme-steel-gold .text-sky-600,
+html.theme-steel-gold .text-sky-700,
+html.theme-steel-gold .dark\:text-sky-400,
+html.theme-steel-gold .dark\:text-sky-300 {
+  color: #F0C45B !important;
+}
+html.theme-steel-gold .bg-sky-50,
+html.theme-steel-gold .dark\:bg-sky-950\/60 {
+  background-color: rgba(229, 184, 75, 0.16) !important;
+  color: #F0C45B !important;
+  border-color: rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .border-sky-200,
+html.theme-steel-gold .dark\:border-sky-800 {
+  border-color: rgba(229, 184, 75, 0.4) !important;
+}
+
 /* ============================================================
    CONTRAST REPLACEMENT FOR ALL COLORFUL PINK / ROSE ELEMENTS
    Fit specifically for the Dark Golden Themed Background
