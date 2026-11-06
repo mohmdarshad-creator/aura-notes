@@ -640,6 +640,282 @@ html.theme-steel-gold .personal-tab-container .p-0\.5.rounded-lg.border button[c
   color: #FAF6EE !important;
 }
 
+/* ============================================================
+   GEMINI DOUBT SOLVER SIDE DRAWER: DARK GOLDEN AESTHETIC THEME
+   Strictly NO white/light panels, pale cards, or washed-out headers.
+   Rich Obsidian Bronze (#13110D), Honey Gold (#E5B84B), Ivory (#FAF6EE).
+   ============================================================ */
+
+/* Backdrop Overlay */
+html.theme-steel-gold .gemini-drawer-backdrop {
+  background-color: rgba(9, 7, 5, 0.75) !important;
+  backdrop-filter: blur(5px) !important;
+}
+
+/* Side Drawer Shell */
+html.theme-steel-gold .gemini-drawer-container {
+  background-color: #13110D !important;
+  border-left-color: rgba(229, 184, 75, 0.28) !important;
+  box-shadow: -20px 0 60px -10px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(229, 184, 75, 0.12) !important;
+  color: #FAF6EE !important;
+}
+
+/* Drawer Header */
+html.theme-steel-gold .gemini-drawer-container > div:first-of-type {
+  background-color: #18130E !important;
+  border-bottom: 1px solid rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .gemini-drawer-container h2 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container h2 span {
+  background-color: rgba(229, 184, 75, 0.15) !important;
+  color: #F0C45B !important;
+  border: 1px solid rgba(229, 184, 75, 0.3) !important;
+}
+html.theme-steel-gold .gemini-drawer-container p {
+  color: #968774 !important;
+}
+html.theme-steel-gold .gemini-drawer-container button {
+  color: #A39380 !important;
+}
+html.theme-steel-gold .gemini-drawer-container button:hover {
+  background-color: #241D15 !important;
+  color: #FAF6EE !important;
+}
+
+/* Knowledge Base Bar */
+html.theme-steel-gold .gemini-drawer-container [class*="bg-indigo-50"],
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-indigo-950"] {
+  background-color: #16120D !important;
+  border-bottom: 1px solid rgba(229, 184, 75, 0.18) !important;
+  border-color: rgba(229, 184, 75, 0.18) !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="bg-indigo-50"] span,
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-indigo-950"] span {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="bg-indigo-50"] .text-stone-500,
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-indigo-950"] .text-stone-400 {
+  color: #968774 !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="bg-indigo-50"] svg,
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-indigo-950"] svg {
+  color: #E5B84B !important;
+}
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-emerald-100"],
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-emerald-950"],
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-amber-500\/15"] {
+  background-color: #1F1810 !important;
+  color: #F0C45B !important;
+  border: 1px solid rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-emerald-100"] span,
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-emerald-950"] span,
+html.theme-steel-gold .gemini-drawer-container span[class*="bg-amber-500\/15"] span {
+  background-color: #E5B84B !important;
+}
+
+/* Active Note Specific Context Bar */
+html.theme-steel-gold .gemini-drawer-container [class*="bg-stone-100\/60"],
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-stone-800\/50"] {
+  background-color: #19140E !important;
+  border-bottom: 1px solid rgba(229, 184, 75, 0.18) !important;
+  border-color: rgba(229, 184, 75, 0.18) !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="bg-stone-100\/60"] .font-medium,
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-stone-800\/50"] .font-medium {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="bg-stone-100\/60"] button,
+html.theme-steel-gold .gemini-drawer-container [class*="dark:bg-stone-800\/50"] button {
+  background-color: #E5B84B !important;
+  color: #0D131A !important;
+  font-weight: 700 !important;
+}
+
+/* API Key Demo Banner */
+html.theme-steel-gold .gemini-drawer-container [class*="from-amber-50"] {
+  background: #1B150F !important;
+  border: 1px solid rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="from-amber-50"] svg {
+  color: #E5B84B !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="from-amber-50"] p.font-semibold {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="from-amber-50"] p:not(.font-semibold) {
+  color: #D6C9B6 !important;
+}
+html.theme-steel-gold .gemini-drawer-container [class*="from-amber-50"] button {
+  color: #E5B84B !important;
+}
+
+/* Message List Container */
+html.theme-steel-gold .gemini-drawer-container .overflow-y-auto {
+  background-color: #13110D !important;
+}
+
+/* Empty State Initial Screen */
+html.theme-steel-gold .gemini-drawer-container .overflow-y-auto .w-12.h-12 {
+  background-color: #1D1711 !important;
+  border: 1px solid rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .overflow-y-auto .w-12.h-12 svg {
+  color: #E5B84B !important;
+}
+html.theme-steel-gold .gemini-drawer-container .overflow-y-auto h3 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .overflow-y-auto p {
+  color: #968774 !important;
+}
+
+/* Quick Prompt Suggestions */
+html.theme-steel-gold .gemini-drawer-container .grid.grid-cols-1 button {
+  background-color: #19140E !important;
+  border: 1px solid rgba(229, 184, 75, 0.2) !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .grid.grid-cols-1 button:hover {
+  background-color: #241D14 !important;
+  border-color: #E5B84B !important;
+  color: #F0C45B !important;
+}
+html.theme-steel-gold .gemini-drawer-container .grid.grid-cols-1 button svg {
+  color: #968774 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .grid.grid-cols-1 button:hover svg {
+  color: #E5B84B !important;
+}
+
+/* User Message Card */
+html.theme-steel-gold .gemini-drawer-container .items-end > div.rounded-2xl {
+  background-color: #261F17 !important;
+  border: 1px solid rgba(229, 184, 75, 0.35) !important;
+  color: #FAF6EE !important;
+  box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.4) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-end > div.rounded-2xl p {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-end span {
+  color: #968774 !important;
+}
+
+/* Assistant Message Card */
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl {
+  background-color: #18130E !important;
+  border: 1px solid rgba(229, 184, 75, 0.22) !important;
+  color: #EFECE6 !important;
+  box-shadow: 0 4px 20px -3px rgba(0, 0, 0, 0.5) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl p {
+  color: #EFECE6 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl strong {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl h1,
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl h2,
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl h3,
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl h4 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl ul,
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl ol,
+html.theme-steel-gold .gemini-drawer-container .items-start > div.rounded-2xl li {
+  color: #EFECE6 !important;
+}
+
+/* Markdown blocks inside Assistant */
+html.theme-steel-gold .gemini-drawer-container .markdown-body pre {
+  background-color: #0E0C09 !important;
+  border: 1px solid rgba(229, 184, 75, 0.3) !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container .markdown-body code:not(pre code) {
+  background-color: rgba(229, 184, 75, 0.16) !important;
+  color: #F0C45B !important;
+  border: 1px solid rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .markdown-body blockquote {
+  border-left-color: #E5B84B !important;
+  color: #D6C9B6 !important;
+  background-color: rgba(229, 184, 75, 0.08) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .markdown-body a {
+  color: #E5B84B !important;
+}
+
+/* AI Message Actions */
+html.theme-steel-gold .gemini-drawer-container .items-start button {
+  color: #A39380 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start button:hover {
+  color: #FAF6EE !important;
+  background-color: #241D15 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start button svg {
+  color: #A39380 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .items-start button:hover svg {
+  color: #E5B84B !important;
+}
+
+/* Loading / Thinking Pulse Bubble */
+html.theme-steel-gold .gemini-drawer-container .animate-pulse[class*="rounded-2xl"] {
+  background-color: #19140E !important;
+  border: 1px solid rgba(229, 184, 75, 0.25) !important;
+  color: #D6C9B6 !important;
+}
+html.theme-steel-gold .gemini-drawer-container .animate-pulse[class*="rounded-2xl"] svg {
+  color: #E5B84B !important;
+}
+
+/* Bottom Input Area */
+html.theme-steel-gold .gemini-drawer-container > div:last-of-type {
+  background-color: #17120D !important;
+  border-top: 1px solid rgba(229, 184, 75, 0.22) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .relative.rounded-2xl {
+  background-color: #110E0A !important;
+  border: 1px solid rgba(229, 184, 75, 0.28) !important;
+}
+html.theme-steel-gold .gemini-drawer-container .relative.rounded-2xl:focus-within {
+  border-color: #E5B84B !important;
+  box-shadow: 0 0 0 2px rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .gemini-drawer-container textarea {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .gemini-drawer-container textarea::placeholder {
+  color: #7A6E60 !important;
+}
+html.theme-steel-gold .gemini-drawer-container button[class*="bg-indigo-600"],
+html.theme-steel-gold .gemini-drawer-container button[class*="bg-amber-500"] {
+  background-color: #E5B84B !important;
+  color: #0D131A !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 10px rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .gemini-drawer-container button[class*="bg-indigo-600"]:hover,
+html.theme-steel-gold .gemini-drawer-container button[class*="bg-amber-500"]:hover {
+  background-color: #F0C45B !important;
+}
+html.theme-steel-gold .gemini-drawer-container button[disabled] {
+  color: #4E3E34 !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+html.theme-steel-gold .gemini-drawer-container div.mt-2.px-1 {
+  color: #7A6E60 !important;
+}
+html.theme-steel-gold .gemini-drawer-container div.mt-2.px-1 strong {
+  color: #FAF6EE !important;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

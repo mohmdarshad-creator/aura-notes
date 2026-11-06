@@ -181,24 +181,24 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
       {/* Semi-transparent backdrop blur overlay with fade-in */}
       <div 
         onClick={onClose}
-        className="fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] animate-backdrop-fade-in"
+        className="gemini-drawer-backdrop fixed inset-0 z-50 bg-black/40 backdrop-blur-[2px] animate-backdrop-fade-in"
       />
 
       {/* Side Drawer with Elastic Pop-In Animation */}
-      <div className="fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] md:w-[540px] bg-white dark:bg-stone-900 border-l border-stone-200 dark:border-stone-800 shadow-2xl flex flex-col animate-drawer-pop-in">
+      <div className="gemini-drawer-container fixed inset-y-0 right-0 z-50 w-full sm:w-[480px] md:w-[540px] bg-white dark:bg-stone-900 border-l border-stone-200 dark:border-stone-800 shadow-2xl flex flex-col animate-drawer-pop-in">
       
       {/* Drawer Header */}
       <div className="p-4 border-b border-stone-200/80 dark:border-stone-800 flex items-center justify-between gap-3 bg-stone-50/70 dark:bg-stone-900/70">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-400 via-indigo-500 to-indigo-600 p-[1px]">
-            <div className="w-full h-full bg-white dark:bg-stone-900 rounded-[11px] flex items-center justify-center">
-              <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-amber-500 via-[#E8B078] to-[#E5B84B] p-[1px]">
+            <div className="w-full h-full bg-stone-900 rounded-[11px] flex items-center justify-center">
+              <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
             </div>
           </div>
           <div>
             <h2 className="text-sm font-bold text-stone-900 dark:text-stone-100 flex items-center gap-2">
               Gemini Doubt Solver
-              <span className="text-[10px] font-mono uppercase bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 px-1.5 py-0.2 rounded font-semibold">
+              <span className="text-[10px] font-mono uppercase bg-amber-500/15 text-amber-500 dark:text-amber-400 px-1.5 py-0.2 rounded font-semibold border border-amber-500/20">
                 2.5 Flash
               </span>
             </h2>
@@ -212,7 +212,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
           {messages.length > 0 && (
             <button
               onClick={handleClearHistory}
-              className="p-1.5 rounded-lg text-stone-400 hover:text-rose-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+              className="p-1.5 rounded-lg text-stone-400 hover:text-amber-500 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
               title="Clear chat history"
             >
               <Trash2 className="w-4 h-4" />
@@ -230,9 +230,9 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
       {/* Knowledge Base Status Bar: Reading all uploaded notes and files */}
       <div className="px-4 py-2 bg-indigo-50/60 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/60 flex items-center justify-between text-xs">
         <div className="flex items-center gap-2 truncate pr-2">
-          <BookOpen className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+          <BookOpen className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
           <span className="text-stone-500 dark:text-stone-400">Library Knowledge:</span>
-          <span className="font-semibold text-indigo-700 dark:text-indigo-300">
+          <span className="font-semibold text-amber-500 dark:text-amber-400">
             {notes.length} {notes.length === 1 ? 'note' : 'notes & files'} indexed
           </span>
           {activeNote && useNoteContext && (
@@ -241,8 +241,8 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
             </span>
           )}
         </div>
-        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200/50 flex items-center gap-1 shadow-2xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500 dark:text-amber-400 font-bold border border-amber-500/30 flex items-center gap-1 shadow-2xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
           Auto-Reading
         </span>
       </div>
@@ -251,7 +251,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
       {activeNote && (
         <div className="px-4 py-1.5 bg-stone-100/60 dark:bg-stone-800/50 border-b border-stone-200/60 dark:border-stone-800 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 truncate pr-2">
-            <Paperclip className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+            <Paperclip className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
             <span className="text-stone-400">Primary Focus:</span>
             <span className="font-medium text-stone-800 dark:text-stone-200 truncate">
               {activeNote.title || 'Untitled Note'}
@@ -261,7 +261,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
             onClick={() => setUseNoteContext(!useNoteContext)}
             className={`text-[10px] px-2 py-0.5 rounded font-medium transition-colors ${
               useNoteContext
-                ? 'bg-indigo-600 text-white'
+                ? 'bg-amber-500 text-stone-950 font-bold shadow-xs'
                 : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300'
             }`}
           >
@@ -283,7 +283,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
             </p>
             <button
               onClick={onOpenSettings}
-              className="mt-2 inline-flex items-center gap-1 font-semibold text-indigo-600 dark:text-indigo-400 hover:underline"
+              className="mt-2 inline-flex items-center gap-1 font-semibold text-amber-500 dark:text-amber-400 hover:underline"
             >
               Open Settings & Add Key <ArrowRight className="w-3 h-3" />
             </button>
@@ -327,10 +327,10 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
                 <button
                   key={idx}
                   onClick={() => handleSend(item.prompt)}
-                  className="p-2.5 rounded-xl text-xs bg-stone-50 dark:bg-stone-800/70 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 border border-stone-200/60 dark:border-stone-800 text-stone-700 dark:text-stone-300 font-medium transition-all text-left flex items-center justify-between group"
+                  className="p-2.5 rounded-xl text-xs bg-stone-50 dark:bg-stone-800/70 hover:bg-amber-500/10 dark:hover:bg-amber-500/10 border border-stone-200/60 dark:border-stone-800 text-stone-700 dark:text-stone-300 font-medium transition-all text-left flex items-center justify-between group"
                 >
                   <span>💡 {item.title}</span>
-                  <ArrowRight className="w-3.5 h-3.5 text-stone-400 group-hover:text-indigo-600 transition-colors" />
+                  <ArrowRight className="w-3.5 h-3.5 text-stone-400 group-hover:text-amber-500 transition-colors" />
                 </button>
               ))}
             </div>
@@ -381,7 +381,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
                   {activeNote && (
                     <button
                       onClick={() => handleAppend(msg.content)}
-                      className="p-1 rounded-md text-[11px] text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 flex items-center gap-1 transition-colors"
+                      className="p-1 rounded-md text-[11px] text-amber-500 dark:text-amber-400 hover:bg-amber-500/10 flex items-center gap-1 transition-colors"
                       title="Append this solution to the active note"
                     >
                       <PlusSquare className="w-3 h-3" />
@@ -415,7 +415,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
 
       {/* Input Form */}
       <div className="p-4 border-t border-stone-200/80 dark:border-stone-800 bg-stone-50/50 dark:bg-stone-900/50">
-        <div className="relative rounded-2xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-500/20 transition-all">
+        <div className="relative rounded-2xl bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 shadow-sm focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-500/20 transition-all">
           <textarea
             ref={inputRef}
             value={input}
@@ -431,7 +431,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
             disabled={!input.trim() || isLoading}
             className={`absolute right-2.5 bottom-2.5 p-2 rounded-xl transition-all ${
               input.trim() && !isLoading
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-sm'
+                ? 'bg-amber-500 text-stone-950 hover:bg-amber-400 font-bold shadow-sm'
                 : 'text-stone-300 dark:text-stone-600 cursor-not-allowed'
             }`}
           >
