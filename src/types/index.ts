@@ -58,6 +58,14 @@ export interface SubjectItem {
   createdAt?: number
 }
 
+export interface CourseItem {
+  code: string
+  title: string
+  semester: number
+  credits: number
+  category?: string
+}
+
 export type PageRoute = 
   | { type: 'home' }
   | { type: 'collection'; view: 'all' | 'pinned' | 'favorites' }

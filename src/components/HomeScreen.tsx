@@ -14,6 +14,7 @@ import {
   Clock, 
   Layers, 
   ChevronRight,
+  ChevronDown,
   BookMarked,
   PlusCircle,
   X,
@@ -25,6 +26,7 @@ import {
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
+import { storageService } from '../services/storageService'
 
 interface HomeScreenProps {
   subjects: SubjectItem[]
@@ -120,20 +122,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
 
   // Scroll reveal observer for tiles moving in as the page gets scrolled down
+  const semestersRef = useRef<HTMLDivElement>(null)
   const subjectsRef = useRef<HTMLDivElement>(null)
   const viewsRef = useRef<HTMLDivElement>(null)
   const notebooksRef = useRef<HTMLDivElement>(null)
   const detailsRef = useRef<HTMLDivElement>(null)
 
+  const [semestersVisible, setSemestersVisible] = useState(false)
   const [subjectsVisible, setSubjectsVisible] = useState(false)
   const [viewsVisible, setViewsVisible] = useState(false)
   const [notebooksVisible, setNotebooksVisible] = useState(false)
   const [detailsVisible, setDetailsVisible] = useState(false)
 
+  // Personal Details: Courses Completed Tab state & active semester bubble
+  const [showCoursesCompleted, setShowCoursesCompleted] = useState(false)
+  const [selectedSemesterBubble, setSelectedSemesterBubble] = useState<number>(1)
+  const isArshad = activeUser.id === 'user-arshad' || activeUser.name.toLowerCase().includes('arshad')
+  const userCourses = storageService.getCoursesForUser(activeUser.id)
+
   useEffect(() => {
     // Check initial visibility so sections currently on screen are revealed immediately
     const checkVisibility = () => {
       const vh = window.innerHeight
+      if (semestersRef.current) {
+        const rect = semestersRef.current.getBoundingClientRect()
+        setSemestersVisible(rect.top < vh && rect.bottom > 0)
+      }
       if (subjectsRef.current) {
         const rect = subjectsRef.current.getBoundingClientRect()
         setSubjectsVisible(rect.top < vh && rect.bottom > 0)
@@ -155,9 +169,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     checkVisibility()
     const timer = setTimeout(checkVisibility, 60)
 
-    // Continuous scroll observer for Subject & Notebook tiles: triggers animations when scrolled up or down
+    // Continuous scroll observer for Semester, Subject & Notebook tiles: triggers animations when scrolled up or down
     const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
+        if (entry.target === semestersRef.current) {
+          setSemestersVisible(entry.isIntersecting)
+        }
         if (entry.target === subjectsRef.current) {
           setSubjectsVisible(entry.isIntersecting)
         }
@@ -175,6 +192,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       rootMargin: '0px 0px -20px 0px'
     })
 
+    if (semestersRef.current) observer.observe(semestersRef.current)
     if (subjectsRef.current) observer.observe(subjectsRef.current)
     if (viewsRef.current) observer.observe(viewsRef.current)
     if (notebooksRef.current) observer.observe(notebooksRef.current)
@@ -302,6 +320,73 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           </button>
         </div>
       </div>
+
+      {/* SECTION: SEMESTER (8 Tiles: Semester 1 to Semester 8) */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
+              <GraduationCap className="w-4 h-4 text-indigo-500" />
+              Semester
+            </h2>
+            <p className="text-xs text-stone-400 mt-0.5">
+              Select any semester to open notes, subjects and academic materials
+            </p>
+          </div>
+        </div>
+
+        {/* 8 Semester Tiles Grid */}
+        <div 
+          ref={semestersRef}
+          className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-3.5"
+        >
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum, index) => {
+            const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
+            const semCredits = semCourses.reduce((sum, c) => sum + c.credits, 0)
+            const semNotesCount = notes.filter(n => n.category.toLowerCase() === `semester ${semNum}` || n.category.toLowerCase() === `sem ${semNum}`).length
+
+            return (
+              <div
+                key={semNum}
+                onClick={() => onOpenSubject(`Semester ${semNum}`)}
+                style={{ transitionDelay: semestersVisible ? `${index * 60}ms` : '0ms' }}
+                className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] hover:border-indigo-400 dark:hover:border-indigo-600`}
+              >
+                {/* Top Badge & Count */}
+                <div className="flex items-center justify-between">
+                  <span className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-mono font-bold text-xs flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-xs">
+                    0{semNum}
+                  </span>
+                  {semCourses.length > 0 && (
+                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
+                      {semCourses.length} Sub
+                    </span>
+                  )}
+                </div>
+
+                {/* Center Title */}
+                <div className="my-2">
+                  <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                    Semester {semNum}
+                  </h3>
+                  <div className="text-[10px] text-stone-400 mt-0.5 truncate">
+                    {isArshad && semCourses.length > 0 
+                      ? `${semCredits} Credits • ${semCourses.length} Courses`
+                      : (isArshad ? 'Upcoming' : 'Curriculum')
+                    }
+                  </div>
+                </div>
+
+                {/* Bottom subtle indicator */}
+                <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium pt-2 border-t border-stone-100 dark:border-stone-800/70">
+                  <span>{semNotesCount} Notes</span>
+                  <ChevronRight className="w-3.5 h-3.5 text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500 transition-all" />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </section>
 
       {/* 2x2 BOXES WITH SUBJECT NAMES (Clickable to open in window) */}
       <section className="space-y-4">
@@ -700,20 +785,199 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           </div>
 
-          {/* Bottom Footer Notice (No pen button) */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-5 mt-6 border-t border-stone-100 dark:border-stone-800/80 text-xs text-stone-400">
-            <span>
-              Profile details are configured in <strong>Settings</strong> &gt; <strong>Student Profiles</strong>.
-            </span>
-            {onOpenSettings && (
+          {/* Action Row: Courses Completed Button & Settings Shortcut */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-5 mt-6 border-t border-stone-100 dark:border-stone-800/80">
+            <div className="flex items-center gap-3">
               <button
-                onClick={onOpenSettings}
-                className="self-start sm:self-auto px-3 py-1.5 rounded-xl font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
+                type="button"
+                onClick={() => setShowCoursesCompleted(!showCoursesCompleted)}
+                className={`flex items-center gap-2.5 px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-semibold transition-all duration-200 shadow-xs ${
+                  showCoursesCompleted
+                    ? 'bg-indigo-600 text-white shadow-indigo-500/25 shadow-md ring-2 ring-indigo-500/30'
+                    : 'bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-indigo-800/80 hover:shadow-xs'
+                }`}
               >
-                Configure in Settings →
+                <GraduationCap className="w-4 h-4 text-amber-500" />
+                <span>Courses Completed</span>
+                {isArshad && userCourses.length > 0 && (
+                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold ${
+                    showCoursesCompleted ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
+                  }`}>
+                    {userCourses.length} Courses
+                  </span>
+                )}
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showCoursesCompleted ? 'rotate-180' : ''}`} />
               </button>
-            )}
+            </div>
+
+            <div className="flex items-center gap-3 text-xs text-stone-400">
+              <span>
+                Profile details configured in <strong>Settings</strong> &gt; <strong>Student Profiles</strong>.
+              </span>
+              {onOpenSettings && (
+                <button
+                  onClick={onOpenSettings}
+                  className="px-2.5 py-1 rounded-lg font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-950/50 transition-colors"
+                >
+                  Edit →
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* EXPANDABLE "COURSES COMPLETED" TAB */}
+          {showCoursesCompleted && (
+            <div className="pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 animate-fade-in">
+              
+              {/* Heading & Credits Meta */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h4 className="font-serif font-bold text-xl text-stone-900 dark:text-stone-100 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-indigo-500" />
+                    Courses Completed
+                  </h4>
+                  <p className="text-xs text-stone-400 mt-0.5">
+                    {isArshad 
+                      ? 'SRM Institute of Science and Technology course curriculum across all 8 academic semesters'
+                      : 'Academic course curriculum across all 8 semesters for ' + activeUser.name
+                    }
+                  </p>
+                </div>
+
+                {isArshad && (
+                  <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                    <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 font-bold">
+                      17 Courses Registered
+                    </span>
+                    <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 font-bold">
+                      48 Total Credits (Sem 1-3)
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              {/* 8 SEMESTER BUBBLES */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
+                  const isSelected = selectedSemesterBubble === semNum
+                  const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
+                  
+                  return (
+                    <button
+                      key={semNum}
+                      type="button"
+                      onClick={() => setSelectedSemesterBubble(semNum)}
+                      className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all duration-200 flex-shrink-0 ${
+                        isSelected
+                          ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 scale-[1.03]'
+                          : 'bg-stone-100 dark:bg-stone-800/90 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-200 border border-stone-200/60 dark:border-stone-700/60'
+                      }`}
+                    >
+                      <span>Semester {semNum}</span>
+                      {isArshad && (
+                        <span className={`w-5 h-5 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
+                          isSelected 
+                            ? 'bg-white/25 text-white' 
+                            : semCourses.length > 0 
+                              ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' 
+                              : 'bg-stone-200 dark:bg-stone-700 text-stone-400'
+                        }`}>
+                          {semCourses.length}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+
+              {/* DETAILS ACCORDING TO SELECTED SEMESTER BUBBLE */}
+              <div className="space-y-3 pt-1">
+                {/* For Mohamed Arshad: Add subject details in each bubble */}
+                {isArshad ? (
+                  (() => {
+                    const coursesForBubble = storageService.getCoursesBySemester(activeUser.id, selectedSemesterBubble)
+                    const totalCredits = coursesForBubble.reduce((sum, c) => sum + c.credits, 0)
+                    
+                    if (coursesForBubble.length === 0) {
+                      return (
+                        <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 border border-dashed border-stone-200 dark:border-stone-700 text-center space-y-2">
+                          <div className="w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
+                            <GraduationCap className="w-5 h-5" />
+                          </div>
+                          <h5 className="font-serif font-bold text-base text-stone-700 dark:text-stone-300">
+                            Semester {selectedSemesterBubble} Curriculum
+                          </h5>
+                          <p className="text-xs text-stone-400 max-w-sm mx-auto">
+                            Upcoming semester registration in progress. No courses completed yet for this semester.
+                          </p>
+                        </div>
+                      )
+                    }
+
+                    return (
+                      <div className="space-y-3">
+                        {/* Semester summary banner */}
+                        <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400 px-1">
+                          <span className="font-medium">Semester {selectedSemesterBubble} Course List ({coursesForBubble.length} Subjects)</span>
+                          <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400">
+                            Total Semester Credits: {totalCredits} Credits
+                          </span>
+                        </div>
+
+                        {/* Grid of Course Cards */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {coursesForBubble.map((course) => (
+                            <div
+                              key={course.code}
+                              className="p-4 rounded-2xl bg-stone-50/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 transition-all flex flex-col justify-between gap-3 group"
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
+                                  {course.code}
+                                </span>
+                                <span className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${
+                                  course.credits > 0 
+                                    ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50' 
+                                    : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-400'
+                                }`}>
+                                  {course.credits > 0 ? `${course.credits} Credits` : 'Non-Credit (0)'}
+                                </span>
+                              </div>
+
+                              <div>
+                                <h5 className="font-sans font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                  {course.title}
+                                </h5>
+                                {course.category && (
+                                  <div className="text-[11px] text-stone-400 mt-1 font-medium">
+                                    {course.category}
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )
+                  })()
+                ) : (
+                  /* For Raniya Parveen: 8 bubbles, details left empty as requested */
+                  <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 border border-dashed border-stone-200 dark:border-stone-700 text-center space-y-2">
+                    <div className="w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
+                      <GraduationCap className="w-5 h-5" />
+                    </div>
+                    <h5 className="font-serif font-bold text-base text-stone-700 dark:text-stone-300">
+                      Semester {selectedSemesterBubble}
+                    </h5>
+                    <p className="text-xs text-stone-400 max-w-sm mx-auto">
+                      No course details added for this semester yet.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          )}
         </div>
       </section>
 

@@ -1,4 +1,4 @@
-import { Note, DoubtMessage, SubjectItem, UserProfile } from '../types'
+import { Note, DoubtMessage, SubjectItem, UserProfile, CourseItem } from '../types'
 
 const NOTES_STORAGE_KEY = 'auranotes_notes_v2'
 const API_KEY_STORAGE_KEY = 'auranotes_gemini_api_key'
@@ -8,6 +8,31 @@ const SUBJECTS_STORAGE_KEY = 'auranotes_subjects_v2'
 const NOTEBOOKS_STORAGE_KEY = 'auranotes_notebooks_v2'
 const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
 const USERS_STORAGE_KEY = 'auranotes_users_v2'
+
+export const ARSHAD_COURSES: CourseItem[] = [
+  // Semester 1
+  { code: '21PDM101L', title: 'PROFESSIONAL SKILLS AND PRACTICES', semester: 1, credits: 0, category: 'Professional Skills' },
+  { code: '21PYB102J', title: 'SEMICONDUCTOR PHYSICS AND COMPUTATIONAL METHODS', semester: 1, credits: 5, category: 'Basic Sciences / Physics' },
+
+  // Semester 2
+  { code: '21CSC101T', title: 'OBJECT ORIENTED DESIGN AND PROGRAMMING', semester: 2, credits: 3, category: 'Professional Core' },
+  { code: '21CYB101J', title: 'CHEMISTRY', semester: 2, credits: 5, category: 'Basic Sciences / Chemistry' },
+  { code: '21CYM101T', title: 'ENVIRONMENTAL SCIENCE', semester: 2, credits: 0, category: 'Mandatory Non-Credit' },
+  { code: '21EES101T', title: 'ELECTRICAL AND ELECTRONICS ENGINEERING', semester: 2, credits: 4, category: 'Engineering Sciences' },
+  { code: '21LEH103T', title: 'FRENCH', semester: 2, credits: 3, category: 'Humanities & Foreign Languages' },
+  { code: '21LEM101T', title: 'CONSTITUTION OF INDIA', semester: 2, credits: 0, category: 'Mandatory Non-Credit' },
+  { code: '21MAB102T', title: 'ADVANCED CALCULUS AND COMPLEX ANALYSIS', semester: 2, credits: 4, category: 'Mathematics & Analysis' },
+  { code: '21MES102L', title: 'ENGINEERING GRAPHICS AND DESIGN', semester: 2, credits: 2, category: 'Engineering Design' },
+
+  // Semester 3
+  { code: '21CSC201J', title: 'DATA STRUCTURES AND ALGORITHMS', semester: 3, credits: 4, category: 'Professional Core' },
+  { code: '21CSC202J', title: 'OPERATING SYSTEMS', semester: 3, credits: 4, category: 'Professional Core' },
+  { code: '21CSC203P', title: 'ADVANCED PROGRAMMING PRACTICE', semester: 3, credits: 4, category: 'Practical & Programming Lab' },
+  { code: '21CSS201T', title: 'COMPUTER ORGANIZATION AND ARCHITECTURE', semester: 3, credits: 4, category: 'Hardware & Architecture' },
+  { code: '21LEM201T', title: 'PROFESSIONAL ETHICS', semester: 3, credits: 0, category: 'Mandatory Non-Credit' },
+  { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 3, category: 'Humanities' },
+  { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 3, category: 'Mathematics & Analysis' },
+]
 
 export const USERS: UserProfile[] = [
   {
@@ -342,6 +367,20 @@ export const storageService = {
     } catch (e) {
       console.error('Failed to save users', e)
     }
+  },
+
+  getCoursesForUser(userId: string): CourseItem[] {
+    const user = this.getAllUsers().find(u => u.id === userId)
+    if (userId === 'user-arshad' || (user && user.name.toLowerCase().includes('arshad'))) {
+      return ARSHAD_COURSES
+    }
+    // For Raniya Parveen: empty course details as requested
+    return []
+  },
+
+  getCoursesBySemester(userId: string, semester: number): CourseItem[] {
+    const courses = this.getCoursesForUser(userId)
+    return courses.filter(c => c.semester === semester)
   },
 
   updateUser(updated: UserProfile): UserProfile[] {
