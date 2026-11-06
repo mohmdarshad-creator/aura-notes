@@ -16,7 +16,8 @@ import {
   ExternalLink,
   Bot,
   User,
-  ArrowRight
+  ArrowRight,
+  BookOpen
 } from 'lucide-react'
 import { Note, DoubtMessage, UserProfile } from '../types'
 import { geminiService } from '../services/geminiService'
@@ -26,6 +27,7 @@ interface GeminiDrawerProps {
   isOpen: boolean
   onClose: () => void
   activeNote: Note | null
+  notes?: Note[]
   activeUser?: UserProfile
   onAppendToNote: (text: string) => void
   onSaveAsNewNote: (title: string, content: string) => void
@@ -37,6 +39,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
   isOpen,
   onClose,
   activeNote,
+  notes = [],
   activeUser,
   onAppendToNote,
   onSaveAsNewNote,
@@ -112,6 +115,7 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
       const responseText = await geminiService.askGemini({
         prompt: textToSend,
         noteContext: noteToAttach,
+        allNotes: notes,
         conversationHistory: history,
       })
 
@@ -215,25 +219,45 @@ export const GeminiDrawer: React.FC<GeminiDrawerProps> = ({
         </div>
       </div>
 
-      {/* Active Note Context Bar */}
+      {/* Knowledge Base Status Bar: Reading all uploaded notes and files */}
+      <div className="px-4 py-2 bg-indigo-50/60 dark:bg-indigo-950/40 border-b border-indigo-100 dark:border-indigo-900/60 flex items-center justify-between text-xs">
+        <div className="flex items-center gap-2 truncate pr-2">
+          <BookOpen className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+          <span className="text-stone-500 dark:text-stone-400">Library Knowledge:</span>
+          <span className="font-semibold text-indigo-700 dark:text-indigo-300">
+            {notes.length} {notes.length === 1 ? 'note' : 'notes & files'} indexed
+          </span>
+          {activeNote && useNoteContext && (
+            <span className="hidden sm:inline text-stone-400 truncate">
+              • Focused on "{activeNote.title}"
+            </span>
+          )}
+        </div>
+        <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200/50 flex items-center gap-1 shadow-2xs">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          Auto-Reading
+        </span>
+      </div>
+
+      {/* Active Note Specific Context Bar if open */}
       {activeNote && (
-        <div className="px-4 py-2 bg-indigo-50/50 dark:bg-indigo-950/30 border-b border-indigo-100 dark:border-indigo-900/50 flex items-center justify-between text-xs">
+        <div className="px-4 py-1.5 bg-stone-100/60 dark:bg-stone-800/50 border-b border-stone-200/60 dark:border-stone-800 flex items-center justify-between text-xs">
           <div className="flex items-center gap-2 truncate pr-2">
             <Paperclip className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
-            <span className="text-stone-500 dark:text-stone-400">Context:</span>
+            <span className="text-stone-400">Primary Focus:</span>
             <span className="font-medium text-stone-800 dark:text-stone-200 truncate">
               {activeNote.title || 'Untitled Note'}
             </span>
           </div>
           <button
             onClick={() => setUseNoteContext(!useNoteContext)}
-            className={`text-[11px] px-2 py-0.5 rounded font-medium transition-colors ${
+            className={`text-[10px] px-2 py-0.5 rounded font-medium transition-colors ${
               useNoteContext
                 ? 'bg-indigo-600 text-white'
                 : 'bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300'
             }`}
           >
-            {useNoteContext ? 'Included' : 'Ignored'}
+            {useNoteContext ? 'Priority' : 'Normal'}
           </button>
         </div>
       )}

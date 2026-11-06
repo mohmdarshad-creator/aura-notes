@@ -250,11 +250,20 @@ export function App() {
     setSelectedNoteId(newNote.id)
   }
 
-  // Upload File as Note from Device (PDF, DOCX, TXT)
+  // Upload File as Note from Device (PDF, DOCX, TXT) with automatic Gemini AI Knowledge Ingestion
   const handleUploadFileNote = async (file: File, category: string = 'General') => {
     try {
       const newNote = await storageService.createNoteFromFile(file, category, activeUser)
       setNotes(prev => [newNote, ...prev])
+
+      // If Gemini API is available, automatically ingest and index the document in background
+      if (geminiService.hasApiKey()) {
+        geminiService.ingestUploadedNote(newNote).then(enrichedContent => {
+          if (enrichedContent) {
+            handleUpdateNote(newNote.id, { content: enrichedContent })
+          }
+        }).catch(err => console.warn('Background Gemini ingestion skipped', err))
+      }
     } catch (err) {
       console.error('Failed to create file note from device', err)
     }
@@ -341,6 +350,7 @@ export function App() {
         isOpen={isGeminiDrawerOpen}
         onClose={() => setIsGeminiDrawerOpen(false)}
         activeNote={activeNote}
+        notes={notes}
         activeUser={activeUser}
         onAppendToNote={handleAppendToNote}
         onSaveAsNewNote={handleSaveAsNewNote}

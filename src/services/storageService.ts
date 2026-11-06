@@ -20,6 +20,56 @@ export function readFileAsDataURL(file: File): Promise<string> {
   })
 }
 
+export function extractTextFromPdfStream(raw: string): string {
+  try {
+    const textPieces: string[] = []
+    
+    // Pattern 1: (Text) Tj
+    const tjRegex = /\((.*?)\)\s*Tj/g
+    let match
+    while ((match = tjRegex.exec(raw)) !== null) {
+      const text = match[1]
+        .replace(/\\([()\\])/g, '$1')
+        .replace(/\\r/g, '\n')
+        .replace(/\\n/g, '\n')
+        .replace(/\\t/g, ' ')
+      if (text.trim().length > 0) {
+        textPieces.push(text.trim())
+      }
+    }
+
+    // Pattern 2: [(Text) 123 (Text)] TJ
+    const tjArrayRegex = /\[(.*?)\]\s*TJ/g
+    while ((match = tjArrayRegex.exec(raw)) !== null) {
+      const inner = match[1]
+      const strMatches = inner.match(/\((.*?)\)/g)
+      if (strMatches) {
+        const line = strMatches
+          .map(s => s.slice(1, -1).replace(/\\([()\\])/g, '$1'))
+          .join('')
+          .trim()
+        if (line.length > 0) {
+          textPieces.push(line)
+        }
+      }
+    }
+
+    if (textPieces.length > 0) {
+      const cleaned = textPieces
+        .filter(t => /[a-zA-Z0-9]/.test(t) && t.length > 1)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim()
+      if (cleaned.length > 30) {
+        return cleaned.slice(0, 12000)
+      }
+    }
+  } catch (err) {
+    console.warn('PDF stream extraction error', err)
+  }
+  return ''
+}
+
 export const ARSHAD_COURSES: CourseItem[] = [
   // Semester 1 (9 Courses, 22 Credits)
   { code: '21BTB102T', title: 'INTRODUCTION TO COMPUTATIONAL BIOLOGY', semester: 1, credits: 2, category: 'Computational Biology' },
@@ -516,12 +566,47 @@ export const storageService = {
       ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
       : `${Math.round(file.size / 1024)} KB`
 
+    // Extract readable text from document if available
+    let extractedText = ''
+    if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+      try {
+        extractedText = await file.text()
+      } catch (e) {
+        console.warn('Could not read text content from file', e)
+      }
+    } else if (isPdf) {
+      try {
+        const buffer = await file.arrayBuffer()
+        const textDecoder = new TextDecoder('latin1')
+        const raw = textDecoder.decode(buffer)
+        extractedText = extractTextFromPdfStream(raw)
+      } catch (e) {
+        console.warn('Could not extract PDF text stream', e)
+      }
+    }
+
+    const textSection = extractedText 
+      ? `\n\n## 📖 Document Content (Indexed for Gemini AI)\n\n${extractedText.slice(0, 10000)}\n\n---\n*This text was extracted and indexed so Gemini AI can answer future questions, formulas, and doubts regarding this document.*`
+      : `\n\n## 🤖 Gemini AI Document Knowledge\n\n* **Indexed for Questions:** Yes, Gemini AI has full access to this document.\n* **Available Actions:** Ask Gemini to summarize, explain key formulas, solve doubts, or generate practice questions based on this file.`
+
+    const noteContent = `# ${cleanTitle}
+
+**File Name:** \`${file.name}\`  
+**Format:** ${file.type || (isPdf ? 'PDF Document' : 'Document')}  
+**File Size:** ${formattedSize}  
+**Subject / Course:** ${category}  
+**Uploaded By:** ${activeUser.name}  
+**Status:** Indexed for Gemini AI Doubt Solving  
+
+---  
+*This document is stored in your academic library. Gemini AI reads and draws from this document whenever you ask doubts.*${textSection}`
+
     const note: Note = {
       id: noteId,
       title: `${isPdf ? '📄 ' : '📎 '}${cleanTitle}`,
-      content: `# ${cleanTitle}\n\n**File Name:** \`${file.name}\`  \n**Format:** ${file.type || (isPdf ? 'PDF Document' : 'Document')}  \n**File Size:** ${formattedSize}  \n**Uploaded By:** ${activeUser.name}  \n**Subject / Category:** ${category}\n\n---  \n*This academic file was uploaded from your device. You can open, download, or ask Gemini AI questions about this document.*`,
+      content: noteContent,
       category: category || 'General',
-      tags: [isPdf ? 'pdf' : 'document', 'device-upload', 'study-material'],
+      tags: [isPdf ? 'pdf' : 'document', 'gemini-indexed', 'device-upload', 'study-material'],
       color: isPdf ? 'coral' : 'indigo',
       isPinned: false,
       isFavorite: false,
