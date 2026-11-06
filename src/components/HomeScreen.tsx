@@ -261,7 +261,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [isClosingCourses, setIsClosingCourses] = useState(false)
   const closeCoursesTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const [selectedSemesterBubble, setSelectedSemesterBubble] = useState<number>(1)
-  const [courseViewMode, setCourseViewMode] = useState<'table' | 'cards'>('table')
+  const [courseViewMode, setCourseViewMode] = useState<'cards' | 'table'>('cards')
   const [showAllSemestersTranscript, setShowAllSemestersTranscript] = useState(false)
   const isArshad = activeUser.id === 'user-arshad' || activeUser.name.toLowerCase().includes('arshad')
   const userCourses = courses
@@ -278,9 +278,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       if (closeCoursesTimerRef.current) clearTimeout(closeCoursesTimerRef.current)
       setIsClosingCourses(false)
       setShowCoursesCompleted(true)
+      setCourseViewMode('cards')
     } else {
       setShowCoursesCompleted(true)
       setIsClosingCourses(false)
+      setCourseViewMode('cards')
     }
   }
 
@@ -1657,12 +1659,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                               {showAllSemestersTranscript ? 'Show Single Sem' : 'All Semesters'}
                             </button>
 
-                            {/* View Switcher: Portal Table vs Cards */}
+                            {/* View Switcher: Grid View vs Portal Table */}
                             <div className="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-lg border border-stone-200 dark:border-stone-700">
                               <button
                                 type="button"
+                                onClick={() => setCourseViewMode('cards')}
+                                className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                                  courseViewMode === 'cards'
+                                    ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
+                                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
+                                }`}
+                                title="Aesthetic Course Grid View"
+                              >
+                                <LayoutGrid className="w-3.5 h-3.5 text-indigo-500" />
+                                <span>Grid View</span>
+                              </button>
+
+                              <button
+                                type="button"
                                 onClick={() => setCourseViewMode('table')}
-                                className={`px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
+                                className={`px-2.5 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                                   courseViewMode === 'table'
                                     ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
                                     : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
@@ -1671,20 +1687,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                               >
                                 <Table className="w-3.5 h-3.5 text-indigo-500" />
                                 <span>Portal Table</span>
-                              </button>
-
-                              <button
-                                type="button"
-                                onClick={() => setCourseViewMode('cards')}
-                                className={`px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1.5 transition-all ${
-                                  courseViewMode === 'cards'
-                                    ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
-                                    : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
-                                }`}
-                                title="Aesthetic Cards View"
-                              >
-                                <LayoutGrid className="w-3.5 h-3.5 text-indigo-500" />
-                                <span>Cards</span>
                               </button>
                             </div>
                           </div>
@@ -1778,19 +1780,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           </div>
                         ) : (
                           /* MODE 2: AESTHETIC GRID OF CARDS */
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="courses-grid-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
                             {displayCourses.map((course) => (
                               <div
                                 key={course.code}
-                                className="p-4 rounded-2xl bg-stone-50/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-600 transition-all flex flex-col justify-between gap-3 group"
+                                className="course-grid-card p-4 rounded-2xl bg-stone-50/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 shadow-xs hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-md hover:-translate-y-1 hover:scale-[1.01] transition-all duration-300 flex flex-col justify-between gap-3 group"
                               >
                                 <div className="flex items-start justify-between gap-2">
-                                  <div className="flex items-center gap-2">
-                                    <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs">
+                                  <div className="flex items-center gap-2 flex-wrap">
+                                    <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 font-mono font-bold text-xs border border-indigo-200/60 dark:border-indigo-800/60 shadow-2xs">
                                       {course.code}
                                     </span>
                                     {showAllSemestersTranscript && (
-                                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300">
+                                      <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-700 text-stone-600 dark:text-stone-300 font-semibold">
                                         Sem {course.semester}
                                       </span>
                                     )}

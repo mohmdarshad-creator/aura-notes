@@ -549,32 +549,40 @@ html.theme-steel-gold .personal-tab-container .scrollbar-thin button span[class*
    3. AESTHETIC CARDS GRID (Mode 2: Course Modules Grid)
    Dark shades only - deep matte obsidian cards with subtle border
    ============================================================ */
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div,
+html.theme-steel-gold .personal-tab-container .courses-grid-container > div,
+html.theme-steel-gold .personal-tab-container .course-grid-card {
   background-color: #16120D !important;
   border-color: #261E16 !important;
   box-shadow: none !important;
 }
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover,
+html.theme-steel-gold .personal-tab-container .courses-grid-container > div:hover,
+html.theme-steel-gold .personal-tab-container .course-grid-card:hover {
   background-color: #1C1712 !important;
   border-color: #362C20 !important;
 }
 /* Course Code Badge inside Grid Cards */
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-indigo-50"] {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-indigo-50"],
+html.theme-steel-gold .personal-tab-container .course-grid-card span.font-mono[class*="bg-indigo-50"] {
   background-color: #1D1812 !important;
   color: #C7BEAF !important;
   border-color: #2F251A !important;
 }
 /* Credit Badge inside Grid Cards - No bright green */
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-emerald-50"] {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-emerald-50"],
+html.theme-steel-gold .personal-tab-container .course-grid-card span.font-mono[class*="bg-emerald-50"] {
   background-color: #1A1510 !important;
   color: #9E9080 !important;
   border-color: #2B2117 !important;
 }
 /* Course Title inside Grid Cards */
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div h5 {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div h5,
+html.theme-steel-gold .personal-tab-container .course-grid-card h5 {
   color: #FAF6EE !important;
 }
-html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover h5 {
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover h5,
+html.theme-steel-gold .personal-tab-container .course-grid-card:hover h5 {
   color: #E5E2DC !important;
 }
 /* Category inside Grid Cards */
