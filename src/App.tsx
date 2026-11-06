@@ -6,7 +6,7 @@ import { NoteEditor } from './components/NoteEditor'
 import { GeminiDrawer } from './components/GeminiDrawer'
 import { SettingsModal } from './components/SettingsModal'
 import { FloatingBar } from './components/FloatingBar'
-import { Note, PageRoute, SubjectItem, NoteColor, UserProfile } from './types'
+import { Note, PageRoute, SubjectItem, NoteColor, UserProfile, CourseItem } from './types'
 import { storageService, INITIAL_NOTES, USERS } from './services/storageService'
 import { geminiService } from './services/geminiService'
 
@@ -18,6 +18,7 @@ export function App() {
   const [notes, setNotes] = useState<Note[]>(() => storageService.getNotes())
   const [subjects, setSubjects] = useState<SubjectItem[]>(() => storageService.getSubjects())
   const [notebooks, setNotebooks] = useState<SubjectItem[]>(() => storageService.getNotebooks())
+  const [courses, setCourses] = useState<CourseItem[]>(() => storageService.getCoursesForUser(activeUser.id))
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [isGeminiDrawerOpen, setIsGeminiDrawerOpen] = useState(false)
@@ -63,6 +64,7 @@ export function App() {
   const handleSelectUser = (user: UserProfile) => {
     setActiveUser(user)
     storageService.setActiveUser(user.id)
+    setCourses(storageService.getCoursesForUser(user.id))
   }
 
   const handleUpdateUser = (updatedUser: UserProfile) => {
@@ -128,17 +130,25 @@ export function App() {
 
   // Rename a subject, notebook, or course and sync notes & active route
   const handleRenameSubject = (oldName: string, newName: string) => {
+    const trimmedNew = newName.trim()
+    const trimmedOld = oldName.trim()
+    if (!trimmedNew || trimmedNew === trimmedOld) return
+
     const { updatedSubjects, updatedNotebooks, updatedCourses, updatedNotes } = 
-      storageService.renameSubjectOrCourse(oldName, newName, activeUser.id)
+      storageService.renameSubjectOrCourse(trimmedOld, trimmedNew, activeUser.id)
     
     setSubjects(updatedSubjects)
     setNotebooks(updatedNotebooks)
+    setCourses(updatedCourses)
     setNotes(updatedNotes)
     
-    // If currently inside this subject's window, update the active route smoothly
-    if (route.type === 'subject' && route.subjectName.toLowerCase() === oldName.toLowerCase()) {
-      setRoute({ type: 'subject', subjectName: newName.trim() })
-    }
+    // Update active route if currently inside this subject's window
+    setRoute(prev => {
+      if (prev.type === 'subject') {
+        return { ...prev, subjectName: trimmedNew }
+      }
+      return prev
+    })
   }
 
   // Add new subject dynamically (for Subjects section)
@@ -308,6 +318,7 @@ export function App() {
           <HomeScreen
             subjects={subjects}
             notebooks={notebooks}
+            courses={courses}
             notes={notes}
             activeUser={activeUser}
             users={users}

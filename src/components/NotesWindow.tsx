@@ -123,8 +123,10 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
+      e.preventDefault()
       handleSaveSubjectName()
     } else if (e.key === 'Escape') {
+      e.preventDefault()
       handleCancelEditing()
     }
   }
@@ -407,7 +409,13 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           <div className="flex-1 min-w-0">
             {currentRoute.type === 'subject' && isEditingSubject ? (
               /* Inline Edit Mode */
-              <form onSubmit={handleSaveSubjectName} className="flex items-center gap-2 flex-wrap animate-fade-in">
+              <form 
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  handleSaveSubjectName(e)
+                }} 
+                className="flex items-center gap-2 flex-wrap animate-fade-in"
+              >
                 <input
                   ref={editSubjectInputRef}
                   type="text"
@@ -419,8 +427,9 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
                 />
                 <div className="flex items-center gap-1.5">
                   <button
-                    type="submit"
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all hover:scale-[1.02]"
+                    type="button"
+                    onClick={() => handleSaveSubjectName()}
+                    className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all hover:scale-[1.02] cursor-pointer"
                   >
                     <Check className="w-3.5 h-3.5" />
                     <span>Save</span>
@@ -428,7 +437,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
                   <button
                     type="button"
                     onClick={handleCancelEditing}
-                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 transition-colors"
+                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-600 dark:text-stone-300 border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer"
                   >
                     <X className="w-3.5 h-3.5" />
                     <span>Cancel</span>

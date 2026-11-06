@@ -513,7 +513,7 @@ export const storageService = {
   } {
     const trimmedNew = newName.trim()
     const trimmedOld = oldName.trim()
-    if (!trimmedNew || trimmedNew.toLowerCase() === trimmedOld.toLowerCase()) {
+    if (!trimmedNew || trimmedNew === trimmedOld) {
       return {
         updatedSubjects: this.getSubjects(),
         updatedNotebooks: this.getNotebooks(),
@@ -543,17 +543,30 @@ export const storageService = {
     // 3. Rename in courses if present
     const targetUserId = userId || 'user-arshad'
     const currentCourses = this.getCoursesForUser(targetUserId)
-    const updatedCourses = currentCourses.map(c => 
-      c.title.trim().toLowerCase() === trimmedOld.toLowerCase() 
-        ? { ...c, title: trimmedNew } 
-        : c
-    )
+    const updatedCourses = currentCourses.map(c => {
+      const matchTitle = c.title.trim().toLowerCase() === trimmedOld.toLowerCase()
+      const matchCode = c.code.trim().toLowerCase() === trimmedOld.toLowerCase()
+      if (matchTitle || matchCode) {
+        return { ...c, title: trimmedNew }
+      }
+      return c
+    })
     this.saveCoursesForUser(targetUserId, updatedCourses)
+
+    // Also update in-memory ARSHAD_COURSES so any fallback references reflect the new name
+    ARSHAD_COURSES.forEach(c => {
+      if (c.title.trim().toLowerCase() === trimmedOld.toLowerCase() || c.code.trim().toLowerCase() === trimmedOld.toLowerCase()) {
+        c.title = trimmedNew
+      }
+    })
 
     // 4. Rename category in all notes
     const currentNotes = this.getNotes()
     const updatedNotes = currentNotes.map(n => {
-      if (n.category && n.category.trim().toLowerCase() === trimmedOld.toLowerCase()) {
+      if (n.category && (
+        n.category.trim().toLowerCase() === trimmedOld.toLowerCase() ||
+        n.category.trim().toLowerCase() === trimmedNew.toLowerCase()
+      )) {
         return { ...n, category: trimmedNew, updatedAt: Date.now() }
       }
       return n
