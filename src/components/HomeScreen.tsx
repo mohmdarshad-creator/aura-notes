@@ -582,8 +582,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={{ transitionDelay: semestersVisible ? `${index * 40}ms` : '0ms' }}
                 className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
                   isSelected && !isClosingSemester
-                    ? 'semester-tile-selected border-amber-500 shadow-lg ring-2 ring-amber-500/30 shadow-amber-500/15 -translate-y-1'
-                    : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-amber-400 dark:hover:border-amber-500'
+                    ? 'semester-tile-selected border-amber-500 shadow-xl ring-2 ring-amber-500/30 shadow-amber-500/20 -translate-y-2 scale-[1.025] animate-pulse-subtle'
+                    : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.035] hover:border-amber-400 dark:hover:border-amber-500'
                 }`}
               >
                 {/* Subtle warm gold ambient overlay on selected */}
@@ -764,7 +764,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         style={{
                           animationDelay: `${Math.min(index * 35, 300)}ms`
                         }}
-                        className="animate-fade-in group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-amber-400 dark:hover:border-amber-500"
+                        className="animate-fade-in group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-amber-400 dark:hover:border-amber-500"
                       >
                         {/* Ambient subtle glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -1082,7 +1082,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     <div
                       key={sub.id}
                       onClick={() => onOpenSubject(sub.name)}
-                      className="group p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-500 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between"
+                      className="group p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-amber-400 dark:hover:border-amber-500 transition-all duration-300 cursor-pointer shadow-xs hover:shadow-xl hover:-translate-y-2 hover:scale-[1.025] flex flex-col justify-between"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="w-8 h-8 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 dark:text-stone-300">
@@ -1186,13 +1186,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div
             onClick={() => onOpenCollection('all')}
             style={{ transitionDelay: '60ms' }}
-            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-600`}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-11 h-11 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-200/60 dark:border-indigo-900 flex items-center justify-center group-hover:scale-115 group-hover:rotate-6 transition-transform duration-300">
                   <BookOpen className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
                 </div>
                 <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-200 dark:border-stone-700">
@@ -1211,7 +1211,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
               <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-xs font-semibold text-indigo-600 dark:text-indigo-400">
                 <span>Open in window</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
               </div>
             </div>
           </div>
@@ -1220,13 +1220,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div
             onClick={() => onOpenCollection('pinned')}
             style={{ transitionDelay: '180ms' }}
-            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900 flex items-center justify-center group-hover:scale-115 group-hover:rotate-6 transition-transform duration-300">
                   <Pin className="w-5 h-5 text-amber-600 dark:text-amber-400 fill-amber-500/30" />
                 </div>
                 <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800">
@@ -1245,7 +1245,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
               <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-xs font-semibold text-amber-600 dark:text-amber-400">
                 <span>Open in window</span>
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
+                <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-300" />
               </div>
             </div>
           </div>
@@ -1254,13 +1254,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div
             onClick={() => onOpenCollection('favorites')}
             style={{ transitionDelay: '300ms' }}
-            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900 flex items-center justify-center group-hover:scale-115 group-hover:rotate-6 transition-transform duration-300">
                   <Star className="w-5 h-5 text-amber-500 fill-amber-500/30" />
                 </div>
                 <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800">
@@ -1324,13 +1324,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={{
                   transitionDelay: `${(index % 4) * 90 + 50}ms`
                 }}
-                className={`tile-reveal ${notebooksVisible ? 'revealed' : ''} group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border}`}
+                className={`tile-reveal ${notebooksVisible ? 'revealed' : ''} group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border}`}
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300`} />
                 
                 <div className="relative z-10 flex flex-col justify-between h-full min-h-[130px]">
                   <div className="flex items-center justify-between">
-                    <div className="w-9 h-9 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <div className="w-9 h-9 rounded-xl bg-stone-100 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-center group-hover:scale-115 group-hover:-translate-y-1 group-hover:rotate-3 transition-transform duration-300">
                       {renderSubjectIcon(notebook.icon, colors.text)}
                     </div>
                     <span className={`text-[11px] font-mono font-medium px-2 py-0.5 rounded-full border ${colors.badge}`}>
@@ -1398,7 +1398,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Personal Details Aesthetic Card (Fade In when Scrolled In, Fade Out when Scrolled Out) */}
         <div 
           ref={detailsRef}
-          className={`details-tile-fade ${detailsVisible ? 'faded-in' : 'faded-out'} personal-tab-container relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
+          key={activeUser.id}
+          className={`details-tile-fade ${detailsVisible ? 'faded-in' : 'faded-out'} personal-tab-container relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.01] transition-all duration-300 overflow-hidden animate-fade-in`}
         >
           {/* Subtle Ambient Background Tint */}
           <div className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${activeUser.avatarGradient} opacity-5 blur-3xl pointer-events-none`} />
@@ -1407,7 +1408,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             
             {/* Left: Avatar & Identity Details */}
             <div className="flex items-start sm:items-center gap-4 sm:gap-5">
-              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-md flex-shrink-0`}>
+              <div className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr ${activeUser.avatarGradient} flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-md hover:scale-105 transition-transform duration-300 flex-shrink-0 animate-pulse-subtle`}>
                 {activeUser.initials}
               </div>
 

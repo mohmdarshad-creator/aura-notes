@@ -1134,6 +1134,87 @@ html.theme-steel-gold .gemini-drawer-container div.mt-2.px-1 strong {
   animation: gentleLevitate 5s ease-in-out infinite;
 }
 
+/* Slower luxury floating animation */
+@keyframes levitateSlow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-levitate-slow {
+  animation: levitateSlow 6s ease-in-out infinite;
+}
+
+/* Kinetic Name Shimmer Animation */
+@keyframes nameShimmer {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-name-shimmer {
+  background-size: 200% 200% !important;
+  animation: nameShimmer 5s ease-in-out infinite !important;
+}
+
+/* Ambient Aura Glow Breathing Animation */
+@keyframes auraGlowPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.65;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.18);
+    opacity: 0.95;
+  }
+}
+
+.animate-aura-glow {
+  animation: auraGlowPulse 4.5s ease-in-out infinite !important;
+}
+
+/* Name Card Spring Pop Entrance */
+@keyframes namePopReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.96);
+  }
+  60% {
+    transform: translateY(-3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-name-pop {
+  animation: namePopReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+}
+
+/* Gentle Float Animation on Idle */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3.5px);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
 /* Scroll-triggered tile entrance animations (smooth once) */
 .tile-reveal {
   opacity: 0;

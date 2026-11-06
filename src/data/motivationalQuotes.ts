@@ -107,3 +107,4 @@ export const MOTIVATIONAL_QUOTES: MotivationalQuote[] = [
   { id: 99, text: "Nothing in life is to be feared, it is only to be understood. Now is the time to understand more.", author: "Marie Curie", tag: "Courage" },
   { id: 100, text: "The present is theirs; the future, for which I really worked, is mine.", author: "Nikola Tesla", tag: "Vision" }
 ]
+

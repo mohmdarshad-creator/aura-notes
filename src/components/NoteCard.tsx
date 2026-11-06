@@ -55,10 +55,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   return (
     <div
       onClick={onClick}
-      className={`note-card-container group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md border-l-4 ${accent.border} ${
+      className={`note-card-container group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border transition-all duration-300 cursor-pointer shadow-sm hover:shadow-xl hover:-translate-y-2 hover:scale-[1.015] border-l-4 ${accent.border} ${
         isSelected
           ? 'border-indigo-500 ring-2 ring-indigo-500/20 bg-indigo-50/20 dark:bg-indigo-950/20'
-          : 'border-stone-200/80 dark:border-stone-800/80 hover:translate-y-[-2px]'
+          : 'border-stone-200/80 dark:border-stone-800/80'
       }`}
     >
       {/* Top Header */}

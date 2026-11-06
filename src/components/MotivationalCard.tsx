@@ -49,7 +49,7 @@ export const MotivationalCard: React.FC = () => {
   }
 
   return (
-    <div className="motivational-spark-card group relative overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-300 shadow-sm hover:shadow-md border">
+    <div className="motivational-spark-card animate-levitate-slow group relative overflow-hidden rounded-2xl sm:rounded-3xl p-5 sm:p-6 transition-all duration-300 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.01] border">
       
       {/* Ambient background glow & radial gradient */}
       <div className="card-ambient-glow absolute -top-16 -right-16 w-48 h-48 rounded-full blur-3xl pointer-events-none opacity-40 transition-opacity group-hover:opacity-60" />
@@ -138,3 +138,4 @@ export const MotivationalCard: React.FC = () => {
     </div>
   )
 }
+

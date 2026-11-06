@@ -36,12 +36,13 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
     ? 'Raniya'
     : activeUser.name.trim().split(' ')[0]
 
-  // Calculate opacity and scale based on scroll
+  // Calculate dynamic parallax float, scale and opacity based on scroll
   const maxScroll = 260
   const progress = Math.min(1, Math.max(0, scrollY / maxScroll))
 
+  const floatY = progress * 65 // Smoothly floats upward as you scroll
   const opacity = Math.max(0, 1 - progress * 1.35)
-  const scale = 1 - progress * 0.08
+  const scale = 1 - progress * 0.1
 
   // Color accents based on active user's gradient
   const glowGradient = activeUser.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'
@@ -50,19 +51,19 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
   return (
     <div className="relative w-full overflow-hidden pt-8 pb-10 sm:pt-14 sm:pb-16 flex flex-col items-center justify-center text-center select-none pointer-events-none">
       
-      {/* Ambient background glowing aura */}
+      {/* Ambient background glowing aura with breathing pulse animation */}
       <div 
-        className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[560px] h-[220px] bg-gradient-to-r ${glowGradient} rounded-full blur-3xl opacity-75 dark:opacity-50 transition-all duration-700`}
+        className={`animate-aura-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[340px] sm:w-[560px] h-[220px] bg-gradient-to-r ${glowGradient} rounded-full blur-3xl opacity-75 dark:opacity-50 transition-all duration-700`}
         style={{
-          transform: `translate(-50%, -50%) scale(${1 - progress * 0.4})`,
-          opacity: Math.max(0, (1 - progress) * 0.7)
+          transform: `translate(-50%, -50%) translateY(-${floatY * 0.4}px) scale(${1 - progress * 0.4})`,
+          opacity: Math.max(0, (1 - progress) * 0.8)
         }}
       />
 
       {/* Pill Badge */}
       <div 
         className={`inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-stone-800/80 border border-stone-200/80 dark:border-stone-700/80 backdrop-blur-md shadow-xs mb-5 transition-all duration-300 ${
-          isMounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-3'
+          isMounted ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-3 scale-95'
         }`}
         style={{
           opacity: Math.max(0, 1 - progress * 2),
@@ -71,19 +72,19 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
       >
         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
         <span className="text-xs font-semibold uppercase tracking-wider text-stone-600 dark:text-stone-300 flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-pulse" />
           AURA Study Workspace • {activeUser.role}
         </span>
       </div>
 
-      {/* Unified Centered Typography Container: Perfectly Aligned */}
+      {/* Unified Centered Typography Container: Active Parallax Motion */}
       <div 
         className={`relative flex flex-col items-center justify-center transition-transform duration-75 will-change-transform ${
           isMounted ? 'animate-hero-reveal' : 'opacity-0 scale-95'
         }`}
         style={{
           opacity,
-          transform: `scale(${scale})`
+          transform: `translateY(-${floatY}px) scale(${scale})`
         }}
       >
         {/* Line 1: "Welcome back" (Centered and Aligned with Username) */}
@@ -91,9 +92,9 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
           Welcome back
         </div>
 
-        {/* Line 2: Name ("Arshad" or "Raniya") (Centered and Aligned) */}
-        <div className="tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-2 sm:mt-3 bg-gradient-to-r bg-clip-text text-transparent pb-2">
-          <span className={`bg-gradient-to-r ${nameGradient} bg-clip-text text-transparent`}>
+        {/* Line 2: Name with Active Shimmer Gradient and Spring Pop */}
+        <div className="tracking-tight font-serif font-extrabold text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-none mt-2 sm:mt-3 pb-2 animate-name-pop">
+          <span className={`bg-gradient-to-r ${nameGradient} bg-clip-text text-transparent animate-name-shimmer inline-block`}>
             {displayName}
           </span>
         </div>
