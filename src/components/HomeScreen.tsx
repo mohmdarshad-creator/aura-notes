@@ -30,7 +30,8 @@ import {
   Table,
   LayoutGrid,
   Pencil,
-  Edit3
+  Edit3,
+  Trash2
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile, CourseItem } from '../types'
 import { HeroWelcome } from './HeroWelcome'
@@ -55,6 +56,8 @@ interface HomeScreenProps {
   onOpenSettings?: () => void
   onUploadFileNote?: (file: File, category: string) => void
   onRenameSubject?: (oldName: string, newName: string) => void
+  onAddCourse?: (course: CourseItem) => void
+  onDeleteCourse?: (courseCode: string) => void
 }
 
 const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; glow: string; badge: string }> = {
@@ -127,7 +130,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onNewNote,
   onOpenSettings,
   onUploadFileNote,
-  onRenameSubject
+  onRenameSubject,
+  onAddCourse,
+  onDeleteCourse
 }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [addModalTarget, setAddModalTarget] = useState<'subject' | 'notebook'>('subject')
@@ -135,6 +140,39 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
   
+  // Fill Course Details Modal State
+  const [showAddCourseModal, setShowAddCourseModal] = useState(false)
+  const [newCourseCode, setNewCourseCode] = useState('')
+  const [newCourseTitle, setNewCourseTitle] = useState('')
+  const [newCourseSemester, setNewCourseSemester] = useState<number>(4)
+  const [newCourseCredits, setNewCourseCredits] = useState<number>(4)
+  const [newCourseCategory, setNewCourseCategory] = useState('Professional Core')
+
+  const openAddCourseModal = (semNumber?: number) => {
+    const sem = semNumber ?? selectedSemester ?? selectedSemesterBubble ?? 4
+    setNewCourseSemester(sem)
+    setNewCourseCode('')
+    setNewCourseTitle('')
+    setNewCourseCredits(4)
+    setNewCourseCategory('Professional Core')
+    setShowAddCourseModal(true)
+  }
+
+  const handleAddCourseSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!newCourseCode.trim() || !newCourseTitle.trim()) return
+    if (onAddCourse) {
+      onAddCourse({
+        code: newCourseCode.trim().toUpperCase(),
+        title: newCourseTitle.trim(),
+        semester: Number(newCourseSemester) || 1,
+        credits: Number(newCourseCredits) || 0,
+        category: newCourseCategory.trim() || 'Professional Core'
+      })
+    }
+    setShowAddCourseModal(false)
+  }
+
   // Inline rename course state on card
   const [editingCourseCode, setEditingCourseCode] = useState<string | null>(null)
   const [editingCourseTitle, setEditingCourseTitle] = useState('')
@@ -539,9 +577,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     <span className={`text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded border ${
                       semNum <= 3
                         ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
-                        : 'bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50'
+                        : semCourses.length > 0
+                          ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200/50 dark:border-indigo-800/50'
+                          : 'bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50'
                     }`}>
-                      {semNum <= 3 ? 'Completed' : 'Upcoming'}
+                      {semNum <= 3 ? 'Completed' : semCourses.length > 0 ? 'Active' : 'Upcoming'}
                     </span>
                   )}
                 </div>
@@ -554,9 +594,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Semester {semNum}
                   </h3>
                   <div className="text-[10px] text-stone-400 mt-0.5 truncate">
-                    {semNum <= 3 
-                      ? `${semCredits} Credits • Cleared`
-                      : `${semCredits} Credits • Curriculum`
+                    {semCourses.length > 0 
+                      ? semNum <= 3 
+                        ? `${semCredits} Credits • Cleared`
+                        : `${semCredits} Credits • ${semCourses.length} Courses`
+                      : '0 Courses • Empty'
                     }
                   </div>
                 </div>
@@ -585,9 +627,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   Semester 0{selectedSemester}
                 </span>
                 <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
-                  {selectedSemester <= 3 ? 'Completed Course Modules' : 'Upcoming Curriculum Modules'}
+                  {selectedSemester <= 3 
+                    ? 'Completed Course Modules' 
+                    : (courses.filter(c => c.semester === selectedSemester).length > 0 ? 'Course Modules' : 'Upcoming Semester Modules')
+                  }
                 </span>
-                {courses.filter(c => c.semester === selectedSemester).length > 0 && (
+                {courses.filter(c => c.semester === selectedSemester).length > 0 ? (
                   <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border ${
                     selectedSemester <= 3
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
@@ -595,10 +640,32 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   }`}>
                     {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits {selectedSemester <= 3 ? '• Cleared' : ''}
                   </span>
+                ) : (
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50">
+                    0 Courses • Empty Box
+                  </span>
                 )}
               </div>
 
               <div className="flex items-center gap-2 flex-wrap">
+                {/* Fill Course Details Bubble Button */}
+                <div className="relative flex items-center group animate-bubble-spring">
+                  <div 
+                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => openAddCourseModal(selectedSemester)}
+                    className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                    title="Fill Course Details for this semester"
+                  >
+                    <PlusCircle className="w-3.5 h-3.5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+                    <span className="max-w-0 opacity-0 group-hover:max-w-[150px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
+                      + Fill Course Details
+                    </span>
+                  </button>
+                </div>
+
                 {/* Add Subject Bubble Button */}
                 <div className="relative flex items-center group animate-bubble-spring">
                   <div 
@@ -729,20 +796,37 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                 <h3 className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">
                                   {course.title}
                                 </h3>
-                                {onRenameSubject && (
-                                  <button
-                                    type="button"
-                                    onClick={(e) => {
-                                      e.stopPropagation()
-                                      setEditingCourseCode(course.code)
-                                      setEditingCourseTitle(course.title)
-                                    }}
-                                    className="opacity-0 group-hover:opacity-100 p-1 rounded-md text-stone-400 hover:text-indigo-600 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer flex-shrink-0"
-                                    title="Rename subject"
-                                  >
-                                    <Edit3 className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
+                                <div className="flex items-center gap-1">
+                                  {onRenameSubject && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        setEditingCourseCode(course.code)
+                                        setEditingCourseTitle(course.title)
+                                      }}
+                                      className="opacity-0 group-hover/rename:opacity-100 p-1 rounded-md text-stone-400 hover:text-indigo-600 hover:bg-stone-100 dark:hover:bg-stone-800 transition-all cursor-pointer flex-shrink-0"
+                                      title="Rename course"
+                                    >
+                                      <Edit3 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                  {onDeleteCourse && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => {
+                                        e.stopPropagation()
+                                        if (window.confirm(`Delete course "${course.title}" (${course.code})?`)) {
+                                          onDeleteCourse(course.code)
+                                        }
+                                      }}
+                                      className="opacity-0 group-hover/rename:opacity-100 p-1 rounded-md text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-all cursor-pointer flex-shrink-0"
+                                      title="Delete course"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
                               </div>
                             )}
                             <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 line-clamp-1">
@@ -786,20 +870,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             // Empty state for semesters without registered courses (e.g., Sem 4..8 or Raniya)
             return (
               <div className="py-14 px-6 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800 bg-white/60 dark:bg-stone-900/40 text-center flex flex-col items-center justify-center space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-xs">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-stone-800 dark:text-stone-200 text-lg">
-                    Semester {selectedSemester} Curriculum
+                    Semester {selectedSemester} is Empty
                   </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-1">
-                    {isArshad 
-                      ? `Semester ${selectedSemester} courses will appear here as you advance. You can start uploading lecture materials or create custom subject tiles now.`
-                      : `Semester ${selectedSemester} course modules ready. You can add notes or upload documents directly from your device.`}
+                  <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-1 leading-relaxed">
+                    No course modules added yet for Semester {selectedSemester}. In the future, this box can be filled with details matching the format of earlier semesters.
                   </p>
                 </div>
-                <div className="flex items-center gap-3 flex-wrap justify-center">
+                <div className="flex items-center gap-3 flex-wrap justify-center pt-1">
+                  {/* Fill Course Details Button */}
+                  <button
+                    type="button"
+                    onClick={() => openAddCourseModal(selectedSemester)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>+ Fill Course Details</span>
+                  </button>
+
                   {/* Add Notes from Device Bubble */}
                   <div className="relative flex items-center group animate-bubble-spring">
                     <div 
@@ -1327,9 +1419,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </div>
               </div>
 
-              {/* ONLY COMPLETED SEMESTER BUBBLES (Semester 1, 2, 3) */}
+              {/* ALL SEMESTER BUBBLES (1 to 8, with upcoming semesters empty) */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-                {[1, 2, 3].map((semNum) => {
+                {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
                   const isSelected = selectedSemesterBubble === semNum && !showAllSemestersTranscript
                   const semCourses = courses.filter(c => c.semester === semNum)
                   
@@ -1351,7 +1443,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <span className={`w-5 h-5 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
                         isSelected 
                           ? 'bg-white/25 text-white' 
-                          : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                          : semCourses.length > 0
+                            ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
+                            : 'bg-stone-200 dark:bg-stone-700 text-stone-400'
                       }`}>
                         {semCourses.length}
                       </span>
@@ -1360,26 +1454,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 })}
               </div>
 
-              {/* DETAILS ACCORDING TO SELECTED COMPLETED SEMESTER BUBBLE */}
+              {/* DETAILS ACCORDING TO SELECTED SEMESTER BUBBLE */}
               <div className="space-y-3 pt-1">
                 {(() => {
-                  const completedOnly = courses.filter(c => c.semester <= 3)
                   const coursesForBubble = courses.filter(c => c.semester === selectedSemesterBubble)
-                  const displayCourses = showAllSemestersTranscript ? completedOnly : coursesForBubble
+                  const displayCourses = showAllSemestersTranscript ? courses : coursesForBubble
                   const totalCredits = displayCourses.reduce((sum, c) => sum + c.credits, 0)
                     
                     if (displayCourses.length === 0) {
                       return (
-                        <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 border border-dashed border-stone-200 dark:border-stone-700 text-center space-y-2">
-                          <div className="w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
-                            <GraduationCap className="w-5 h-5" />
+                        <div className="p-8 sm:p-10 rounded-2xl bg-stone-50/70 dark:bg-stone-800/40 border-2 border-dashed border-stone-200 dark:border-stone-700/80 text-center space-y-4">
+                          <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto shadow-xs">
+                            <GraduationCap className="w-6 h-6" />
                           </div>
-                          <h5 className="font-serif font-bold text-base text-stone-700 dark:text-stone-300">
-                            Semester {selectedSemesterBubble} Curriculum
-                          </h5>
-                          <p className="text-xs text-stone-400 max-w-sm mx-auto">
-                            Upcoming semester registration in progress. No courses completed yet for this semester.
-                          </p>
+                          <div className="space-y-1">
+                            <h5 className="font-serif font-bold text-base sm:text-lg text-stone-800 dark:text-stone-200">
+                              Semester {selectedSemesterBubble} is Empty
+                            </h5>
+                            <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto leading-relaxed">
+                              No courses registered or completed for Semester {selectedSemesterBubble} yet. In the future, this box can be filled with course code, title, credits, and category matching the format of earlier semesters.
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => openAddCourseModal(selectedSemesterBubble)}
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-95 transition-all cursor-pointer"
+                          >
+                            <Plus className="w-4 h-4" />
+                            <span>+ Fill Course Details for Semester {selectedSemesterBubble}</span>
+                          </button>
                         </div>
                       )
                     }
@@ -1391,8 +1494,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-stone-800 dark:text-stone-200">
                               {showAllSemestersTranscript 
-                                ? `SRM Completed Transcript (${displayCourses.length} Courses Across Semesters 1-3)`
-                                : `Semester ${selectedSemesterBubble} Completed Courses (${displayCourses.length} Courses)`
+                                ? `All Registered Courses (${displayCourses.length} Subjects)`
+                                : `Semester ${selectedSemesterBubble} (${displayCourses.length} Courses)`
                               }
                             </span>
                             <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-200/50 dark:border-indigo-800/50">
@@ -1401,6 +1504,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           </div>
 
                           <div className="flex items-center gap-2 flex-wrap">
+                            {/* Fill / Add Course Button */}
+                            <button
+                              type="button"
+                              onClick={() => openAddCourseModal(selectedSemesterBubble)}
+                              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors flex items-center gap-1 cursor-pointer"
+                              title="Fill new course details for this semester"
+                            >
+                              <Plus className="w-3.5 h-3.5" />
+                              <span>+ Add Course</span>
+                            </button>
+
                             {/* All Semesters Toggle */}
                             <button
                               type="button"
@@ -1411,7 +1525,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                   : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:text-stone-900 dark:hover:text-white'
                               }`}
                             >
-                              {showAllSemestersTranscript ? 'Show Single Sem' : 'All Completed (Sem 1-3)'}
+                              {showAllSemestersTranscript ? 'Show Single Sem' : 'All Semesters'}
                             </button>
 
                             {/* View Switcher: Portal Table vs Cards */}
@@ -1471,11 +1585,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                   <th className="py-3 px-4">Description</th>
                                   <th className="py-3 px-4 text-center w-[90px]">Semester</th>
                                   <th className="py-3 px-4 text-center w-[90px]">Credit</th>
+                                  <th className="py-3 px-3 text-center w-[60px]">Action</th>
                                 </tr>
                               </thead>
                               <tbody className="divide-y divide-stone-100 dark:divide-stone-800/70 font-mono">
                                 {displayCourses.map((course) => (
-                                  <tr key={course.code} className="hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20 transition-colors">
+                                  <tr key={course.code} className="hover:bg-indigo-50/40 dark:hover:bg-indigo-950/20 transition-colors group">
                                     <td className="py-3 px-4 font-bold text-stone-900 dark:text-stone-100 whitespace-nowrap">
                                       {course.code}
                                     </td>
@@ -1497,6 +1612,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                         {course.credits}
                                       </span>
                                     </td>
+                                    <td className="py-3 px-3 text-center">
+                                      {onDeleteCourse && (
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            if (window.confirm(`Delete course "${course.title}" (${course.code})?`)) {
+                                              onDeleteCourse(course.code)
+                                            }
+                                          }}
+                                          className="p-1 rounded text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-colors cursor-pointer"
+                                          title="Delete course"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      )}
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -1506,11 +1637,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                     Total ({displayCourses.length} Subjects)
                                   </td>
                                   <td className="py-3 px-4 text-center text-stone-500 font-mono text-[11px]">
-                                    {showAllSemestersTranscript ? 'Sem 1-3' : `Sem ${selectedSemesterBubble}`}
+                                    {showAllSemestersTranscript ? 'All' : `Sem ${selectedSemesterBubble}`}
                                   </td>
                                   <td className="py-3 px-4 text-center font-mono font-bold text-indigo-600 dark:text-indigo-400">
                                     {displayCourses.reduce((sum, c) => sum + c.credits, 0)} Cr
                                   </td>
+                                  <td className="py-3 px-3"></td>
                                 </tr>
                               </tfoot>
                             </table>
@@ -1544,9 +1676,28 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                 </div>
 
                                 <div>
-                                  <h5 className="font-sans font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                    {course.title}
-                                  </h5>
+                                  <div className="flex items-start justify-between gap-1 group/item">
+                                    <h5 className="font-sans font-bold text-sm text-stone-900 dark:text-stone-100 leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                      {course.title}
+                                    </h5>
+                                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                      {onDeleteCourse && (
+                                        <button
+                                          type="button"
+                                          onClick={(e) => {
+                                            e.stopPropagation()
+                                            if (window.confirm(`Delete course "${course.title}" (${course.code})?`)) {
+                                              onDeleteCourse(course.code)
+                                            }
+                                          }}
+                                          className="p-1 rounded-md text-stone-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/50 transition-all cursor-pointer"
+                                          title="Delete course"
+                                        >
+                                          <Trash2 className="w-3.5 h-3.5" />
+                                        </button>
+                                      )}
+                                    </div>
+                                  </div>
                                   {course.category && (
                                     <div className="text-[11px] text-stone-400 mt-1 font-medium">
                                       {course.category}
@@ -1661,6 +1812,153 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {addModalTarget === 'subject' ? 'Insert Subject' : 'Create Notebook'}
                 </button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* FILL COURSE DETAILS MODAL */}
+      {showAddCourseModal && (
+        <div className="fixed inset-0 z-50 p-4 sm:p-6 bg-black/50 backdrop-blur-sm flex items-center justify-center animate-fade-in">
+          <div className="w-full max-w-lg bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-3xl shadow-2xl p-6 space-y-5 animate-scale-up">
+            
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-stone-100 dark:border-stone-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-xs">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100">
+                    Fill Course Details
+                  </h3>
+                  <p className="text-xs text-stone-400">
+                    Fill semester box details matching previous semester structure
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAddCourseModal(false)}
+                className="p-1.5 rounded-xl text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Form */}
+            <form onSubmit={handleAddCourseSubmit} className="space-y-4">
+              
+              {/* Semester selection & Credits */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    Target Semester
+                  </label>
+                  <select
+                    value={newCourseSemester}
+                    onChange={(e) => setNewCourseSemester(Number(e.target.value))}
+                    className="w-full mt-1.5 px-3 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none font-medium cursor-pointer"
+                  >
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
+                      <option key={s} value={s}>
+                        Semester {s} {s <= 3 ? '(Completed)' : '(Upcoming)'}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                    Credits (Cr)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    max="20"
+                    required
+                    value={newCourseCredits}
+                    onChange={(e) => setNewCourseCredits(Number(e.target.value))}
+                    className="w-full mt-1.5 px-3 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none font-mono"
+                    placeholder="4"
+                  />
+                </div>
+              </div>
+
+              {/* Course Code */}
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Course Code
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCourseCode}
+                  onChange={(e) => setNewCourseCode(e.target.value.toUpperCase())}
+                  placeholder="e.g. 21CSC401J"
+                  className="w-full mt-1.5 px-3.5 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none font-mono font-bold tracking-wider uppercase"
+                />
+              </div>
+
+              {/* Course Title */}
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Subject / Course Name
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={newCourseTitle}
+                  onChange={(e) => setNewCourseTitle(e.target.value)}
+                  placeholder="e.g. DESIGN AND ANALYSIS OF ALGORITHMS"
+                  className="w-full mt-1.5 px-3.5 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none font-medium"
+                />
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                  Category / Classification
+                </label>
+                <input
+                  type="text"
+                  list="course-category-options"
+                  value={newCourseCategory}
+                  onChange={(e) => setNewCourseCategory(e.target.value)}
+                  placeholder="e.g. Professional Core, Elective..."
+                  className="w-full mt-1.5 px-3.5 py-2.5 text-sm rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 focus:border-indigo-500 outline-none text-xs"
+                />
+                <datalist id="course-category-options">
+                  <option value="Professional Core" />
+                  <option value="Professional Elective" />
+                  <option value="Open Elective" />
+                  <option value="Programming Lab & Practice" />
+                  <option value="Basic Sciences / Physics" />
+                  <option value="Mathematics & Linear Algebra" />
+                  <option value="Humanities & Social Sciences" />
+                  <option value="Engineering Sciences" />
+                  <option value="Capstone Project Work" />
+                  <option value="Audit / Non-Credit Course" />
+                </datalist>
+              </div>
+
+              {/* Actions */}
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-stone-100 dark:border-stone-800">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCourseModal(false)}
+                  className="px-4 py-2 text-xs font-semibold text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 rounded-xl transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md shadow-indigo-500/25 transition-all hover:scale-[1.02] active:scale-95 cursor-pointer"
+                >
+                  Save Course Details
+                </button>
+              </div>
+
             </form>
           </div>
         </div>

@@ -177,6 +177,18 @@ export function App() {
     setNotebooks(prev => [...prev, newNb])
   }
 
+  // Add course to semester curriculum / completed courses
+  const handleAddCourse = (newCourse: CourseItem) => {
+    const updated = storageService.addCourseForUser(activeUser.id, newCourse)
+    setCourses(updated)
+  }
+
+  // Delete course from semester
+  const handleDeleteCourse = (code: string) => {
+    const updated = storageService.deleteCourseForUser(activeUser.id, code)
+    setCourses(updated)
+  }
+
   // Create Note
   const handleCreateNote = (contextCategory?: string) => {
     let cat = 'General'
@@ -334,6 +346,8 @@ export function App() {
             onOpenSettings={() => setIsSettingsOpen(true)}
             onUploadFileNote={handleUploadFileNote}
             onRenameSubject={handleRenameSubject}
+            onAddCourse={handleAddCourse}
+            onDeleteCourse={handleDeleteCourse}
           />
         ) : (
           /* Page 2: Dedicated Notes Window */
