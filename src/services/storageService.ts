@@ -101,6 +101,41 @@ export const ARSHAD_COURSES: CourseItem[] = [
   { code: '21LEM201T', title: 'PROFESSIONAL ETHICS', semester: 3, credits: 0, category: 'Professional Ethics & Audit' },
   { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 0, category: 'Humanities & Human Values' },
   { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 4, category: 'Mathematics & Numerical Analysis' },
+
+  // Semester 4 (6 Courses, 20 Credits)
+  { code: '21CSC204J', title: 'DESIGN AND ANALYSIS OF ALGORITHMS', semester: 4, credits: 4, category: 'Professional Core' },
+  { code: '21CSC205J', title: 'DATABASE MANAGEMENT SYSTEMS', semester: 4, credits: 4, category: 'Professional Core' },
+  { code: '21CSC206T', title: 'SOFTWARE ENGINEERING AND PROJECT MANAGEMENT', semester: 4, credits: 3, category: 'Software Engineering' },
+  { code: '21MAB207T', title: 'PROBABILITY AND QUEUEING THEORY', semester: 4, credits: 4, category: 'Mathematics & Queueing Theory' },
+  { code: '21CSS202J', title: 'JAVA AND WEB PROGRAMMING', semester: 4, credits: 4, category: 'Programming & Web Applications' },
+  { code: '21LEM203T', title: 'CONSTITUTION OF INDIA AND PROFESSIONAL VALUES', semester: 4, credits: 1, category: 'Indian Constitution & Values' },
+
+  // Semester 5 (6 Courses, 20 Credits)
+  { code: '21CSC301T', title: 'FORMAL LANGUAGE AND AUTOMATA THEORY', semester: 5, credits: 3, category: 'Theory of Computation' },
+  { code: '21CSC302J', title: 'COMPUTER NETWORKS', semester: 5, credits: 4, category: 'Networking & Protocols' },
+  { code: '21CSC303J', title: 'FULL STACK WEB DEVELOPMENT', semester: 5, credits: 4, category: 'Web Engineering' },
+  { code: '21CSS301T', title: 'ARTIFICIAL INTELLIGENCE AND EXPERT SYSTEMS', semester: 5, credits: 4, category: 'Core Artificial Intelligence' },
+  { code: '21CSE301T', title: 'PROFESSIONAL ELECTIVE - I: CLOUD COMPUTING', semester: 5, credits: 3, category: 'Cloud Architecture & Virtualization' },
+  { code: '21OE301T', title: 'OPEN ELECTIVE - I: CYBER SECURITY ESSENTIALS', semester: 5, credits: 2, category: 'Cyber Security Essentials' },
+
+  // Semester 6 (6 Courses, 19 Credits)
+  { code: '21CSC304J', title: 'COMPILER DESIGN', semester: 6, credits: 4, category: 'Systems & Language Engineering' },
+  { code: '21CSC305J', title: 'MACHINE LEARNING', semester: 6, credits: 4, category: 'Machine Learning & Modeling' },
+  { code: '21CSC306T', title: 'CRYPTOGRAPHY AND NETWORK SECURITY', semester: 6, credits: 3, category: 'Information Security & Cryptography' },
+  { code: '21CSE302T', title: 'PROFESSIONAL ELECTIVE - II: INTERNET OF THINGS', semester: 6, credits: 3, category: 'Embedded Systems & IoT' },
+  { code: '21CSE303T', title: 'PROFESSIONAL ELECTIVE - III: DISTRIBUTED SYSTEMS', semester: 6, credits: 3, category: 'Distributed Computing' },
+  { code: '21OE302T', title: 'OPEN ELECTIVE - II: ENTREPRENEURSHIP DEVELOPMENT', semester: 6, credits: 2, category: 'Innovation & Management' },
+
+  // Semester 7 (5 Courses, 17 Credits)
+  { code: '21CSC401J', title: 'DEEP LEARNING AND NEURAL NETWORKS', semester: 7, credits: 4, category: 'Deep Learning & Neural Networks' },
+  { code: '21CSC402T', title: 'BIG DATA ANALYTICS AND STREAM PROCESSING', semester: 7, credits: 3, category: 'Big Data Architectures' },
+  { code: '21CSE401T', title: 'PROFESSIONAL ELECTIVE - IV: BLOCKCHAIN TECHNOLOGY', semester: 7, credits: 3, category: 'Decentralized Systems' },
+  { code: '21CSP401L', title: 'INDUSTRIAL TRAINING AND INTERNSHIP', semester: 7, credits: 3, category: 'Practical & Industrial Training' },
+  { code: '21CSP402L', title: 'MAJOR PROJECT - PHASE I', semester: 7, credits: 4, category: 'Capstone Project Work' },
+
+  // Semester 8 (2 Courses, 14 Credits)
+  { code: '21CSP403L', title: 'MAJOR PROJECT - PHASE II', semester: 8, credits: 11, category: 'Capstone Project & Dissertation' },
+  { code: '21CSE402T', title: 'PROFESSIONAL ELECTIVE - V: QUANTUM COMPUTING', semester: 8, credits: 3, category: 'Quantum Information Sciences' },
 ]
 
 export const USERS: UserProfile[] = [
@@ -439,30 +474,27 @@ export const storageService = {
   },
 
   getCoursesForUser(userId: string): CourseItem[] {
-    const user = this.getAllUsers().find(u => u.id === userId)
-    if (userId === 'user-arshad' || (user && user.name.toLowerCase().includes('arshad'))) {
-      try {
-        const stored = localStorage.getItem(`${COURSES_STORAGE_KEY}_${userId}`)
-        if (stored) {
-          const parsed = JSON.parse(stored)
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            return parsed
-          }
-        }
-      } catch (e) {
-        console.error('Failed to load courses from storage', e)
-      }
-      return ARSHAD_COURSES
-    }
-    // For Raniya Parveen or other users: check if custom courses were added, else empty
     try {
       const stored = localStorage.getItem(`${COURSES_STORAGE_KEY}_${userId}`)
       if (stored) {
         const parsed = JSON.parse(stored)
-        if (Array.isArray(parsed)) return parsed
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // If stored courses only contain partial semesters (e.g. only sem 1-3), backfill missing semesters from ARSHAD_COURSES
+          const storedSemesters = new Set(parsed.map((c: CourseItem) => c.semester))
+          const missingCourses = ARSHAD_COURSES.filter(c => !storedSemesters.has(c.semester))
+          if (missingCourses.length > 0) {
+            const merged = [...parsed, ...missingCourses]
+            this.saveCoursesForUser(userId, merged)
+            return merged
+          }
+          return parsed
+        }
       }
-    } catch {}
-    return []
+    } catch (e) {
+      console.error('Failed to load courses from storage', e)
+    }
+    // Return standard SRM CSE curriculum by default
+    return ARSHAD_COURSES
   },
 
   saveCoursesForUser(userId: string, courses: CourseItem[]): void {

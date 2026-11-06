@@ -150,9 +150,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       if (closeSemesterTimerRef.current) clearTimeout(closeSemesterTimerRef.current)
       setIsClosingSemester(false)
       setSelectedSemester(semNum)
+      setSubjectsVisible(true)
     } else {
       setSelectedSemester(semNum)
       setIsClosingSemester(false)
+      setSubjectsVisible(true)
     }
   }
 
@@ -480,7 +482,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-3.5"
         >
           {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum, index) => {
-            const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
+            const semCourses = storageService.getCoursesBySemester(activeUser.id, semNum)
             const semCredits = semCourses.reduce((sum, c) => sum + c.credits, 0)
             const semCourseTitles = new Set(semCourses.map(c => c.title.toLowerCase()))
             const semCourseCodes = new Set(semCourses.map(c => c.code.toLowerCase()))
@@ -535,9 +537,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Semester {semNum}
                   </h3>
                   <div className="text-[10px] text-stone-400 mt-0.5 truncate">
-                    {isArshad && semCourses.length > 0 
+                    {semCourses.length > 0 
                       ? `${semCredits} Credits • ${semCourses.length} Courses`
-                      : (isArshad ? 'Upcoming' : 'Curriculum')
+                      : 'Curriculum'
                     }
                   </div>
                 </div>
@@ -568,7 +570,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
                   Subject Modules
                 </span>
-                {isArshad && storageService.getCoursesBySemester(activeUser.id, selectedSemester).length > 0 && (
+                {storageService.getCoursesBySemester(activeUser.id, selectedSemester).length > 0 && (
                   <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50 font-bold">
                     {storageService.getCoursesBySemester(activeUser.id, selectedSemester).length} Courses • {storageService.getCoursesBySemester(activeUser.id, selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits
                   </span>
@@ -613,7 +615,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             {/* Subject Tiles Grid */}
             <div ref={subjectsRef} className="space-y-4">
           {(() => {
-            const activeCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, selectedSemester) : []
+            const activeCourses = storageService.getCoursesBySemester(activeUser.id, selectedSemester)
 
             if (activeCourses.length > 0) {
               return (
@@ -641,9 +643,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         key={course.code}
                         onClick={() => onOpenSubject(course.title)}
                         style={{
-                          transitionDelay: subjectsVisible ? `${Math.min(index * 40, 400)}ms` : '0ms'
+                          animationDelay: `${Math.min(index * 35, 300)}ms`
                         }}
-                        className={`tile-reveal ${subjectsVisible ? 'revealed' : ''} group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-indigo-400 dark:hover:border-indigo-600`}
+                        className="animate-fade-in group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-indigo-400 dark:hover:border-indigo-600"
                       >
                         {/* Ambient subtle glow */}
                         <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
@@ -1146,7 +1148,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               >
                 <GraduationCap className="w-4 h-4 text-amber-500" />
                 <span>Courses Completed</span>
-                {isArshad && userCourses.length > 0 && (
+                {userCourses.length > 0 && (
                   <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold transition-colors ${
                     showCoursesCompleted && !isClosingCourses ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
                   }`}>
@@ -1186,30 +1188,25 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Courses Completed
                   </h4>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    {isArshad 
-                      ? 'SRM Institute of Science and Technology course curriculum across all 8 academic semesters'
-                      : 'Academic course curriculum across all 8 semesters for ' + activeUser.name
-                    }
+                    SRM Institute of Science and Technology course curriculum across all 8 academic semesters
                   </p>
                 </div>
 
-                {isArshad && (
-                  <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
-                    <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 font-bold">
-                      {userCourses.length} Courses Registered
-                    </span>
-                    <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 font-bold">
-                      {userCourses.reduce((sum, c) => sum + c.credits, 0)} Total Credits (Sem 1-3)
-                    </span>
-                  </div>
-                )}
+                <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
+                  <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 font-bold">
+                    {userCourses.length} Courses Registered
+                  </span>
+                  <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 font-bold">
+                    {userCourses.reduce((sum, c) => sum + c.credits, 0)} Total Degree Credits
+                  </span>
+                </div>
               </div>
 
               {/* 8 SEMESTER BUBBLES */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
                 {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
                   const isSelected = selectedSemesterBubble === semNum
-                  const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
+                  const semCourses = storageService.getCoursesBySemester(activeUser.id, semNum)
                   
                   return (
                     <button
@@ -1223,17 +1220,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       }`}
                     >
                       <span>Semester {semNum}</span>
-                      {isArshad && (
-                        <span className={`w-5 h-5 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
-                          isSelected 
-                            ? 'bg-white/25 text-white' 
-                            : semCourses.length > 0 
-                              ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' 
-                              : 'bg-stone-200 dark:bg-stone-700 text-stone-400'
-                        }`}>
-                          {semCourses.length}
-                        </span>
-                      )}
+                      <span className={`w-5 h-5 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
+                        isSelected 
+                          ? 'bg-white/25 text-white' 
+                          : semCourses.length > 0 
+                            ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' 
+                            : 'bg-stone-200 dark:bg-stone-700 text-stone-400'
+                      }`}>
+                        {semCourses.length}
+                      </span>
                     </button>
                   )
                 })}
@@ -1241,11 +1236,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
               {/* DETAILS ACCORDING TO SELECTED SEMESTER BUBBLE */}
               <div className="space-y-3 pt-1">
-                {/* For Mohamed Arshad: Add subject details in each bubble */}
-                {isArshad ? (
-                  (() => {
-                    const coursesForBubble = storageService.getCoursesBySemester(activeUser.id, selectedSemesterBubble)
-                    const displayCourses = showAllSemestersTranscript ? userCourses : coursesForBubble
+                {(() => {
+                  const coursesForBubble = storageService.getCoursesBySemester(activeUser.id, selectedSemesterBubble)
+                  const displayCourses = showAllSemestersTranscript ? userCourses : coursesForBubble
                     const totalCredits = displayCourses.reduce((sum, c) => sum + c.credits, 0)
                     
                     if (displayCourses.length === 0) {
@@ -1439,21 +1432,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                         )}
                       </div>
                     )
-                  })()
-                ) : (
-                  /* For Raniya Parveen: 8 bubbles, details left empty as requested */
-                  <div className="p-8 rounded-2xl bg-stone-50 dark:bg-stone-800/40 border border-dashed border-stone-200 dark:border-stone-700 text-center space-y-2">
-                    <div className="w-10 h-10 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 mx-auto">
-                      <GraduationCap className="w-5 h-5" />
-                    </div>
-                    <h5 className="font-serif font-bold text-base text-stone-700 dark:text-stone-300">
-                      Semester {selectedSemesterBubble}
-                    </h5>
-                    <p className="text-xs text-stone-400 max-w-sm mx-auto">
-                      No course details added for this semester yet.
-                    </p>
-                  </div>
-                )}
+                  })()}
               </div>
 
             </div>
