@@ -319,33 +319,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     checkVisibility()
     const timer = setTimeout(checkVisibility, 60)
 
-    // Smooth scroll reveal observer: triggers once when each section scrolls into view
-    const observerCallback: IntersectionObserverCallback = (entries, obs) => {
+    // Smooth bidirectional scroll reveal observer:
+    // Re-triggers animations whenever sections scroll into view (scrolled down and up, or up and down)
+    const observerCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          if (entry.target === semestersRef.current) {
-            setSemestersVisible(true)
-            obs.unobserve(entry.target)
-          }
-          if (entry.target === subjectsRef.current) {
-            setSubjectsVisible(true)
-            obs.unobserve(entry.target)
-          }
-          if (entry.target === viewsRef.current) {
-            setViewsVisible(true)
-            obs.unobserve(entry.target)
-          }
-          if (entry.target === notebooksRef.current) {
-            setNotebooksVisible(true)
-            obs.unobserve(entry.target)
-          }
+        const isVisible = entry.isIntersecting
+        if (entry.target === semestersRef.current) {
+          setSemestersVisible(isVisible)
+        } else if (entry.target === subjectsRef.current) {
+          setSubjectsVisible(isVisible)
+        } else if (entry.target === viewsRef.current) {
+          setViewsVisible(isVisible)
+        } else if (entry.target === notebooksRef.current) {
+          setNotebooksVisible(isVisible)
         }
       })
     }
 
     const observer = new IntersectionObserver(observerCallback, {
       threshold: 0.05,
-      rootMargin: '0px 0px -20px 0px'
+      rootMargin: '10px 0px -10px 0px'
     })
 
     if (semestersRef.current) observer.observe(semestersRef.current)
@@ -353,19 +346,18 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     if (viewsRef.current) observer.observe(viewsRef.current)
     if (notebooksRef.current) observer.observe(notebooksRef.current)
 
-    // Dedicated observer for Personal Details Tile: Fades in smoothly once
-    const detailsObserverCallback: IntersectionObserverCallback = (entries, obs) => {
+    // Dedicated observer for Personal Details Tile: Fades in/out smoothly when scrolled down and up
+    const detailsObserverCallback: IntersectionObserverCallback = (entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          setDetailsVisible(true)
-          obs.unobserve(entry.target)
+        if (entry.target === detailsRef.current) {
+          setDetailsVisible(entry.isIntersecting)
         }
       })
     }
 
     const detailsObserver = new IntersectionObserver(detailsObserverCallback, {
       threshold: 0.08,
-      rootMargin: '0px 0px -20px 0px'
+      rootMargin: '10px 0px -10px 0px'
     })
 
     if (detailsRef.current) detailsObserver.observe(detailsRef.current)
@@ -1186,7 +1178,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Box 1: All Notes */}
           <div
             onClick={() => onOpenCollection('all')}
-            style={{ transitionDelay: '60ms' }}
+            style={{ transitionDelay: viewsVisible ? '60ms' : '0ms' }}
             className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-indigo-400 dark:hover:border-indigo-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-indigo-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -1220,7 +1212,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Box 2: Pinned */}
           <div
             onClick={() => onOpenCollection('pinned')}
-            style={{ transitionDelay: '180ms' }}
+            style={{ transitionDelay: viewsVisible ? '180ms' : '0ms' }}
             className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -1254,7 +1246,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           {/* Box 3: Favorites */}
           <div
             onClick={() => onOpenCollection('favorites')}
-            style={{ transitionDelay: '300ms' }}
+            style={{ transitionDelay: viewsVisible ? '300ms' : '0ms' }}
             className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -1323,7 +1315,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 key={notebook.id}
                 onClick={() => onOpenSubject(notebook.name)}
                 style={{
-                  transitionDelay: `${(index % 4) * 90 + 50}ms`
+                  transitionDelay: notebooksVisible ? `${(index % 4) * 90 + 50}ms` : '0ms'
                 }}
                 className={`tile-reveal ${notebooksVisible ? 'revealed' : ''} group relative p-5 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.025] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border}`}
               >

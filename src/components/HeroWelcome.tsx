@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { ChevronDown, Sparkles } from 'lucide-react'
 import { UserProfile } from '../types'
 
@@ -9,6 +9,8 @@ interface HeroWelcomeProps {
 export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
   const [scrollY, setScrollY] = useState(0)
   const [isMounted, setIsMounted] = useState(false)
+  const [heroCycleKey, setHeroCycleKey] = useState(0)
+  const hasScrolledAway = useRef(false)
 
   // Track scroll position for live parallax split
   useEffect(() => {
@@ -17,9 +19,21 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
 
     let ticking = false
     const handleScroll = () => {
+      const currentY = window.scrollY
       if (!ticking) {
         window.requestAnimationFrame(() => {
-          setScrollY(window.scrollY)
+          setScrollY(currentY)
+
+          // When scrolled down past hero (200px), mark as scrolled away
+          if (currentY > 200) {
+            hasScrolledAway.current = true
+          } 
+          // When scrolled back up to top, re-trigger the entrance animations once more!
+          else if (currentY <= 5 && hasScrolledAway.current) {
+            hasScrolledAway.current = false
+            setHeroCycleKey(k => k + 1)
+          }
+
           ticking = false
         })
         ticking = true
@@ -92,6 +106,7 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
 
       {/* Cinematic Split Typography Container: Dynamic Parallax Motion */}
       <div 
+        key={heroCycleKey}
         className={`relative flex flex-col items-center justify-center transition-transform duration-75 will-change-transform ${
           isMounted ? 'animate-hero-reveal' : 'opacity-0 scale-95'
         }`}
