@@ -10,28 +10,35 @@ const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
 const USERS_STORAGE_KEY = 'auranotes_users_v2'
 
 export const ARSHAD_COURSES: CourseItem[] = [
-  // Semester 1
-  { code: '21PDM101L', title: 'PROFESSIONAL SKILLS AND PRACTICES', semester: 1, credits: 0, category: 'Professional Skills' },
-  { code: '21PYB102J', title: 'SEMICONDUCTOR PHYSICS AND COMPUTATIONAL METHODS', semester: 1, credits: 5, category: 'Basic Sciences / Physics' },
+  // Semester 1 (9 Courses, 22 Credits)
+  { code: '21BTB102T', title: 'INTRODUCTION TO COMPUTATIONAL BIOLOGY', semester: 1, credits: 2, category: 'Computational Biology' },
+  { code: '21CSS101J', title: 'PROGRAMMING FOR PROBLEM SOLVING', semester: 1, credits: 4, category: 'Programming & Problem Solving' },
+  { code: '21GNH101J', title: 'PHILOSOPHY OF ENGINEERING', semester: 1, credits: 2, category: 'Humanities & Philosophy' },
+  { code: '21GNM101L', title: 'PHYSICAL AND MENTAL HEALTH USING YOGA', semester: 1, credits: 0, category: 'Wellness & Non-Credit Audit' },
+  { code: '21LEH101T', title: 'COMMUNICATIVE ENGLISH', semester: 1, credits: 3, category: 'Languages & Communication' },
+  { code: '21MAB101T', title: 'CALCULUS AND LINEAR ALGEBRA', semester: 1, credits: 4, category: 'Mathematics & Linear Algebra' },
+  { code: '21MES101L', title: 'BASIC CIVIL AND MECHANICAL WORKSHOP', semester: 1, credits: 2, category: 'Engineering Workshop' },
+  { code: '21PDM101L', title: 'PROFESSIONAL SKILLS AND PRACTICES', semester: 1, credits: 0, category: 'Professional Skills & Practices' },
+  { code: '21PYB102J', title: 'SEMICONDUCTOR PHYSICS AND COMPUTATIONAL METHODS', semester: 1, credits: 5, category: 'Basic Sciences / Semiconductor Physics' },
 
-  // Semester 2
+  // Semester 2 (8 Courses, 21 Credits)
   { code: '21CSC101T', title: 'OBJECT ORIENTED DESIGN AND PROGRAMMING', semester: 2, credits: 3, category: 'Professional Core' },
   { code: '21CYB101J', title: 'CHEMISTRY', semester: 2, credits: 5, category: 'Basic Sciences / Chemistry' },
-  { code: '21CYM101T', title: 'ENVIRONMENTAL SCIENCE', semester: 2, credits: 0, category: 'Mandatory Non-Credit' },
+  { code: '21CYM101T', title: 'ENVIRONMENTAL SCIENCE', semester: 2, credits: 0, category: 'Environmental Sciences & Audit' },
   { code: '21EES101T', title: 'ELECTRICAL AND ELECTRONICS ENGINEERING', semester: 2, credits: 4, category: 'Engineering Sciences' },
   { code: '21LEH103T', title: 'FRENCH', semester: 2, credits: 3, category: 'Humanities & Foreign Languages' },
-  { code: '21LEM101T', title: 'CONSTITUTION OF INDIA', semester: 2, credits: 0, category: 'Mandatory Non-Credit' },
-  { code: '21MAB102T', title: 'ADVANCED CALCULUS AND COMPLEX ANALYSIS', semester: 2, credits: 4, category: 'Mathematics & Analysis' },
-  { code: '21MES102L', title: 'ENGINEERING GRAPHICS AND DESIGN', semester: 2, credits: 2, category: 'Engineering Design' },
+  { code: '21LEM101T', title: 'CONSTITUTION OF INDIA', semester: 2, credits: 0, category: 'Indian Constitution & Audit' },
+  { code: '21MAB102T', title: 'ADVANCED CALCULUS AND COMPLEX ANALYSIS', semester: 2, credits: 4, category: 'Mathematics & Complex Analysis' },
+  { code: '21MES102L', title: 'ENGINEERING GRAPHICS AND DESIGN', semester: 2, credits: 2, category: 'Engineering Graphics & Design' },
 
-  // Semester 3
+  // Semester 3 (7 Courses, 22 Credits)
   { code: '21CSC201J', title: 'DATA STRUCTURES AND ALGORITHMS', semester: 3, credits: 4, category: 'Professional Core' },
   { code: '21CSC202J', title: 'OPERATING SYSTEMS', semester: 3, credits: 4, category: 'Professional Core' },
-  { code: '21CSC203P', title: 'ADVANCED PROGRAMMING PRACTICE', semester: 3, credits: 4, category: 'Practical & Programming Lab' },
-  { code: '21CSS201T', title: 'COMPUTER ORGANIZATION AND ARCHITECTURE', semester: 3, credits: 4, category: 'Hardware & Architecture' },
-  { code: '21LEM201T', title: 'PROFESSIONAL ETHICS', semester: 3, credits: 0, category: 'Mandatory Non-Credit' },
-  { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 3, category: 'Humanities' },
-  { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 3, category: 'Mathematics & Analysis' },
+  { code: '21CSC203P', title: 'ADVANCED PROGRAMMING PRACTICE', semester: 3, credits: 4, category: 'Programming Lab & Practice' },
+  { code: '21CSS201T', title: 'COMPUTER ORGANIZATION AND ARCHITECTURE', semester: 3, credits: 4, category: 'Core Computer Architecture' },
+  { code: '21LEM201T', title: 'PROFESSIONAL ETHICS', semester: 3, credits: 0, category: 'Professional Ethics & Audit' },
+  { code: '21LEM202T', title: 'UNIVERSAL HUMAN VALUES - II: UNDERSTANDING HARMONY AND ETHICAL HUMAN CONDUCT', semester: 3, credits: 3, category: 'Humanities & Human Values' },
+  { code: '21MAB206T', title: 'NUMERICAL METHODS AND ANALYSIS', semester: 3, credits: 3, category: 'Mathematics & Numerical Analysis' },
 ]
 
 export const USERS: UserProfile[] = [
