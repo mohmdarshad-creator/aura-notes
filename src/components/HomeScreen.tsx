@@ -1328,7 +1328,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       </section>
 
       {/* PERSONAL DETAILS SECTION (TAB BELOW NOTEBOOKS) */}
-      <section className="space-y-4 pt-4 border-t border-stone-200/70 dark:border-stone-800">
+      <section className="personal-details-section space-y-4 pt-4 border-t border-stone-200/70 dark:border-stone-800">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
@@ -1367,7 +1367,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         {/* Personal Details Aesthetic Card (Fade In when Scrolled In, Fade Out when Scrolled Out) */}
         <div 
           ref={detailsRef}
-          className={`details-tile-fade ${detailsVisible ? 'faded-in' : 'faded-out'} relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
+          className={`details-tile-fade ${detailsVisible ? 'faded-in' : 'faded-out'} personal-tab-container relative p-6 sm:p-8 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden`}
         >
           {/* Subtle Ambient Background Tint */}
           <div className={`absolute top-0 right-0 w-80 h-80 bg-gradient-to-br ${activeUser.avatarGradient} opacity-5 blur-3xl pointer-events-none`} />
@@ -1431,7 +1431,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
 
               <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
-                <div className="text-lg sm:text-2xl font-bold font-serif text-amber-600 dark:text-amber-400">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-stone-900 dark:text-stone-100">
                   {notes.filter(n => n.authorId === activeUser.id && n.isPinned).length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">
@@ -1440,7 +1440,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
 
               <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
-                <div className="text-lg sm:text-2xl font-bold font-serif text-amber-500">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-stone-900 dark:text-stone-100">
                   {notes.filter(n => n.authorId === activeUser.id && n.isFavorite).length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">

@@ -332,6 +332,256 @@ html.theme-steel-gold .markdown-body code:not(pre code) {
   color: #F0C45B !important;
 }
 
+/* ============================================================
+   PERSONAL TAB: STEALTH DARK SHADES ONLY
+   Strictly NO bright colours anywhere (no bright amber, no emerald
+   green, no bright indigo/blue, no neon gradients). Only deep obsidian,
+   dark espresso bronze, antique charcoal steel, and muted ivory text.
+   ============================================================ */
+
+/* Outer Section & Student Tab Bar */
+html.theme-steel-gold .personal-details-section {
+  border-color: rgba(78, 62, 52, 0.3) !important;
+}
+html.theme-steel-gold .personal-details-section h2 {
+  color: #8C7E6E !important;
+}
+html.theme-steel-gold .personal-details-section h2 svg {
+  color: #7A6E60 !important;
+}
+
+/* Student Profile Tabs bar at top of Personal Details */
+html.theme-steel-gold .personal-details-section .bg-stone-100 {
+  background-color: #16120D !important;
+  border-color: #261E16 !important;
+}
+html.theme-steel-gold .personal-details-section .bg-stone-100 button {
+  color: #8A7B6B !important;
+}
+html.theme-steel-gold .personal-details-section .bg-stone-100 button.bg-white,
+html.theme-steel-gold .personal-details-section .bg-stone-100 button[class*="text-stone-900"] {
+  background-color: #241D15 !important;
+  color: #FAF6EE !important;
+  border: 1px solid #3A2E20 !important;
+}
+
+/* Personal Details Main Card Container */
+html.theme-steel-gold .personal-tab-container {
+  background-color: #120F0C !important;
+  border-color: #2A2118 !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7) !important;
+}
+html.theme-steel-gold .personal-tab-container .pointer-events-none {
+  opacity: 0 !important; /* Hide bright avatar glow */
+}
+
+/* Scholar Identity Badges in Personal Tab - Dark Shades Only */
+html.theme-steel-gold .personal-tab-container .bg-emerald-50,
+html.theme-steel-gold .personal-tab-container .dark\:bg-emerald-950\/60 {
+  background-color: #1A1510 !important;
+  color: #A89C8C !important;
+  border-color: #2E251C !important;
+}
+html.theme-steel-gold .personal-tab-container .bg-emerald-500,
+html.theme-steel-gold .personal-tab-container .text-emerald-700,
+html.theme-steel-gold .personal-tab-container .dark\:text-emerald-300 {
+  background-color: #7A6E60 !important;
+  color: #A89C8C !important;
+}
+html.theme-steel-gold .personal-tab-container .bg-indigo-50,
+html.theme-steel-gold .personal-tab-container .dark\:bg-indigo-950\/60,
+html.theme-steel-gold .personal-tab-container .dark\:bg-indigo-950\/70 {
+  background-color: #19140F !important;
+  color: #B8AA98 !important;
+  border-color: #2D2319 !important;
+}
+html.theme-steel-gold .personal-tab-container .text-indigo-600,
+html.theme-steel-gold .personal-tab-container .text-indigo-700,
+html.theme-steel-gold .personal-tab-container .text-indigo-500,
+html.theme-steel-gold .personal-tab-container .dark\:text-indigo-400,
+html.theme-steel-gold .personal-tab-container .dark\:text-indigo-300 {
+  color: #8C7E6E !important;
+}
+html.theme-steel-gold .personal-tab-container .text-amber-500,
+html.theme-steel-gold .personal-tab-container .text-amber-600,
+html.theme-steel-gold .personal-tab-container .dark\:text-amber-400 {
+  color: #8C7E6E !important;
+}
+
+/* ============================================================
+   1. ACADEMIC METRICS GRID (3 Stats Tiles in Personal Tab)
+   Dark shades only - no bright amber or neon numbers
+   ============================================================ */
+html.theme-steel-gold .personal-tab-container .grid-cols-3 > div {
+  background-color: #18140E !important;
+  border-color: #2B2219 !important;
+}
+html.theme-steel-gold .personal-tab-container .grid-cols-3 > div .text-lg,
+html.theme-steel-gold .personal-tab-container .grid-cols-3 > div .sm\:text-2xl {
+  color: #DCD6CC !important; /* Crisp muted ivory bone - dark shade contrast */
+}
+html.theme-steel-gold .personal-tab-container .grid-cols-3 > div .text-stone-400 {
+  color: #7A6E60 !important; /* Muted antique bronze */
+}
+
+/* ============================================================
+   2. "COURSES COMPLETED" ACTION BAR & EXPANDABLE DRAWER
+   Dark stealth shades only
+   ============================================================ */
+html.theme-steel-gold .personal-tab-container button.bg-indigo-600,
+html.theme-steel-gold .personal-tab-container .bg-indigo-600 {
+  background-color: #1E1812 !important;
+  color: #FAF6EE !important;
+  border: 1px solid #362C20 !important;
+  box-shadow: none !important;
+}
+html.theme-steel-gold .personal-tab-container button.bg-indigo-600:hover,
+html.theme-steel-gold .personal-tab-container .bg-indigo-600:hover {
+  background-color: #282017 !important;
+}
+
+/* Semester Bubbles (1 to 8) in Personal Tab */
+html.theme-steel-gold .personal-tab-container .scrollbar-thin button {
+  background-color: #17130E !important;
+  border-color: #261E16 !important;
+  color: #8A7B6B !important;
+}
+html.theme-steel-gold .personal-tab-container .scrollbar-thin button:hover {
+  background-color: #201A13 !important;
+  color: #C7BEAF !important;
+}
+html.theme-steel-gold .personal-tab-container .scrollbar-thin button.bg-gradient-to-r,
+html.theme-steel-gold .personal-tab-container .scrollbar-thin button[class*="from-indigo-600"] {
+  background: #241D15 !important;
+  border: 1px solid #3D3022 !important;
+  color: #FAF6EE !important;
+  box-shadow: none !important;
+}
+html.theme-steel-gold .personal-tab-container .scrollbar-thin button span[class*="rounded-full"] {
+  background-color: #14100C !important;
+  color: #8C7E6E !important;
+}
+
+/* ============================================================
+   3. AESTHETIC CARDS GRID (Mode 2: Course Modules Grid)
+   Dark shades only - deep matte obsidian cards with subtle border
+   ============================================================ */
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div {
+  background-color: #16120D !important;
+  border-color: #261E16 !important;
+  box-shadow: none !important;
+}
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover {
+  background-color: #1C1712 !important;
+  border-color: #362C20 !important;
+}
+/* Course Code Badge inside Grid Cards */
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-indigo-50"] {
+  background-color: #1D1812 !important;
+  color: #C7BEAF !important;
+  border-color: #2F251A !important;
+}
+/* Credit Badge inside Grid Cards - No bright green */
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div span.font-mono[class*="bg-emerald-50"] {
+  background-color: #1A1510 !important;
+  color: #9E9080 !important;
+  border-color: #2B2117 !important;
+}
+/* Course Title inside Grid Cards */
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div h5 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div:hover h5 {
+  color: #E5E2DC !important;
+}
+/* Category inside Grid Cards */
+html.theme-steel-gold .personal-tab-container .grid-cols-1.md\:grid-cols-2 > div .text-stone-400 {
+  color: #7A6E60 !important;
+}
+
+/* ============================================================
+   4. PORTAL TABLE GRID (Mode 1: Official Table View)
+   Dark shades only - deep matte rows & dark dividers
+   ============================================================ */
+html.theme-steel-gold .personal-tab-container table {
+  background-color: #14100C !important;
+  border-color: #261E16 !important;
+}
+html.theme-steel-gold .personal-tab-container table thead tr {
+  background-color: #18130E !important;
+  border-color: #261E16 !important;
+  color: #8A7B6B !important;
+}
+html.theme-steel-gold .personal-tab-container table thead th {
+  color: #8A7B6B !important;
+  border-color: #261E16 !important;
+}
+html.theme-steel-gold .personal-tab-container table tbody tr {
+  background-color: #14100C !important;
+  border-color: #201913 !important;
+}
+html.theme-steel-gold .personal-tab-container table tbody tr:hover {
+  background-color: #1C1611 !important;
+}
+html.theme-steel-gold .personal-tab-container table tbody td {
+  border-color: #201913 !important;
+  color: #C7BEAF !important;
+}
+html.theme-steel-gold .personal-tab-container table tbody td[class*="font-bold"] {
+  color: #FAF6EE !important;
+}
+/* Table Credit Badge - No bright emerald */
+html.theme-steel-gold .personal-tab-container table tbody span[class*="bg-emerald-50"] {
+  background-color: #1A1510 !important;
+  color: #9E9080 !important;
+  border-color: #2B2117 !important;
+}
+/* Table Footer */
+html.theme-steel-gold .personal-tab-container table tfoot tr {
+  background-color: #18130E !important;
+  border-color: #261E16 !important;
+  color: #C7BEAF !important;
+}
+html.theme-steel-gold .personal-tab-container table tfoot td {
+  color: #C7BEAF !important;
+}
+
+/* ============================================================
+   5. EMPTY SEMESTER DETAILS BOX & ACTION BUTTONS
+   ============================================================ */
+html.theme-steel-gold .personal-tab-container .border-dashed {
+  background-color: #14100C !important;
+  border-color: #282017 !important;
+}
+html.theme-steel-gold .personal-tab-container .border-dashed h5 {
+  color: #DCD6CC !important;
+}
+html.theme-steel-gold .personal-tab-container .border-dashed p {
+  color: #7A6E60 !important;
+}
+html.theme-steel-gold .personal-tab-container .border-dashed button {
+  background-color: #201A13 !important;
+  border: 1px solid #362C20 !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .personal-tab-container .border-dashed button:hover {
+  background-color: #282017 !important;
+}
+
+/* View Switcher (Portal Table vs Cards) in Personal Tab */
+html.theme-steel-gold .personal-tab-container .p-0\.5.rounded-lg.border {
+  background-color: #14100C !important;
+  border-color: #261E16 !important;
+}
+html.theme-steel-gold .personal-tab-container .p-0\.5.rounded-lg.border button {
+  color: #7A6E60 !important;
+}
+html.theme-steel-gold .personal-tab-container .p-0\.5.rounded-lg.border button.bg-white,
+html.theme-steel-gold .personal-tab-container .p-0\.5.rounded-lg.border button[class*="text-stone-900"] {
+  background-color: #241D15 !important;
+  color: #FAF6EE !important;
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
