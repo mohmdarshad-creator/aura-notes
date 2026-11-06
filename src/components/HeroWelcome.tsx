@@ -13,6 +13,7 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
   // Track scroll position for live parallax split
   useEffect(() => {
     setIsMounted(true)
+    setScrollY(window.scrollY)
 
     let ticking = false
     const handleScroll = () => {
@@ -27,14 +28,21 @@ export const HeroWelcome: React.FC<HeroWelcomeProps> = ({ activeUser }) => {
 
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [activeUser.id])
 
-  // Extract display name: "Arshad", "Raniya" or first name
-  const displayName = activeUser.name.includes('Arshad')
-    ? 'Arshad'
-    : activeUser.name.includes('Raniya')
-    ? 'Raniya'
-    : activeUser.name.trim().split(' ')[0]
+  // Extract display name: works universally for all existing, upcoming and newly created users
+  const getDisplayName = (user: UserProfile) => {
+    if (!user || !user.name) return 'Scholar'
+    if (user.name.includes('Arshad')) return 'Arshad'
+    if (user.name.includes('Raniya')) return 'Raniya'
+    const parts = user.name.trim().split(/\s+/)
+    if (parts.length > 1 && /^(dr\.|prof\.|mr\.|ms\.|mrs\.)/i.test(parts[0])) {
+      return parts[1]
+    }
+    return parts[0] || user.name
+  }
+
+  const displayName = getDisplayName(activeUser)
 
   // Calculate dynamic parallax float, scale, split translation and opacity based on scroll
   // When scrolled down as in the earliest animation:

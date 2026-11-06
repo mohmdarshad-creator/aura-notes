@@ -414,7 +414,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-10 animate-fade-in">
       
       {/* Front Screen Animated Split Welcome Hero */}
-      <HeroWelcome activeUser={activeUser} />
+      <HeroWelcome key={activeUser.id} activeUser={activeUser} />
 
       {/* Control Bar: Scope Toggle (My Notes vs Combined) & Actions */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/70 dark:border-stone-800">

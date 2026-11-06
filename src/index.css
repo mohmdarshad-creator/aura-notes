@@ -1163,6 +1163,8 @@ html.theme-steel-gold .gemini-drawer-container div.mt-2.px-1 strong {
 
 .animate-name-shimmer {
   background-size: 200% 200% !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
   animation: nameShimmer 5s ease-in-out infinite !important;
 }
 
@@ -1406,7 +1408,8 @@ section,
   transition: background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               border-color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
               color 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 /* ============================================================
