@@ -40,10 +40,10 @@ interface SettingsModalProps {
 
 const GRADIENT_PRESETS: { id: string; name: string; gradient: string; color: NoteColor }[] = [
   { id: 'indigo', name: 'Indigo Amber', gradient: 'from-indigo-600 via-indigo-500 to-amber-400', color: 'indigo' },
-  { id: 'rose', name: 'Rose Pink', gradient: 'from-rose-500 via-pink-500 to-amber-300', color: 'coral' },
+  { id: 'apricot', name: 'Apricot Peach Gold', gradient: 'from-amber-500 via-[#E8B078] to-[#E5B84B]', color: 'amber' },
   { id: 'emerald', name: 'Emerald Teal', gradient: 'from-emerald-600 via-teal-500 to-sky-400', color: 'emerald' },
-  { id: 'purple', name: 'Purple Violet', gradient: 'from-purple-600 via-violet-500 to-pink-400', color: 'purple' },
-  { id: 'amber', name: 'Amber Orange', gradient: 'from-amber-500 via-orange-500 to-rose-400', color: 'amber' },
+  { id: 'purple', name: 'Purple Violet', gradient: 'from-purple-600 via-violet-500 to-amber-400', color: 'purple' },
+  { id: 'amber', name: 'Amber Bronze', gradient: 'from-amber-600 via-orange-500 to-yellow-400', color: 'amber' },
   { id: 'cyan', name: 'Cyan Sky', gradient: 'from-cyan-500 via-sky-500 to-indigo-500', color: 'sky' },
 ]
 
@@ -735,7 +735,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">Default</span>
                   </div>
                   <div className="text-[11px] text-stone-500 dark:text-stone-400 mt-0.5 leading-tight">
-                    Parchment, obsidian navy & warm ochre gold
+                    Dark golden obsidian, ochre gold & apricot clay
                   </div>
                 </div>
               </button>

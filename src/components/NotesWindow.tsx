@@ -179,7 +179,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
         return {
           title: 'Favorite Notes',
           subtitle: 'Starred concepts, deep-dive explorations & memorable notes',
-          icon: <Star className="w-6 h-6 text-rose-500 fill-rose-500/20" />,
+          icon: <Star className="w-6 h-6 text-amber-500 fill-amber-500/20" />,
           categoryFilter: null,
           pinnedOnly: false,
           favoritesOnly: true,
@@ -280,7 +280,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
       className={`max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in relative transition-all ${
-        isDragging ? 'ring-4 ring-rose-500/40 rounded-3xl bg-rose-50/20 dark:bg-rose-950/20' : ''
+        isDragging ? 'ring-4 ring-amber-500/40 rounded-3xl bg-amber-50/20 dark:bg-amber-950/20' : ''
       }`}
     >
       {/* Hidden File Input for Device Upload */}
@@ -295,10 +295,10 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
       {/* Floating Drag Overlay */}
       {isDragging && (
-        <div className="absolute inset-0 z-50 rounded-3xl bg-rose-500/10 dark:bg-rose-950/60 backdrop-blur-xs border-2 border-dashed border-rose-500 flex flex-col items-center justify-center pointer-events-none p-6 text-center">
-          <Upload className="w-12 h-12 text-rose-600 dark:text-rose-400 animate-bounce mb-2" />
-          <p className="text-lg font-serif font-bold text-rose-900 dark:text-rose-100">Drop PDF & Document files to upload</p>
-          <p className="text-xs text-rose-700 dark:text-rose-300">Files will be attached to {windowMeta.title}</p>
+        <div className="absolute inset-0 z-50 rounded-3xl bg-amber-500/10 dark:bg-amber-950/60 backdrop-blur-xs border-2 border-dashed border-amber-500 flex flex-col items-center justify-center pointer-events-none p-6 text-center">
+          <Upload className="w-12 h-12 text-amber-600 dark:text-amber-400 animate-bounce mb-2" />
+          <p className="text-lg font-serif font-bold text-amber-900 dark:text-amber-100">Drop PDF & Document files to upload</p>
+          <p className="text-xs text-amber-700 dark:text-amber-300">Files will be attached to {windowMeta.title}</p>
         </div>
       )}
 
@@ -364,15 +364,15 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           {/* BUTTON 3: Add Notes from Device Bubble */}
           <div className="relative flex items-center group animate-bubble-spring">
             <div 
-              className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+              className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-amber-500 via-[#E8B078] to-[#E5B84B] opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
             />
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/70 dark:hover:bg-amber-900/80 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
               title="Upload PDF or notes from your device"
             >
-              <Upload className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              <Upload className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
               <span className="max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
                 + Add Notes from Device
               </span>
@@ -618,8 +618,8 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
               onClick={() => setFileTypeFilter('pdf')}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-all ${
                 fileTypeFilter === 'pdf'
-                  ? 'bg-rose-600 text-white shadow-xs'
-                  : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 hover:bg-amber-100'
               }`}
             >
               <FileText className="w-3 h-3" />
@@ -726,7 +726,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           <div className="flex items-center gap-2.5 flex-wrap justify-center">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700 transition-all shadow-sm hover:scale-[1.02]"
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-amber-600 text-white hover:bg-amber-700 transition-all shadow-sm hover:scale-[1.02]"
             >
               <Upload className="w-3.5 h-3.5" />
               <span>Upload PDF / Notes from Device</span>

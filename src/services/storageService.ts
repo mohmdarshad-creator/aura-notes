@@ -118,9 +118,9 @@ export const USERS: UserProfile[] = [
     id: 'user-raniya',
     name: 'Raniya Parveen',
     initials: 'RP',
-    color: 'coral',
+    color: 'amber',
     role: 'Engineering Scholar',
-    avatarGradient: 'from-rose-500 via-pink-500 to-amber-300',
+    avatarGradient: 'from-amber-500 via-[#E8B078] to-[#E5B84B]',
     registerNumber: '9602104171',
     college: 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
   },
@@ -408,12 +408,17 @@ export const storageService = {
               college: 'SRM Engineering College, Ramapuram, Chennai'
             }
           }
-          if ((u.id === 'user-raniya' || u.name.includes('Raniya')) && (!u.registerNumber || !u.college)) {
-            changed = true
-            return {
-              ...u,
-              registerNumber: '9602104171',
-              college: 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
+          if (u.id === 'user-raniya' || u.name.includes('Raniya')) {
+            const hasOldPink = !u.avatarGradient || u.avatarGradient.includes('rose') || u.avatarGradient.includes('pink')
+            if (!u.registerNumber || !u.college || hasOldPink) {
+              changed = true
+              return {
+                ...u,
+                color: 'amber' as any,
+                avatarGradient: 'from-amber-500 via-[#E8B078] to-[#E5B84B]',
+                registerNumber: u.registerNumber || '9602104171',
+                college: u.college || 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari'
+              }
             }
           }
           return u

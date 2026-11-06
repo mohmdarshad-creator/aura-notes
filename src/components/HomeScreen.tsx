@@ -651,7 +651,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {/* Fill Course Details Bubble Button */}
                 <div className="relative flex items-center group animate-bubble-spring">
                   <div 
-                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-amber-500 via-rose-500 to-indigo-500 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-amber-500 via-[#E8B078] to-[#E5B84B] opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
                   />
                   <button
                     type="button"
@@ -846,10 +846,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           <div className="pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
                             <button
                               onClick={(e) => triggerUploadForSubject(course.title, e)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:hover:bg-rose-900/70 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 transition-all shadow-xs hover:scale-[1.03]"
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-amber-50 hover:bg-amber-100 text-amber-700 dark:bg-amber-950/60 dark:hover:bg-amber-900/70 dark:text-amber-300 border border-amber-200/80 dark:border-amber-800 transition-all shadow-xs hover:scale-[1.03]"
                               title={`Upload PDF or document notes for ${course.title}`}
                             >
-                              <Upload className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                              <Upload className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                               <span>+ Add Notes from Device</span>
                             </button>
 
@@ -944,10 +944,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   {/* Slot 2: Add Notes from Device Tile */}
                   <div
                     onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
-                    className="group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-dashed border-stone-300 dark:border-stone-700 hover:border-rose-500 dark:hover:border-rose-400 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
+                    className="group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-dashed border-stone-300 dark:border-stone-700 hover:border-amber-500 dark:hover:border-amber-400 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
                   >
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-dashed border-rose-300 dark:border-rose-800 font-bold">
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-dashed border-amber-300 dark:border-amber-800 font-bold">
                         + NOTES & PDFS
                       </span>
                       <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
@@ -956,7 +956,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </div>
 
                     <div className="my-2 space-y-1">
-                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                         + Add Notes from Device
                       </h4>
                       <p className="text-xs text-stone-400 leading-relaxed">
@@ -965,11 +965,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </div>
 
                     <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
-                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 group-hover:underline">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 group-hover:underline">
                         <Upload className="w-3.5 h-3.5" />
                         <span>Attach Documents</span>
                       </span>
-                      <span className="text-xs text-stone-400 group-hover:text-rose-500">
+                      <span className="text-xs text-stone-400 group-hover:text-amber-500">
                         Upload →
                       </span>
                     </div>
@@ -1223,22 +1223,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
           <div
             onClick={() => onOpenCollection('favorites')}
             style={{ transitionDelay: '300ms' }}
-            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-rose-400 dark:hover:border-rose-600`}
+            className={`tile-reveal ${viewsVisible ? 'revealed' : ''} group relative p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden hover:border-amber-400 dark:hover:border-amber-600`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-rose-500/10 via-rose-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-500/10 via-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             
             <div className="relative z-10 flex flex-col justify-between h-full space-y-4">
               <div className="flex items-center justify-between">
-                <div className="w-11 h-11 rounded-2xl bg-rose-50 dark:bg-rose-950/60 border border-rose-200/60 dark:border-rose-900 flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <Star className="w-5 h-5 text-rose-500 fill-rose-500/30" />
+                <div className="w-11 h-11 rounded-2xl bg-amber-50 dark:bg-amber-950/60 border border-amber-200/60 dark:border-amber-900 flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Star className="w-5 h-5 text-amber-500 fill-amber-500/30" />
                 </div>
-                <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800">
+                <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-700 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800">
                   {favoriteNotes.length} Starred
                 </span>
               </div>
 
               <div>
-                <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100 group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
                   Favorite Notes
                 </h3>
                 <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
@@ -1246,7 +1246,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </p>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-xs font-semibold text-rose-600 dark:text-rose-400">
+              <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-xs font-semibold text-amber-600 dark:text-amber-400">
                 <span>Open in window</span>
                 <ChevronRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform" />
               </div>
@@ -1440,7 +1440,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
 
               <div className="p-3 sm:p-4 rounded-2xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 text-center min-w-[90px]">
-                <div className="text-lg sm:text-2xl font-bold font-serif text-rose-600 dark:text-rose-400">
+                <div className="text-lg sm:text-2xl font-bold font-serif text-amber-500">
                   {notes.filter(n => n.authorId === activeUser.id && n.isFavorite).length}
                 </div>
                 <div className="text-[10px] sm:text-xs font-medium text-stone-400 mt-0.5">
