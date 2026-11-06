@@ -536,11 +536,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       Active
                     </span>
                   ) : (
-                    semCourses.length > 0 && (
-                      <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
-                        {semCourses.length} Sub
-                      </span>
-                    )
+                    <span className={`text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded border ${
+                      semNum <= 3
+                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
+                        : 'bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50'
+                    }`}>
+                      {semNum <= 3 ? 'Completed' : 'Upcoming'}
+                    </span>
                   )}
                 </div>
 
@@ -552,9 +554,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Semester {semNum}
                   </h3>
                   <div className="text-[10px] text-stone-400 mt-0.5 truncate">
-                    {semCourses.length > 0 
-                      ? `${semCredits} Credits • ${semCourses.length} Courses`
-                      : 'Curriculum'
+                    {semNum <= 3 
+                      ? `${semCredits} Credits • Cleared`
+                      : `${semCredits} Credits • Curriculum`
                     }
                   </div>
                 </div>
@@ -583,11 +585,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   Semester 0{selectedSemester}
                 </span>
                 <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
-                  Subject Modules
+                  {selectedSemester <= 3 ? 'Completed Course Modules' : 'Upcoming Curriculum Modules'}
                 </span>
                 {courses.filter(c => c.semester === selectedSemester).length > 0 && (
-                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50 font-bold">
-                    {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits
+                  <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border ${
+                    selectedSemester <= 3
+                      ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
+                      : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/50'
+                  }`}>
+                    {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits {selectedSemester <= 3 ? '• Cleared' : ''}
                   </span>
                 )}
               </div>
@@ -1269,13 +1275,11 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               >
                 <GraduationCap className="w-4 h-4 text-amber-500" />
                 <span>Courses Completed</span>
-                {userCourses.length > 0 && (
-                  <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold transition-colors ${
-                    showCoursesCompleted && !isClosingCourses ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
-                  }`}>
-                    {userCourses.length} Courses
-                  </span>
-                )}
+                <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold transition-colors ${
+                  showCoursesCompleted && !isClosingCourses ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
+                }`}>
+                  {courses.filter(c => c.semester <= 3).length} Courses • {courses.filter(c => c.semester <= 3).reduce((sum, c) => sum + c.credits, 0)} Credits
+                </span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showCoursesCompleted && !isClosingCourses ? 'rotate-180' : ''}`} />
               </button>
             </div>
@@ -1295,7 +1299,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </div>
           </div>
 
-          {/* EXPANDABLE "COURSES COMPLETED" TAB */}
+          {/* EXPANDABLE "COURSES COMPLETED" TAB - SHOWS ONLY COMPLETED SEMESTERS (SEM 1-3) */}
           {showCoursesCompleted && (
             <div className={`pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 overflow-hidden ${
               isClosingCourses ? 'animate-tab-close-up' : 'animate-tab-open-down'
@@ -1309,32 +1313,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Courses Completed
                   </h4>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    SRM Institute of Science and Technology course curriculum across all 8 academic semesters
+                    Verified SRM Institute of Science and Technology transcript for completed academic semesters (Semesters 1 to 3)
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
                   <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 font-bold">
-                    {userCourses.length} Courses Registered
+                    {courses.filter(c => c.semester <= 3).length} Courses Completed
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 font-bold">
-                    {userCourses.reduce((sum, c) => sum + c.credits, 0)} Total Degree Credits
+                    {courses.filter(c => c.semester <= 3).reduce((sum, c) => sum + c.credits, 0)} Total Credits Earned (Sem 1-3)
                   </span>
                 </div>
               </div>
 
-              {/* 8 SEMESTER BUBBLES */}
+              {/* ONLY COMPLETED SEMESTER BUBBLES (Semester 1, 2, 3) */}
               <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
-                {[1, 2, 3, 4, 5, 6, 7, 8].map((semNum) => {
-                  const isSelected = selectedSemesterBubble === semNum
+                {[1, 2, 3].map((semNum) => {
+                  const isSelected = selectedSemesterBubble === semNum && !showAllSemestersTranscript
                   const semCourses = courses.filter(c => c.semester === semNum)
                   
                   return (
                     <button
                       key={semNum}
                       type="button"
-                      onClick={() => setSelectedSemesterBubble(semNum)}
-                      className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all duration-200 flex-shrink-0 ${
+                      onClick={() => {
+                        setSelectedSemesterBubble(semNum)
+                        setShowAllSemestersTranscript(false)
+                      }}
+                      className={`px-4 py-2 rounded-full text-xs font-semibold whitespace-nowrap flex items-center gap-2 transition-all duration-200 flex-shrink-0 cursor-pointer ${
                         isSelected
                           ? 'bg-gradient-to-r from-indigo-600 to-indigo-700 text-white shadow-md shadow-indigo-500/25 scale-[1.03]'
                           : 'bg-stone-100 dark:bg-stone-800/90 text-stone-600 dark:text-stone-400 hover:bg-stone-200 dark:hover:bg-stone-700 hover:text-stone-900 dark:hover:text-stone-200 border border-stone-200/60 dark:border-stone-700/60'
@@ -1344,9 +1351,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       <span className={`w-5 h-5 rounded-full text-[10px] font-mono font-bold flex items-center justify-center ${
                         isSelected 
                           ? 'bg-white/25 text-white' 
-                          : semCourses.length > 0 
-                            ? 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300' 
-                            : 'bg-stone-200 dark:bg-stone-700 text-stone-400'
+                          : 'bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300'
                       }`}>
                         {semCourses.length}
                       </span>
@@ -1355,12 +1360,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 })}
               </div>
 
-              {/* DETAILS ACCORDING TO SELECTED SEMESTER BUBBLE */}
+              {/* DETAILS ACCORDING TO SELECTED COMPLETED SEMESTER BUBBLE */}
               <div className="space-y-3 pt-1">
                 {(() => {
+                  const completedOnly = courses.filter(c => c.semester <= 3)
                   const coursesForBubble = courses.filter(c => c.semester === selectedSemesterBubble)
-                  const displayCourses = showAllSemestersTranscript ? userCourses : coursesForBubble
-                    const totalCredits = displayCourses.reduce((sum, c) => sum + c.credits, 0)
+                  const displayCourses = showAllSemestersTranscript ? completedOnly : coursesForBubble
+                  const totalCredits = displayCourses.reduce((sum, c) => sum + c.credits, 0)
                     
                     if (displayCourses.length === 0) {
                       return (
@@ -1385,8 +1391,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           <div className="flex items-center gap-2">
                             <span className="font-semibold text-stone-800 dark:text-stone-200">
                               {showAllSemestersTranscript 
-                                ? `SRM Full Course List (${displayCourses.length} Subjects Across Semesters 1-3)`
-                                : `Semester ${selectedSemesterBubble} Course List (${displayCourses.length} Subjects)`
+                                ? `SRM Completed Transcript (${displayCourses.length} Courses Across Semesters 1-3)`
+                                : `Semester ${selectedSemesterBubble} Completed Courses (${displayCourses.length} Courses)`
                               }
                             </span>
                             <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 rounded-md border border-indigo-200/50 dark:border-indigo-800/50">
@@ -1405,7 +1411,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                   : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 border-stone-200 dark:border-stone-700 hover:text-stone-900 dark:hover:text-white'
                               }`}
                             >
-                              {showAllSemestersTranscript ? 'Show Single Sem' : 'All Semesters'}
+                              {showAllSemestersTranscript ? 'Show Single Sem' : 'All Completed (Sem 1-3)'}
                             </button>
 
                             {/* View Switcher: Portal Table vs Cards */}
