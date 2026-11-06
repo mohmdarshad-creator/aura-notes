@@ -132,8 +132,35 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
   
-  // Selected semester for viewing subjects
-  const [selectedSemester, setSelectedSemester] = useState<number>(1)
+  // Selected semester for viewing subjects inside each semester tile
+  const [selectedSemester, setSelectedSemester] = useState<number | null>(1)
+  const [isClosingSemester, setIsClosingSemester] = useState(false)
+  const closeSemesterTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const handleSemesterTileClick = (semNum: number) => {
+    if (selectedSemester === semNum && !isClosingSemester) {
+      // Toggle collapse with closing animation
+      setIsClosingSemester(true)
+      if (closeSemesterTimerRef.current) clearTimeout(closeSemesterTimerRef.current)
+      closeSemesterTimerRef.current = setTimeout(() => {
+        setSelectedSemester(null)
+        setIsClosingSemester(false)
+      }, 300)
+    } else if (isClosingSemester) {
+      if (closeSemesterTimerRef.current) clearTimeout(closeSemesterTimerRef.current)
+      setIsClosingSemester(false)
+      setSelectedSemester(semNum)
+    } else {
+      setSelectedSemester(semNum)
+      setIsClosingSemester(false)
+    }
+  }
+
+  useEffect(() => {
+    return () => {
+      if (closeSemesterTimerRef.current) clearTimeout(closeSemesterTimerRef.current)
+    }
+  }, [])
   const [subjectViewTab, setSubjectViewTab] = useState<'semester' | 'custom'>('semester')
   const [deviceUploadToast, setDeviceUploadToast] = useState<string | null>(null)
   const [targetUploadSubject, setTargetUploadSubject] = useState<string>('')
@@ -148,7 +175,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   const handleSemesterFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const files = Array.from(e.target.files)
-      const category = targetUploadSubject || `Semester ${selectedSemester}`
+      const category = targetUploadSubject || `Semester ${selectedSemester || 1}`
       files.forEach(f => {
         if (onUploadFileNote) {
           onUploadFileNote(f, category)
@@ -463,24 +490,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             return (
               <div
                 key={semNum}
-                onClick={() => setSelectedSemester(semNum)}
+                onClick={() => handleSemesterTileClick(semNum)}
                 style={{ transitionDelay: semestersVisible ? `${index * 60}ms` : '0ms' }}
                 className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
-                  isSelected
-                    ? 'bg-indigo-50/40 dark:bg-indigo-950/40 border-indigo-500 shadow-md ring-2 ring-indigo-500/30 -translate-y-1'
+                  isSelected && !isClosingSemester
+                    ? 'bg-indigo-50/50 dark:bg-indigo-950/50 border-indigo-500 shadow-md ring-2 ring-indigo-500/30 -translate-y-1'
                     : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-indigo-400 dark:hover:border-indigo-600'
                 }`}
               >
                 {/* Top Badge & Count */}
                 <div className="flex items-center justify-between">
                   <span className={`w-7 h-7 rounded-lg font-mono font-bold text-xs flex items-center justify-center transition-colors shadow-xs ${
-                    isSelected
+                    isSelected && !isClosingSemester
                       ? 'bg-indigo-600 text-white'
                       : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 group-hover:bg-indigo-600 group-hover:text-white'
                   }`}>
                     0{semNum}
                   </span>
-                  {isSelected ? (
+                  {isSelected && !isClosingSemester ? (
                     <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white shadow-xs">
                       Active
                     </span>
@@ -496,7 +523,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {/* Center Title */}
                 <div className="my-2">
                   <h3 className={`font-serif font-bold text-sm sm:text-base transition-colors ${
-                    isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+                    isSelected && !isClosingSemester ? 'text-indigo-600 dark:text-indigo-400' : 'text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
                   }`}>
                     Semester {semNum}
                   </h3>
@@ -511,80 +538,73 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {/* Bottom subtle indicator */}
                 <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium pt-2 border-t border-stone-100 dark:border-stone-800/70">
                   <span>{semNotesCount} Notes</span>
-                  <ChevronRight className={`w-3.5 h-3.5 transition-all ${
-                    isSelected ? 'text-indigo-600 dark:text-indigo-400 translate-x-1' : 'text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500'
+                  <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                    isSelected && !isClosingSemester ? 'text-indigo-600 dark:text-indigo-400 rotate-180' : 'text-stone-400 group-hover:text-indigo-500'
                   }`} />
                 </div>
               </div>
             )
           })}
         </div>
-      </section>
 
-      {/* SECTION: SEMESTER SUBJECT TILES WITH "+ ADD NOTES FROM DEVICE" */}
-      <section className="space-y-4">
-        {/* Header with Switcher and Add Subject */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
-                <Layers className="w-4 h-4 text-indigo-500" />
-                Semester {selectedSemester} Subjects
-              </h2>
-              {isArshad && storageService.getCoursesBySemester(activeUser.id, selectedSemester).length > 0 && (
-                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
-                  {storageService.getCoursesBySemester(activeUser.id, selectedSemester).length} Courses • {storageService.getCoursesBySemester(activeUser.id, selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits
+        {/* INSIDE SEMESTER SECTION: EXPANDED SUBJECT TILES FOR THE ACTIVE SEMESTER TILE */}
+        {selectedSemester !== null && (
+          <div className={`mt-5 pt-5 border-t border-stone-200/80 dark:border-stone-800 space-y-4 overflow-hidden ${
+            isClosingSemester ? 'animate-tab-close-up' : 'animate-tab-open-down'
+          }`}>
+            {/* Header for Active Semester Subjects */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-xs">
+                  Semester 0{selectedSemester}
                 </span>
-              )}
-            </div>
-            <p className="text-xs text-stone-400 mt-0.5">
-              Click any subject tile to open its notes window, or click "+ Add Notes from Device" to upload PDF/doc files
-            </p>
-          </div>
+                <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
+                  Subject Modules
+                </span>
+                {isArshad && storageService.getCoursesBySemester(activeUser.id, selectedSemester).length > 0 && (
+                  <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50 font-bold">
+                    {storageService.getCoursesBySemester(activeUser.id, selectedSemester).length} Courses • {storageService.getCoursesBySemester(activeUser.id, selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits
+                  </span>
+                )}
+              </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
-            {/* Quick 1-8 Semester Jump Bubbles */}
-            <div className="flex items-center bg-stone-100 dark:bg-stone-800/90 p-1 rounded-xl text-xs font-medium border border-stone-200/70 dark:border-stone-700">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* Add Subject Bubble Button */}
+                <div className="relative flex items-center group animate-bubble-spring">
+                  <div 
+                    className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAddModalTarget('subject')
+                      setShowAddModal(true)
+                    }}
+                    className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                    title="Add Subject Tile"
+                  >
+                    <Plus className="w-3.5 h-3.5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+                    <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
+                      Add Subject
+                    </span>
+                  </button>
+                </div>
+
+                {/* Collapse Button */}
                 <button
-                  key={s}
-                  onClick={() => setSelectedSemester(s)}
-                  className={`px-2 py-1 rounded-lg text-xs font-mono transition-all ${
-                    selectedSemester === s
-                      ? 'bg-indigo-600 text-white font-bold shadow-xs'
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
-                  }`}
+                  type="button"
+                  onClick={() => handleSemesterTileClick(selectedSemester)}
+                  className="px-3 py-1.5 rounded-xl text-xs font-medium text-stone-500 hover:text-stone-800 dark:text-stone-400 dark:hover:text-stone-200 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 transition-colors flex items-center gap-1 cursor-pointer"
+                  title="Collapse Semester Subjects"
                 >
-                  S{s}
+                  <X className="w-3.5 h-3.5" />
+                  <span>Collapse</span>
                 </button>
-              ))}
+              </div>
             </div>
 
-            {/* Add Subject Bubble Button */}
-            <div className="relative flex items-center group animate-bubble-spring">
-              <div 
-                className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setAddModalTarget('subject')
-                  setShowAddModal(true)
-                }}
-                className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
-                title="Add Subject Tile"
-              >
-                <Plus className="w-3.5 h-3.5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
-                <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
-                  Add Subject
-                </span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Subject Tiles Grid */}
-        <div ref={subjectsRef} className="space-y-4">
+            {/* Subject Tiles Grid */}
+            <div ref={subjectsRef} className="space-y-4">
           {(() => {
             const activeCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, selectedSemester) : []
 
@@ -739,9 +759,12 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             )
           })()}
+            </div>
+          </div>
+        )}
 
-          {/* Optional Toggle / Additional section for Custom Added Subjects if any exist */}
-          {subjects.length > 0 && (
+        {/* Optional Toggle / Additional section for Custom Added Subjects if any exist */}
+        {subjects.length > 0 && (
             <div className="pt-2">
               <div className="flex items-center justify-between mb-3">
                 <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
@@ -784,7 +807,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               </div>
             </div>
           )}
-        </div>
       </section>
 
       {/* VIEWS AS A BAR (Divider & Section Header) */}
