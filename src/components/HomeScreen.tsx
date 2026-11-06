@@ -575,13 +575,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     </span>
                   ) : (
                     <span className={`text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded border ${
-                      semNum <= 3
+                      isArshad && semNum <= 3
                         ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
                         : semCourses.length > 0
                           ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200/50 dark:border-indigo-800/50'
                           : 'bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50'
                     }`}>
-                      {semNum <= 3 ? 'Completed' : semCourses.length > 0 ? 'Active' : 'Upcoming'}
+                      {isArshad && semNum <= 3 ? 'Completed' : semCourses.length > 0 ? 'Active' : 'To Be Added'}
                     </span>
                   )}
                 </div>
@@ -595,10 +595,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   </h3>
                   <div className="text-[10px] text-stone-400 mt-0.5 truncate">
                     {semCourses.length > 0 
-                      ? semNum <= 3 
+                      ? (isArshad && semNum <= 3)
                         ? `${semCredits} Credits • Cleared`
                         : `${semCredits} Credits • ${semCourses.length} Courses`
-                      : '0 Courses • Empty'
+                      : '0 Courses • To be added'
                     }
                   </div>
                 </div>
@@ -627,22 +627,22 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                   Semester 0{selectedSemester}
                 </span>
                 <span className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100">
-                  {selectedSemester <= 3 
+                  {isArshad && selectedSemester <= 3 
                     ? 'Completed Course Modules' 
-                    : (courses.filter(c => c.semester === selectedSemester).length > 0 ? 'Course Modules' : 'Upcoming Semester Modules')
+                    : (courses.filter(c => c.semester === selectedSemester).length > 0 ? 'Course Modules' : 'Semester Modules (To Be Added)')
                   }
                 </span>
                 {courses.filter(c => c.semester === selectedSemester).length > 0 ? (
                   <span className={`text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border ${
-                    selectedSemester <= 3
+                    isArshad && selectedSemester <= 3
                       ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
                       : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/50 dark:border-indigo-800/50'
                   }`}>
-                    {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits {selectedSemester <= 3 ? '• Cleared' : ''}
+                    {courses.filter(c => c.semester === selectedSemester).length} Courses • {courses.filter(c => c.semester === selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits {isArshad && selectedSemester <= 3 ? '• Cleared' : ''}
                   </span>
                 ) : (
                   <span className="text-[11px] font-mono px-2 py-0.5 rounded-full font-bold border bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50">
-                    0 Courses • Empty Box
+                    0 Courses • To Be Added
                   </span>
                 )}
               </div>
@@ -863,73 +863,171 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       </div>
                     )
                   })}
+
+                  {/* Append + Add Course Module Tile inside the grid matching exact tile shape */}
+                  <div
+                    onClick={() => openAddCourseModal(selectedSemester)}
+                    className="group relative p-5 sm:p-6 rounded-3xl bg-stone-50/50 dark:bg-stone-900/40 border-2 border-dashed border-stone-200 dark:border-stone-800 hover:border-indigo-400 dark:hover:border-indigo-600 shadow-2xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-dashed border-indigo-300 dark:border-indigo-800 font-bold">
+                        + NEW MODULE
+                      </span>
+                      <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
+                        Add Cr
+                      </span>
+                    </div>
+
+                    <div className="my-2 space-y-1">
+                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        + Add Course to Semester {selectedSemester}
+                      </h4>
+                      <p className="text-xs text-stone-400 line-clamp-2">
+                        Fill course code, title, credits, and category matching earlier semester format.
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:underline">
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Fill Details</span>
+                      </span>
+                      <span className="text-xs text-stone-400 group-hover:text-indigo-500">
+                        + Add Tile →
+                      </span>
+                    </div>
+                  </div>
+
                 </div>
               )
             }
 
-            // Empty state for semesters without registered courses (e.g., Sem 4..8 or Raniya)
+            // Empty state for semesters without registered courses (e.g., Sem 4..8 for Arshad, or Sem 1..8 for Raniya)
             return (
-              <div className="py-14 px-6 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800 bg-white/60 dark:bg-stone-900/40 text-center flex flex-col items-center justify-center space-y-4">
-                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shadow-xs">
-                  <GraduationCap className="w-6 h-6" />
+              <div className="space-y-5">
+                {/* 3-Column Visual Grid of Module Tiles Matching the Same Shape and Proportions */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {/* Slot 1: Fill Course Details Tile */}
+                  <div
+                    onClick={() => openAddCourseModal(selectedSemester)}
+                    className="group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-dashed border-stone-300 dark:border-stone-700 hover:border-indigo-500 dark:hover:border-indigo-400 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-dashed border-indigo-300 dark:border-indigo-800 font-bold">
+                        + CODE TO BE ADDED
+                      </span>
+                      <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
+                        Credits
+                      </span>
+                    </div>
+
+                    <div className="my-2 space-y-1">
+                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        + Fill Course Details for Sem {selectedSemester}
+                      </h4>
+                      <p className="text-xs text-stone-400 leading-relaxed">
+                        Add course code, subject name, credits, and category to create a course module tile matching earlier semester details.
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 dark:text-indigo-400 group-hover:underline">
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Add Subject Details</span>
+                      </span>
+                      <span className="text-xs text-stone-400 group-hover:text-indigo-500">
+                        Fill Details →
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Slot 2: Add Notes from Device Tile */}
+                  <div
+                    onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
+                    className="group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-dashed border-stone-300 dark:border-stone-700 hover:border-rose-500 dark:hover:border-rose-400 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border border-dashed border-rose-300 dark:border-rose-800 font-bold">
+                        + NOTES & PDFS
+                      </span>
+                      <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
+                        Upload
+                      </span>
+                    </div>
+
+                    <div className="my-2 space-y-1">
+                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors">
+                        + Add Notes from Device
+                      </h4>
+                      <p className="text-xs text-stone-400 leading-relaxed">
+                        Attach lecture slides, handwritten notes, or syllabus docs directly into Semester {selectedSemester}.
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-600 dark:text-rose-400 group-hover:underline">
+                        <Upload className="w-3.5 h-3.5" />
+                        <span>Attach Documents</span>
+                      </span>
+                      <span className="text-xs text-stone-400 group-hover:text-rose-500">
+                        Upload →
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Slot 3: Custom Subject Tile */}
+                  <div
+                    onClick={() => {
+                      setAddModalTarget('subject')
+                      setShowAddModal(true)
+                    }}
+                    className="group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border-2 border-dashed border-stone-300 dark:border-stone-700 hover:border-emerald-500 dark:hover:border-emerald-400 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 cursor-pointer flex flex-col justify-between min-h-[200px]"
+                  >
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="font-mono text-xs px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-dashed border-emerald-300 dark:border-emerald-800 font-bold">
+                        + CUSTOM SUBJECT
+                      </span>
+                      <span className="text-[11px] font-mono text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
+                        Tile
+                      </span>
+                    </div>
+
+                    <div className="my-2 space-y-1">
+                      <h4 className="font-serif font-bold text-base text-stone-800 dark:text-stone-200 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                        + Insert Custom Subject Tile
+                      </h4>
+                      <p className="text-xs text-stone-400 leading-relaxed">
+                        Create custom topics, project lab tiles, or elective subjects for Semester {selectedSemester}.
+                      </p>
+                    </div>
+
+                    <div className="pt-3 border-t border-dashed border-stone-200 dark:border-stone-800/80 flex items-center justify-between">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400 group-hover:underline">
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>Create Subject</span>
+                      </span>
+                      <span className="text-xs text-stone-400 group-hover:text-emerald-500">
+                        Create →
+                      </span>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-serif font-bold text-stone-800 dark:text-stone-200 text-lg">
-                    Semester {selectedSemester} is Empty
-                  </h3>
-                  <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-1 leading-relaxed">
-                    No course modules added yet for Semester {selectedSemester}. In the future, this box can be filled with details matching the format of earlier semesters.
-                  </p>
-                </div>
-                <div className="flex items-center gap-3 flex-wrap justify-center pt-1">
-                  {/* Fill Course Details Button */}
+
+                {/* Info banner */}
+                <div className="py-4 px-6 rounded-2xl border border-stone-200/80 dark:border-stone-800 bg-stone-50/60 dark:bg-stone-900/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-stone-500 dark:text-stone-400">
+                  <div className="flex items-center gap-2">
+                    <GraduationCap className="w-4 h-4 text-indigo-500 flex-shrink-0" />
+                    <span>
+                      Semester {selectedSemester} details to be added for <strong>{activeUser.name}</strong>. Added courses will appear formatted identically to earlier semesters.
+                    </span>
+                  </div>
                   <button
                     type="button"
                     onClick={() => openAddCourseModal(selectedSemester)}
-                    className="flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                    className="px-3.5 py-1.5 rounded-xl font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-all cursor-pointer whitespace-nowrap"
                   >
-                    <Plus className="w-4 h-4" />
-                    <span>+ Fill Course Details</span>
+                    + Fill Course Details
                   </button>
-
-                  {/* Add Notes from Device Bubble */}
-                  <div className="relative flex items-center group animate-bubble-spring">
-                    <div 
-                      className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
-                      className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-4 group-hover:gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
-                      title="Upload notes from device"
-                    >
-                      <Upload className="w-4 h-4 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
-                      <span className="max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
-                        + Add Notes from Device
-                      </span>
-                    </button>
-                  </div>
-
-                  {/* Add Subject Tile Bubble */}
-                  <div className="relative flex items-center group animate-bubble-spring">
-                    <div 
-                      className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setAddModalTarget('subject')
-                        setShowAddModal(true)
-                      }}
-                      className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-4 group-hover:gap-1.5 rounded-full bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
-                      title="Insert New Subject Tile"
-                    >
-                      <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
-                      <span className="max-w-0 opacity-0 group-hover:max-w-[130px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
-                        Add Subject Tile
-                      </span>
-                    </button>
-                  </div>
                 </div>
               </div>
             )
@@ -1370,7 +1468,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 <span className={`px-2 py-0.5 rounded-full text-[11px] font-mono font-bold transition-colors ${
                   showCoursesCompleted && !isClosingCourses ? 'bg-white/20 text-white' : 'bg-indigo-200/70 dark:bg-indigo-900 text-indigo-900 dark:text-indigo-100'
                 }`}>
-                  {courses.filter(c => c.semester <= 3).length} Courses • {courses.filter(c => c.semester <= 3).reduce((sum, c) => sum + c.credits, 0)} Credits
+                  {courses.filter(c => isArshad ? c.semester <= 3 : true).length} Courses • {courses.filter(c => isArshad ? c.semester <= 3 : true).reduce((sum, c) => sum + c.credits, 0)} Credits
                 </span>
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${showCoursesCompleted && !isClosingCourses ? 'rotate-180' : ''}`} />
               </button>
@@ -1405,16 +1503,19 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                     Courses Completed
                   </h4>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    Verified SRM Institute of Science and Technology transcript for completed academic semesters (Semesters 1 to 3)
+                    {isArshad 
+                      ? 'Verified SRM Institute of Science and Technology transcript for completed academic semesters (Semesters 1 to 3)'
+                      : `Academic course transcript for ${activeUser.name} (${activeUser.college || 'Engineering Scholar'})`
+                    }
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2 text-xs font-mono flex-wrap">
                   <span className="px-2.5 py-1 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800 font-bold">
-                    {courses.filter(c => c.semester <= 3).length} Courses Completed
+                    {courses.filter(c => isArshad ? c.semester <= 3 : true).length} Courses {isArshad ? 'Completed (Sem 1-3)' : 'Added'}
                   </span>
                   <span className="px-2.5 py-1 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 font-bold">
-                    {courses.filter(c => c.semester <= 3).reduce((sum, c) => sum + c.credits, 0)} Total Credits Earned (Sem 1-3)
+                    {courses.filter(c => isArshad ? c.semester <= 3 : true).reduce((sum, c) => sum + c.credits, 0)} Total Credits Earned
                   </span>
                 </div>
               </div>
@@ -1469,10 +1570,13 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           </div>
                           <div className="space-y-1">
                             <h5 className="font-serif font-bold text-base sm:text-lg text-stone-800 dark:text-stone-200">
-                              Semester {selectedSemesterBubble} is Empty
+                              Semester {selectedSemesterBubble} Details to be Added
                             </h5>
                             <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto leading-relaxed">
-                              No courses registered or completed for Semester {selectedSemesterBubble} yet. In the future, this box can be filled with course code, title, credits, and category matching the format of earlier semesters.
+                              {isArshad
+                                ? `Semester ${selectedSemesterBubble} details to be added. In the future, this box can be filled with course code, title, credits, and category matching earlier semesters.`
+                                : `No courses added for Semester ${selectedSemesterBubble} yet. Click below to fill course details for ${activeUser.name} matching earlier semester structure.`
+                              }
                             </p>
                           </div>
                           <button
@@ -1538,7 +1642,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                                     ? 'bg-white dark:bg-stone-700 text-stone-900 dark:text-white shadow-xs font-bold'
                                     : 'text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200'
                                 }`}
-                                title="SRM Official Portal Table View"
+                                title="Official Portal Table View"
                               >
                                 <Table className="w-3.5 h-3.5 text-indigo-500" />
                                 <span>Portal Table</span>
@@ -1561,20 +1665,20 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                           </div>
                         </div>
 
-                        {/* MODE 1: SRM STUDENT PORTAL OFFICIAL TABLE VIEW */}
+                        {/* MODE 1: STUDENT PORTAL OFFICIAL TABLE VIEW */}
                         {courseViewMode === 'table' ? (
                           <div className="overflow-x-auto rounded-2xl border border-stone-200/90 dark:border-stone-700/80 bg-white dark:bg-stone-900 shadow-xs">
-                            {/* SRM Portal header styling matching sp.srmist.edu.in */}
+                            {/* Portal header styling */}
                             <div className="px-4 py-2.5 bg-stone-50 dark:bg-stone-800/60 border-b border-stone-200/80 dark:border-stone-700/80 flex items-center justify-between gap-2 flex-wrap text-xs">
                               <div className="flex items-center gap-2">
                                 <span className="font-bold text-stone-800 dark:text-stone-200 tracking-wide font-sans">
-                                  Faculty of Engineering and Technology, Ramapuram, Chennai
+                                  {activeUser.college || (isArshad ? 'Faculty of Engineering and Technology, Ramapuram, Chennai' : 'Arunachala College of Engineering, Ammandivilai, Kaniyakumari')}
                                 </span>
                                 <span className="text-stone-400">•</span>
                                 <span className="font-semibold text-indigo-600 dark:text-indigo-400">Course List</span>
                               </div>
                               <span className="font-mono text-[11px] text-stone-400">
-                                sp.srmist.edu.in
+                                {isArshad ? 'sp.srmist.edu.in' : 'student.portal'}
                               </span>
                             </div>
 

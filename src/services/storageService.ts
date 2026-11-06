@@ -439,37 +439,55 @@ export const storageService = {
   },
 
   getCoursesForUser(userId: string): CourseItem[] {
+    const isArshadUser = userId === 'user-arshad' || userId.toLowerCase().includes('arshad')
     try {
       const stored = localStorage.getItem(`${COURSES_STORAGE_KEY}_${userId}`)
       if (stored) {
         const parsed = JSON.parse(stored)
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // If stored courses contain legacy auto-generated dummy curriculum for sem 4-8, strip them out so sem 4-8 start empty
-          const legacyDummyCodes = new Set([
-            '21CSC204J', '21CSC205J', '21CSC206T', '21MAB207T', '21CSS202J', '21LEM203T',
-            '21CSC301T', '21CSC302J', '21CSC303J', '21CSS301T', '21CSE301T', '21OE301T',
-            '21CSC304J', '21CSC305J', '21CSC306T', '21CSE302T', '21CSE303T', '21OE302T',
-            '21CSC401J', '21CSC402T', '21CSE401T', '21CSP401L', '21CSP402L',
-            '21CSP403L', '21CSE402T'
-          ])
-          const cleaned = parsed.filter(c => !(c.semester > 3 && legacyDummyCodes.has(c.code)))
-          
-          // Ensure semesters 1-3 always have the full 24 verified completed courses
-          const storedSem123Codes = new Set(cleaned.filter(c => c.semester <= 3).map(c => c.code))
-          const missingSem123 = ARSHAD_COURSES.filter(c => !storedSem123Codes.has(c.code))
-          const finalCourses = missingSem123.length > 0 ? [...cleaned, ...missingSem123] : cleaned
+        if (Array.isArray(parsed)) {
+          if (isArshadUser) {
+            // If stored courses contain legacy auto-generated dummy curriculum for sem 4-8, strip them out so sem 4-8 start empty (to be added)
+            const legacyDummyCodes = new Set([
+              '21CSC204J', '21CSC205J', '21CSC206T', '21MAB207T', '21CSS202J', '21LEM203T',
+              '21CSC301T', '21CSC302J', '21CSC303J', '21CSS301T', '21CSE301T', '21OE301T',
+              '21CSC304J', '21CSC305J', '21CSC306T', '21CSE302T', '21CSE303T', '21OE302T',
+              '21CSC401J', '21CSC402T', '21CSE401T', '21CSP401L', '21CSP402L',
+              '21CSP403L', '21CSE402T'
+            ])
+            const cleaned = parsed.filter(c => !(c.semester > 3 && legacyDummyCodes.has(c.code)))
+            
+            // Ensure Mohamed Arshad always has the 24 verified SRM completed courses for Semesters 1-3
+            const storedSem123Codes = new Set(cleaned.filter(c => c.semester <= 3).map(c => c.code))
+            const missingSem123 = ARSHAD_COURSES.filter(c => !storedSem123Codes.has(c.code))
+            const finalCourses = missingSem123.length > 0 ? [...cleaned, ...missingSem123] : cleaned
 
-          if (finalCourses.length !== parsed.length) {
-            this.saveCoursesForUser(userId, finalCourses)
+            if (finalCourses.length !== parsed.length) {
+              this.saveCoursesForUser(userId, finalCourses)
+            }
+            return finalCourses
+          } else {
+            // For Raniya (or another user): Strip out any legacy Arshad SRM codes that were inadvertently saved
+            const arshadCodes = new Set(ARSHAD_COURSES.map(c => c.code))
+            const cleaned = parsed.filter(c => !arshadCodes.has(c.code))
+            if (cleaned.length !== parsed.length) {
+              this.saveCoursesForUser(userId, cleaned)
+            }
+            return cleaned
           }
-          return finalCourses
         }
       }
     } catch (e) {
       console.error('Failed to load courses from storage', e)
     }
-    // Return standard SRM CSE completed courses by default
-    return ARSHAD_COURSES
+
+    // Default courses if no storage exists yet:
+    if (isArshadUser) {
+      this.saveCoursesForUser(userId, ARSHAD_COURSES)
+      return ARSHAD_COURSES
+    }
+    // For Raniya: all semesters start empty (to be added)
+    this.saveCoursesForUser(userId, [])
+    return []
   },
 
   saveCoursesForUser(userId: string, courses: CourseItem[]): void {
