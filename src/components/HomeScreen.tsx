@@ -531,7 +531,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* Device Upload Toast */}
         {deviceUploadToast && (
-          <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 shadow-xl border border-stone-700 animate-fade-in text-xs font-medium">
+          <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white shadow-xl border border-stone-700 dark:border-amber-500/30 animate-fade-in text-xs font-medium">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             <span>{deviceUploadToast}</span>
           </div>
@@ -642,7 +642,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
         {/* INSIDE SEMESTER SECTION: EXPANDED SUBJECT TILES FOR THE ACTIVE SEMESTER TILE */}
         {selectedSemester !== null && (
-          <div className={`mt-5 pt-5 border-t border-stone-200/80 dark:border-stone-800 space-y-4 overflow-hidden ${
+          <div className={`semester-expanded-section mt-5 pt-5 border-t border-stone-200/80 dark:border-stone-800 space-y-4 overflow-hidden ${
             isClosingSemester ? 'animate-tab-close-up' : 'animate-tab-open-down'
           }`}>
             {/* Header for Active Semester Subjects */}
@@ -1516,7 +1516,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
           {/* EXPANDABLE "COURSES COMPLETED" TAB - SHOWS ONLY COMPLETED SEMESTERS (SEM 1-3) */}
           {showCoursesCompleted && (
-            <div className={`pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 overflow-hidden ${
+            <div className={`courses-completed-section pt-6 mt-6 border-t border-stone-200/80 dark:border-stone-800 space-y-5 overflow-hidden ${
               isClosingCourses ? 'animate-tab-close-up' : 'animate-tab-open-down'
             }`}>
               

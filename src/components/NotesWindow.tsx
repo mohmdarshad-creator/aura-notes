@@ -279,7 +279,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
       }}
       onDragLeave={() => setIsDragging(false)}
       onDrop={handleDrop}
-      className={`max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in relative transition-all ${
+      className={`notes-window-container max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in relative transition-all ${
         isDragging ? 'ring-4 ring-amber-500/40 rounded-3xl bg-amber-50/20 dark:bg-amber-950/20' : ''
       }`}
     >
@@ -304,7 +304,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
 
       {/* Toast Notification */}
       {uploadSuccessToast && (
-        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 shadow-xl border border-stone-700 animate-fade-in text-xs font-medium">
+        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white shadow-xl border border-stone-700 dark:border-amber-500/30 animate-fade-in text-xs font-medium">
           <CheckCircle2 className="w-4 h-4 text-emerald-400" />
           <span>{uploadSuccessToast}</span>
         </div>

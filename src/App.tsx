@@ -54,7 +54,7 @@ export function App() {
     if (theme === 'dark') {
       root.classList.add('dark')
     } else if (theme === 'steel-gold') {
-      root.classList.add('theme-steel-gold')
+      root.classList.add('dark', 'theme-steel-gold')
     }
     storageService.saveTheme(theme)
   }, [theme])

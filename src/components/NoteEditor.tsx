@@ -105,7 +105,7 @@ export const NoteEditor: React.FC<NoteEditorProps> = ({
   }
 
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden">
+    <div className="note-editor-container h-full flex flex-col bg-white dark:bg-stone-900 rounded-3xl border border-stone-200/80 dark:border-stone-800 shadow-sm overflow-hidden">
       
       {/* Top Header Bar */}
       <div className="px-6 py-4 border-b border-stone-200/80 dark:border-stone-800 flex items-center justify-between gap-4 flex-wrap bg-stone-50/50 dark:bg-stone-900/50">

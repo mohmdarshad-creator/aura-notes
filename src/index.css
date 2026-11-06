@@ -1329,5 +1329,386 @@ html.theme-steel-gold .theme-tile-dark:hover {
   transform: translateY(-3px) scale(1.02) !important;
 }
 
+/* ============================================================
+   DARK GOLDEN THEME (STEEL & GOLD): FOLDER & NOTES VIEWS
+   Ensures zero white/pale artifacts when any folder or tab is opened
+   ============================================================ */
+
+/* Global pale background neutralization under Steel & Gold */
+html.theme-steel-gold .bg-amber-50,
+html.theme-steel-gold .bg-amber-100 {
+  background-color: rgba(229, 184, 75, 0.12) !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .hover\:bg-amber-100:hover,
+html.theme-steel-gold .hover\:bg-amber-50:hover {
+  background-color: rgba(229, 184, 75, 0.22) !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .bg-white\/50,
+html.theme-steel-gold .bg-white\/60,
+html.theme-steel-gold .bg-white\/40,
+html.theme-steel-gold .bg-white\/30,
+html.theme-steel-gold .bg-white\/20,
+html.theme-steel-gold .bg-white\/10 {
+  background-color: #17130E !important;
+}
+html.theme-steel-gold .bg-stone-50\/50,
+html.theme-steel-gold .bg-stone-50\/70,
+html.theme-steel-gold .bg-stone-50\/80 {
+  background-color: #1A150F !important;
+}
+html.theme-steel-gold .hover\:bg-stone-200:hover {
+  background-color: #2F261D !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .text-amber-700,
+html.theme-steel-gold .text-amber-600 {
+  color: #E5B84B !important;
+}
+html.theme-steel-gold .border-amber-200,
+html.theme-steel-gold .border-amber-200\/50,
+html.theme-steel-gold .border-amber-200\/60,
+html.theme-steel-gold .border-amber-200\/80,
+html.theme-steel-gold .border-amber-300 {
+  border-color: rgba(229, 184, 75, 0.28) !important;
+}
+html.theme-steel-gold .bg-emerald-50,
+html.theme-steel-gold .dark\:bg-emerald-950\/60 {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #6EE7B7 !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+html.theme-steel-gold .text-emerald-700,
+html.theme-steel-gold .dark\:text-emerald-300 {
+  color: #6EE7B7 !important;
+}
+
+/* Neutralize inverted light elements in dark mode */
+html.theme-steel-gold .dark\:bg-stone-100 {
+  background-color: #241E17 !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .dark\:hover\:bg-white:hover {
+  background-color: #2F261D !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .dark\:text-stone-900 {
+  color: #FAF6EE !important;
+}
+
+/* Ensure root canvas is pure dark golden obsidian */
+html.theme-steel-gold div.min-h-screen,
+html.theme-steel-gold #root > div.min-h-screen {
+  background-color: transparent !important;
+}
+
+/* ============================================================
+   1. NOTES WINDOW (Dedicated Folder Window)
+   ============================================================ */
+html.theme-steel-gold .notes-window-container {
+  color: #FAF6EE !important;
+}
+
+/* Window Navigation Bar */
+html.theme-steel-gold .notes-window-container .border-b {
+  border-bottom-color: rgba(229, 184, 75, 0.2) !important;
+}
+
+/* Back to Home Button */
+html.theme-steel-gold .notes-window-container button[title="Back to Home"] {
+  background-color: #1D1812 !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.28) !important;
+}
+html.theme-steel-gold .notes-window-container button[title="Back to Home"]:hover {
+  background-color: #241D14 !important;
+  border-color: #E5B84B !important;
+  box-shadow: 0 4px 14px rgba(229, 184, 75, 0.2) !important;
+}
+
+/* Upload from Device Button */
+html.theme-steel-gold .notes-window-container button[title="Upload PDF or notes from your device"] {
+  background-color: rgba(229, 184, 75, 0.12) !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.3) !important;
+}
+html.theme-steel-gold .notes-window-container button[title="Upload PDF or notes from your device"]:hover {
+  background-color: rgba(229, 184, 75, 0.22) !important;
+  border-color: #E5B84B !important;
+  box-shadow: 0 4px 14px rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .notes-window-container button[title="Upload PDF or notes from your device"] svg {
+  color: #E5B84B !important;
+}
+
+/* New Note Button */
+html.theme-steel-gold .notes-window-container button[title="Create New Note in this context"] {
+  background-color: #E5B84B !important;
+  color: #0D131A !important;
+  font-weight: 700 !important;
+  border-color: rgba(229, 184, 75, 0.5) !important;
+  box-shadow: 0 2px 12px rgba(229, 184, 75, 0.3) !important;
+}
+html.theme-steel-gold .notes-window-container button[title="Create New Note in this context"]:hover {
+  background-color: #F0C45B !important;
+  color: #0D131A !important;
+}
+html.theme-steel-gold .notes-window-container button[title="Create New Note in this context"] svg {
+  color: #0D131A !important;
+}
+
+/* Header Folder Icon */
+html.theme-steel-gold .notes-window-container .w-12.h-12.rounded-2xl {
+  background-color: #1D1812 !important;
+  border-color: rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container .w-12.h-12.rounded-2xl svg {
+  color: #E5B84B !important;
+}
+
+/* Header Titles & Badges */
+html.theme-steel-gold .notes-window-container h1 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .notes-window-container .rounded-full.bg-stone-100 {
+  background-color: #241E17 !important;
+  color: #D6C9B6 !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+}
+
+/* In-Window Search Bar */
+html.theme-steel-gold .notes-window-container .group.rounded-xl.border {
+  background-color: #1D1812 !important;
+  border-color: rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container .group.rounded-xl.border:focus-within {
+  border-color: #E5B84B !important;
+  box-shadow: 0 0 0 2px rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container input[placeholder="Search in this window..."] {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .notes-window-container input[placeholder="Search in this window..."]::placeholder {
+  color: #8F7E6B !important;
+}
+
+/* Filter Bar: Author & Tag Pills */
+html.theme-steel-gold .notes-window-container button.rounded-lg {
+  background-color: #241E17 !important;
+  color: #D6C9B6 !important;
+  border: 1px solid rgba(229, 184, 75, 0.16) !important;
+}
+html.theme-steel-gold .notes-window-container button.rounded-lg:hover {
+  background-color: #2F261D !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .notes-window-container button.rounded-lg.bg-stone-900,
+html.theme-steel-gold .notes-window-container button.rounded-lg.bg-indigo-600 {
+  background-color: #E5B84B !important;
+  color: #0D131A !important;
+  font-weight: 700 !important;
+  border-color: #E5B84B !important;
+}
+
+/* Empty State Card in Folder Window */
+html.theme-steel-gold .notes-window-container .border-dashed {
+  background-color: #17130E !important;
+  border-color: rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed h3 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed p {
+  color: #A39380 !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed .w-12.h-12 {
+  background-color: #241E17 !important;
+  border: 1px solid rgba(229, 184, 75, 0.2) !important;
+  color: #E5B84B !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed button.bg-amber-600 {
+  background-color: #E5B84B !important;
+  color: #0D131A !important;
+  font-weight: 700 !important;
+  border-color: #E5B84B !important;
+  box-shadow: 0 2px 10px rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed button.bg-stone-900 {
+  background-color: #241E17 !important;
+  color: #FAF6EE !important;
+  border: 1px solid rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .notes-window-container .border-dashed button.bg-stone-900:hover {
+  background-color: #2E261D !important;
+  border-color: rgba(229, 184, 75, 0.4) !important;
+}
+
+/* ============================================================
+   2. NOTE CARDS INSIDE FOLDERS
+   ============================================================ */
+html.theme-steel-gold .note-card-container {
+  background-color: #1D1812 !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+}
+html.theme-steel-gold .note-card-container:hover {
+  border-color: rgba(229, 184, 75, 0.45) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.55), 0 0 12px rgba(229, 184, 75, 0.12) !important;
+}
+html.theme-steel-gold .note-card-container h3 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-card-container p {
+  color: #C2B5A2 !important;
+}
+html.theme-steel-gold .note-card-container .bg-stone-100 {
+  background-color: #241E17 !important;
+  color: #D6C9B6 !important;
+  border: 1px solid rgba(229, 184, 75, 0.15) !important;
+}
+html.theme-steel-gold .note-card-container .bg-rose-50 {
+  background-color: rgba(229, 184, 75, 0.12) !important;
+  color: #E5B84B !important;
+  border-color: rgba(229, 184, 75, 0.25) !important;
+}
+html.theme-steel-gold .note-card-container .bg-stone-50\/80 {
+  background-color: #15110D !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .note-card-container .bg-stone-50\/80 p.text-stone-800 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-card-container .bg-stone-50\/80 a.bg-white {
+  background-color: #241E17 !important;
+  color: #FAF6EE !important;
+  border: 1px solid rgba(229, 184, 75, 0.2) !important;
+}
+
+/* ============================================================
+   3. NOTE EDITOR MODAL
+   ============================================================ */
+html.theme-steel-gold .note-editor-container {
+  background-color: #17130E !important;
+  border-color: rgba(229, 184, 75, 0.25) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75) !important;
+}
+html.theme-steel-gold .note-editor-container > div:first-child {
+  background-color: #1B150F !important;
+  border-bottom-color: rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .note-editor-container select {
+  background-color: #241E17 !important;
+  color: #FAF6EE !important;
+  border: 1px solid rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .note-editor-container input[placeholder="Untitled Note..."] {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-editor-container input[placeholder="Untitled Note..."]::placeholder {
+  color: #7A6E60 !important;
+}
+html.theme-steel-gold .note-editor-container .border-y {
+  background-color: #18130E !important;
+  border-color: rgba(229, 184, 75, 0.15) !important;
+}
+html.theme-steel-gold .note-editor-container .border-y button {
+  color: #A39380 !important;
+}
+html.theme-steel-gold .note-editor-container .border-y button:hover {
+  background-color: #241E17 !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-editor-container textarea {
+  background-color: transparent !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-editor-container textarea::placeholder {
+  color: #6E6153 !important;
+}
+html.theme-steel-gold .note-editor-container .markdown-body {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-editor-container .markdown-body p,
+html.theme-steel-gold .note-editor-container .markdown-body li {
+  color: #D6C9B6 !important;
+}
+html.theme-steel-gold .note-editor-container .markdown-body h1,
+html.theme-steel-gold .note-editor-container .markdown-body h2,
+html.theme-steel-gold .note-editor-container .markdown-body h3 {
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .note-editor-container button.bg-rose-50 {
+  background-color: rgba(239, 68, 68, 0.15) !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  color: #FCA5A5 !important;
+}
+
+/* ============================================================
+   4. SEMESTER SECTION: EXPANDED SUBJECT TILES
+   ============================================================ */
+html.theme-steel-gold .semester-expanded-section {
+  border-top-color: rgba(229, 184, 75, 0.22) !important;
+}
+html.theme-steel-gold .semester-expanded-section button[title*="Fill Course Details"] {
+  background-color: rgba(229, 184, 75, 0.12) !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.3) !important;
+}
+html.theme-steel-gold .semester-expanded-section button[title*="Fill Course Details"]:hover {
+  background-color: rgba(229, 184, 75, 0.22) !important;
+  border-color: #E5B84B !important;
+}
+html.theme-steel-gold .semester-expanded-section button[title*="Add Subject"] {
+  background-color: rgba(229, 184, 75, 0.12) !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.3) !important;
+}
+html.theme-steel-gold .semester-expanded-section button[title*="Add Subject"]:hover {
+  background-color: rgba(229, 184, 75, 0.22) !important;
+  border-color: #E5B84B !important;
+}
+html.theme-steel-gold .semester-expanded-section .bg-white {
+  background-color: #1D1812 !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .semester-expanded-section .bg-white:hover {
+  border-color: rgba(229, 184, 75, 0.45) !important;
+}
+
+/* ============================================================
+   5. PERSONAL TAB: COURSES COMPLETED EXPANDABLE VIEW
+   ============================================================ */
+html.theme-steel-gold .courses-completed-section {
+  border-top-color: rgba(229, 184, 75, 0.22) !important;
+}
+html.theme-steel-gold .courses-completed-section table {
+  background-color: #17130E !important;
+  color: #FAF6EE !important;
+}
+html.theme-steel-gold .courses-completed-section thead tr,
+html.theme-steel-gold .courses-completed-section thead th {
+  background-color: #201912 !important;
+  color: #FAF6EE !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .courses-completed-section tbody tr {
+  border-color: rgba(229, 184, 75, 0.12) !important;
+}
+html.theme-steel-gold .courses-completed-section tbody tr:hover {
+  background-color: rgba(229, 184, 75, 0.08) !important;
+}
+html.theme-steel-gold .courses-completed-section tfoot tr {
+  background-color: #201912 !important;
+  border-color: rgba(229, 184, 75, 0.2) !important;
+}
+html.theme-steel-gold .courses-completed-section .bg-stone-50\/70,
+html.theme-steel-gold .courses-completed-section .bg-stone-50\/80 {
+  background-color: #17130E !important;
+  border-color: rgba(229, 184, 75, 0.22) !important;
+}
+
+
 
 
