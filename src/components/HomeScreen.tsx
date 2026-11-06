@@ -576,7 +576,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={{ transitionDelay: semestersVisible ? `${index * 40}ms` : '0ms' }}
                 className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
                   isSelected && !isClosingSemester
-                    ? 'semester-tile-selected bg-[#241D14] border-amber-500 shadow-lg ring-2 ring-amber-500/30 shadow-amber-500/15 -translate-y-1'
+                    ? 'semester-tile-selected border-amber-500 shadow-lg ring-2 ring-amber-500/30 shadow-amber-500/15 -translate-y-1'
                     : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-amber-400 dark:hover:border-amber-500'
                 }`}
               >

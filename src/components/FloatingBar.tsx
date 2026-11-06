@@ -70,7 +70,7 @@ export const FloatingBar: React.FC<FloatingBarProps> = ({
           : 'opacity-100 translate-y-0'
       }`}
     >
-      <div className="floating-bar-dock flex items-center gap-1.5 p-1.5 sm:p-2 rounded-full bg-white/85 dark:bg-stone-900/85 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 shadow-2xl hover:shadow-indigo-500/10 transition-shadow">
+      <div className="floating-bar-dock animate-levitate flex items-center gap-1.5 p-1.5 sm:p-2 rounded-full bg-white/85 dark:bg-stone-900/85 backdrop-blur-xl border border-stone-200/80 dark:border-stone-700/80 shadow-2xl hover:shadow-indigo-500/10 transition-all">
         
         {/* Navigation Home Icon (Shown when not at home) */}
         {!isAtHome && onNavigateHome && (
