@@ -556,29 +556,34 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 style={{ transitionDelay: semestersVisible ? `${index * 40}ms` : '0ms' }}
                 className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
                   isSelected && !isClosingSemester
-                    ? 'bg-indigo-50/50 dark:bg-indigo-950/50 border-indigo-500 shadow-md ring-2 ring-indigo-500/30 -translate-y-1'
-                    : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-indigo-400 dark:hover:border-indigo-600'
+                    ? 'semester-tile-selected bg-[#241D14] border-amber-500 shadow-lg ring-2 ring-amber-500/30 shadow-amber-500/15 -translate-y-1'
+                    : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-amber-400 dark:hover:border-amber-500'
                 }`}
               >
+                {/* Subtle warm gold ambient overlay on selected */}
+                {isSelected && !isClosingSemester && (
+                  <div className="absolute inset-0 bg-gradient-to-br from-amber-500/20 via-amber-500/5 to-transparent pointer-events-none" />
+                )}
+
                 {/* Top Badge & Count */}
-                <div className="flex items-center justify-between">
+                <div className="relative z-10 flex items-center justify-between">
                   <span className={`w-7 h-7 rounded-lg font-mono font-bold text-xs flex items-center justify-center transition-colors shadow-xs ${
                     isSelected && !isClosingSemester
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 group-hover:bg-indigo-600 group-hover:text-white'
+                      ? 'bg-amber-500 text-stone-950 font-bold shadow-amber-500/30 shadow-sm'
+                      : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 group-hover:bg-amber-500 group-hover:text-stone-950'
                   }`}>
                     0{semNum}
                   </span>
                   {isSelected && !isClosingSemester ? (
-                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white shadow-xs">
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-amber-500 text-stone-950 shadow-xs">
                       Active
                     </span>
                   ) : (
                     <span className={`text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded border ${
                       isArshad && semNum <= 3
-                        ? 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200/50 dark:border-emerald-800/50'
+                        ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200/50 dark:border-amber-800/50'
                         : semCourses.length > 0
-                          ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200/50 dark:border-indigo-800/50'
+                          ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200/50 dark:border-amber-800/50'
                           : 'bg-stone-100 dark:bg-stone-800 text-stone-500 border-stone-200/50 dark:border-stone-700/50'
                     }`}>
                       {isArshad && semNum <= 3 ? 'Completed' : semCourses.length > 0 ? 'Active' : 'To Be Added'}
@@ -587,9 +592,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </div>
 
                 {/* Center Title */}
-                <div className="my-2">
+                <div className="relative z-10 my-2">
                   <h3 className={`font-serif font-bold text-sm sm:text-base transition-colors ${
-                    isSelected && !isClosingSemester ? 'text-indigo-600 dark:text-indigo-400' : 'text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+                    isSelected && !isClosingSemester ? 'text-amber-400' : 'text-stone-900 dark:text-stone-100 group-hover:text-amber-400'
                   }`}>
                     Semester {semNum}
                   </h3>
@@ -604,10 +609,10 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 </div>
 
                 {/* Bottom subtle indicator */}
-                <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium pt-2 border-t border-stone-100 dark:border-stone-800/70">
+                <div className="relative z-10 flex items-center justify-between text-[10px] text-stone-400 font-medium pt-2 border-t border-stone-100 dark:border-stone-800/70">
                   <span>{semNotesCount} Notes</span>
                   <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${
-                    isSelected && !isClosingSemester ? 'text-indigo-600 dark:text-indigo-400 rotate-180' : 'text-stone-400 group-hover:text-indigo-500'
+                    isSelected && !isClosingSemester ? 'text-amber-400 rotate-180' : 'text-stone-400 group-hover:text-amber-400'
                   }`} />
                 </div>
               </div>

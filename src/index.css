@@ -375,6 +375,22 @@ html.theme-steel-gold .markdown-body code:not(pre code) {
 }
 
 /* ============================================================
+   SELECTED SEMESTER TILE: WARM GOLD SHADED AESTHETIC
+   Replaces white/pale tint with rich warm obsidian gold
+   ============================================================ */
+html.theme-steel-gold .semester-tile-selected {
+  background-color: #241D14 !important;
+  border-color: #E5B84B !important;
+  box-shadow: 0 12px 28px -5px rgba(229, 184, 75, 0.25), 0 0 0 2px rgba(229, 184, 75, 0.35) !important;
+}
+html.theme-steel-gold .semester-tile-selected h3 {
+  color: #F0C45B !important;
+}
+html.theme-steel-gold .semester-tile-selected .text-stone-400 {
+  color: #D6C9B6 !important;
+}
+
+/* ============================================================
    PERSONAL TAB: STEALTH DARK SHADES ONLY
    Strictly NO bright colours anywhere (no bright amber, no emerald
    green, no bright indigo/blue, no neon gradients). Only deep obsidian,
