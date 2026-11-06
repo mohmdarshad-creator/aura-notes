@@ -11,6 +11,14 @@ export interface UserProfile {
   college?: string
 }
 
+export interface FileAttachment {
+  name: string
+  size: number
+  type: string
+  dataUrl?: string
+  uploadedAt: number
+}
+
 export interface Note {
   id: string
   title: string
@@ -24,6 +32,7 @@ export interface Note {
   authorName: string
   createdAt: number
   updatedAt: number
+  fileData?: FileAttachment
 }
 
 export interface DoubtMessage {

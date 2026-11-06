@@ -250,6 +250,16 @@ export function App() {
     setSelectedNoteId(newNote.id)
   }
 
+  // Upload File as Note from Device (PDF, DOCX, TXT)
+  const handleUploadFileNote = async (file: File, category: string = 'General') => {
+    try {
+      const newNote = await storageService.createNoteFromFile(file, category, activeUser)
+      setNotes(prev => [newNote, ...prev])
+    } catch (err) {
+      console.error('Failed to create file note from device', err)
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col transition-colors">
       
@@ -287,6 +297,7 @@ export function App() {
             onOpenGemini={() => handleOpenGeminiGeneral()}
             onNewNote={() => handleCreateNote()}
             onOpenSettings={() => setIsSettingsOpen(true)}
+            onUploadFileNote={handleUploadFileNote}
           />
         ) : (
           /* Page 2: Dedicated Notes Window */
@@ -299,6 +310,7 @@ export function App() {
             onSelectNote={(noteId) => setSelectedNoteId(noteId)}
             selectedNoteId={selectedNoteId}
             onCreateNoteInContext={(category) => handleCreateNote(category)}
+            onUploadFileNote={handleUploadFileNote}
             onTogglePin={handleTogglePin}
             onToggleFavorite={handleToggleFavorite}
             onDeleteNote={handleDeleteNote}

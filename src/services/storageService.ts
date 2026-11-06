@@ -9,6 +9,17 @@ const NOTEBOOKS_STORAGE_KEY = 'auranotes_notebooks_v2'
 const ACTIVE_USER_STORAGE_KEY = 'auranotes_active_user_v2'
 const USERS_STORAGE_KEY = 'auranotes_users_v2'
 
+export const fileBlobCache = new Map<string, string>()
+
+export function readFileAsDataURL(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export const ARSHAD_COURSES: CourseItem[] = [
   // Semester 1 (9 Courses, 22 Credits)
   { code: '21BTB102T', title: 'INTRODUCTION TO COMPUTATIONAL BIOLOGY', semester: 1, credits: 2, category: 'Computational Biology' },
@@ -441,7 +452,19 @@ export const storageService = {
         localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(INITIAL_NOTES))
         return INITIAL_NOTES
       }
-      return JSON.parse(stored)
+      const parsed: Note[] = JSON.parse(stored)
+      return parsed.map(n => {
+        if (n.fileData && !n.fileData.dataUrl && fileBlobCache.has(n.id)) {
+          return {
+            ...n,
+            fileData: {
+              ...n.fileData,
+              dataUrl: fileBlobCache.get(n.id)
+            }
+          }
+        }
+        return n
+      })
     } catch (e) {
       console.error('Failed to load notes from localStorage', e)
       return INITIAL_NOTES
@@ -452,8 +475,70 @@ export const storageService = {
     try {
       localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes))
     } catch (e) {
-      console.error('Failed to save notes to localStorage', e)
+      console.warn('Storage quota issue detected, caching file data in memory to fit localStorage', e)
+      try {
+        const lightNotes = notes.map(n => {
+          if (n.fileData && n.fileData.dataUrl && n.fileData.dataUrl.length > 250000) {
+            fileBlobCache.set(n.id, n.fileData.dataUrl)
+            return {
+              ...n,
+              fileData: {
+                ...n.fileData,
+                dataUrl: ''
+              }
+            }
+          }
+          return n
+        })
+        localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(lightNotes))
+      } catch (err2) {
+        console.error('Failed to save notes even in reduced format', err2)
+      }
     }
+  },
+
+  async createNoteFromFile(file: File, category: string, activeUser: UserProfile): Promise<Note> {
+    let dataUrl = ''
+    try {
+      dataUrl = await readFileAsDataURL(file)
+    } catch (err) {
+      console.warn('Could not read file as dataUrl', err)
+    }
+
+    const noteId = `note-file-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+    if (dataUrl) {
+      fileBlobCache.set(noteId, dataUrl)
+    }
+
+    const cleanTitle = file.name.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ')
+    const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')
+    const formattedSize = file.size >= 1024 * 1024 
+      ? `${(file.size / (1024 * 1024)).toFixed(2)} MB`
+      : `${Math.round(file.size / 1024)} KB`
+
+    const note: Note = {
+      id: noteId,
+      title: `${isPdf ? '📄 ' : '📎 '}${cleanTitle}`,
+      content: `# ${cleanTitle}\n\n**File Name:** \`${file.name}\`  \n**Format:** ${file.type || (isPdf ? 'PDF Document' : 'Document')}  \n**File Size:** ${formattedSize}  \n**Uploaded By:** ${activeUser.name}  \n**Subject / Category:** ${category}\n\n---  \n*This academic file was uploaded from your device. You can open, download, or ask Gemini AI questions about this document.*`,
+      category: category || 'General',
+      tags: [isPdf ? 'pdf' : 'document', 'device-upload', 'study-material'],
+      color: isPdf ? 'coral' : 'indigo',
+      isPinned: false,
+      isFavorite: false,
+      authorId: activeUser.id,
+      authorName: activeUser.name,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+      fileData: {
+        name: file.name,
+        size: file.size,
+        type: file.type || (isPdf ? 'application/pdf' : 'application/octet-stream'),
+        dataUrl: dataUrl,
+        uploadedAt: Date.now()
+      }
+    }
+
+    return note
   },
 
   getApiKey(): string {
@@ -621,7 +706,9 @@ date: ${new Date(note.updatedAt).toISOString()}
     const usedFormatted = usedMb >= 1 ? `${usedMb.toFixed(2)} MB` : `${usedKb.toFixed(1)} KB`
     const percentUsed = Math.min(100, Math.max(0.4, (totalBytes / totalCapacityBytes) * 100))
     const freeMb = Math.max(0, 5.0 - usedMb).toFixed(2)
-    const notesCount = notesList ? notesList.length : this.getNotes().length
+    const allNotes = notesList || this.getNotes()
+    const pdfFilesCount = allNotes.filter(n => n.fileData || n.tags.includes('pdf') || n.title.includes('📄')).length
+    const totalFilesCount = allNotes.length
     const notebooksCount = this.getNotebooks().length
     const subjectsCount = this.getSubjects().length
 
@@ -632,10 +719,11 @@ date: ${new Date(note.updatedAt).toISOString()}
       usedFormatted,
       freeFormatted: `${freeMb} MB`,
       percentUsed: Number(percentUsed.toFixed(1)),
-      notesCount,
+      notesCount: allNotes.length,
       notebooksCount,
       subjectsCount,
-      totalFilesCount: notesCount
+      pdfFilesCount,
+      totalFilesCount
     }
   }
 }

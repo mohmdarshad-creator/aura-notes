@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pin, Star, Sparkles, Trash2, Download, Tag, Calendar } from 'lucide-react'
+import { Pin, Star, Sparkles, Trash2, Download, Tag, Calendar, FileText, ExternalLink } from 'lucide-react'
 import { Note, NoteColor } from '../types'
 
 interface NoteCardProps {
@@ -67,6 +67,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <span className="text-[11px] font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800 px-2 py-0.5 rounded-md">
             {note.category}
           </span>
+          {note.fileData && (
+            <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/60 flex items-center gap-1">
+              <FileText className="w-3 h-3" />
+              {note.fileData.type?.includes('pdf') || note.fileData.name.toLowerCase().endsWith('.pdf') ? 'PDF' : 'FILE'}
+            </span>
+          )}
           {note.authorName && (
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1 ${
               note.authorName.includes('Arshad')
@@ -111,6 +117,36 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       <h3 className="font-serif font-bold text-lg text-stone-900 dark:text-stone-100 leading-snug mb-2 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
         {note.title || 'Untitled Note'}
       </h3>
+
+      {/* Attached File Preview Card if available */}
+      {note.fileData && (
+        <div className="mb-3 p-2.5 rounded-xl bg-stone-50/80 dark:bg-stone-800/60 border border-stone-200/70 dark:border-stone-700/60 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 truncate">
+            <div className="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center flex-shrink-0">
+              <FileText className="w-4 h-4" />
+            </div>
+            <div className="truncate text-xs">
+              <p className="font-medium text-stone-800 dark:text-stone-200 truncate">{note.fileData.name}</p>
+              <p className="text-[10px] text-stone-400">
+                {note.fileData.size >= 1024 * 1024
+                  ? `${(note.fileData.size / (1024 * 1024)).toFixed(2)} MB`
+                  : `${Math.round(note.fileData.size / 1024)} KB`}
+              </p>
+            </div>
+          </div>
+          {note.fileData.dataUrl && (
+            <a
+              href={note.fileData.dataUrl}
+              download={note.fileData.name}
+              onClick={(e) => e.stopPropagation()}
+              className="p-1.5 rounded-lg bg-white dark:bg-stone-700 text-stone-600 dark:text-stone-300 hover:text-indigo-600 dark:hover:text-indigo-400 hover:shadow-xs transition-all flex items-center gap-1 text-[11px] font-medium"
+              title="Download File"
+            >
+              <Download className="w-3.5 h-3.5" />
+            </a>
+          )}
+        </div>
+      )}
 
       {/* Snippet Preview */}
       <p className="text-sm text-stone-600 dark:text-stone-400 line-clamp-3 leading-relaxed mb-4">

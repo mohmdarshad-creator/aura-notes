@@ -11,7 +11,11 @@ import {
   Folder,
   Layers,
   Filter,
-  X
+  X,
+  Upload,
+  FileText,
+  FileUp,
+  CheckCircle2
 } from 'lucide-react'
 import { Note, PageRoute, UserProfile } from '../types'
 import { NoteCard } from './NoteCard'
@@ -26,6 +30,7 @@ interface NotesWindowProps {
   onSelectNote: (noteId: string) => void
   selectedNoteId: string | null
   onCreateNoteInContext: (subjectOrCategory?: string) => void
+  onUploadFileNote?: (file: File, category?: string) => void
   onTogglePin: (id: string, e: React.MouseEvent) => void
   onToggleFavorite: (id: string, e: React.MouseEvent) => void
   onDeleteNote: (id: string) => void
@@ -42,6 +47,7 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
   onSelectNote,
   selectedNoteId,
   onCreateNoteInContext,
+  onUploadFileNote,
   onTogglePin,
   onToggleFavorite,
   onDeleteNote,
@@ -51,11 +57,46 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
   const [searchQuery, setSearchQuery] = useState('')
   const [isSearchHovered, setIsSearchHovered] = useState(false)
   const [isSearchFocused, setIsSearchFocused] = useState(false)
+  const [fileTypeFilter, setFileTypeFilter] = useState<'all' | 'pdf' | 'text'>('all')
+  const [uploadSuccessToast, setUploadSuccessToast] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const isSearchExpanded = isSearchHovered || isSearchFocused || Boolean(searchQuery.trim())
 
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
   const [authorFilter, setAuthorFilter] = useState<'all' | string>('all')
+
+  const handleFilesSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files)
+      const category = windowMeta.categoryFilter || 'General'
+      files.forEach(f => {
+        if (onUploadFileNote) {
+          onUploadFileNote(f, category)
+        }
+      })
+      setUploadSuccessToast(`Uploaded ${files.length} file${files.length > 1 ? 's' : ''} to ${windowMeta.title}`)
+      setTimeout(() => setUploadSuccessToast(null), 3500)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files)
+      const category = windowMeta.categoryFilter || 'General'
+      files.forEach(f => {
+        if (onUploadFileNote) {
+          onUploadFileNote(f, category)
+        }
+      })
+      setUploadSuccessToast(`Uploaded ${files.length} file${files.length > 1 ? 's' : ''} from device`)
+      setTimeout(() => setUploadSuccessToast(null), 3500)
+    }
+  }
 
   // Determine window title and icon based on route
   const windowMeta = useMemo(() => {
@@ -111,8 +152,8 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
     }
   }, [currentRoute])
 
-  // Filter notes for this specific window
-  const windowNotes = useMemo(() => {
+  // Raw filtered notes for this specific window
+  const rawWindowNotes = useMemo(() => {
     return notes.filter((n) => {
       // Category / Subject filter
       if (windowMeta.categoryFilter && n.category.toLowerCase() !== windowMeta.categoryFilter.toLowerCase()) {
@@ -143,18 +184,67 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
         return matchTitle || matchContent || matchTag
       }
       return true
-    }).sort((a, b) => {
+    })
+  }, [notes, windowMeta, selectedTag, authorFilter, searchQuery])
+
+  const pdfCountInWindow = rawWindowNotes.filter(n => n.fileData || n.tags.includes('pdf') || n.title.includes('📄')).length
+  const textCountInWindow = rawWindowNotes.length - pdfCountInWindow
+
+  const windowNotes = useMemo(() => {
+    let list = rawWindowNotes
+    if (fileTypeFilter === 'pdf') {
+      list = list.filter(n => n.fileData || n.tags.includes('pdf') || n.title.includes('📄'))
+    } else if (fileTypeFilter === 'text') {
+      list = list.filter(n => !n.fileData && !n.tags.includes('pdf') && !n.title.includes('📄'))
+    }
+    return list.sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1
       if (!a.isPinned && b.isPinned) return 1
       return b.updatedAt - a.updatedAt
     })
-  }, [notes, windowMeta, selectedTag, searchQuery])
+  }, [rawWindowNotes, fileTypeFilter])
 
   // Available tags in this window
-  const availableTags = Array.from(new Set(windowNotes.flatMap(n => n.tags || []))).sort()
+  const availableTags = Array.from(new Set(rawWindowNotes.flatMap(n => n.tags || []))).sort()
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in">
+    <div 
+      onDragOver={(e) => {
+        e.preventDefault()
+        setIsDragging(true)
+      }}
+      onDragLeave={() => setIsDragging(false)}
+      onDrop={handleDrop}
+      className={`max-w-6xl mx-auto px-4 sm:px-6 py-6 space-y-8 animate-fade-in relative transition-all ${
+        isDragging ? 'ring-4 ring-rose-500/40 rounded-3xl bg-rose-50/20 dark:bg-rose-950/20' : ''
+      }`}
+    >
+      {/* Hidden File Input for Device Upload */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept=".pdf,application/pdf,.doc,.docx,.txt"
+        multiple
+        className="hidden"
+        onChange={handleFilesSelected}
+      />
+
+      {/* Floating Drag Overlay */}
+      {isDragging && (
+        <div className="absolute inset-0 z-50 rounded-3xl bg-rose-500/10 dark:bg-rose-950/60 backdrop-blur-xs border-2 border-dashed border-rose-500 flex flex-col items-center justify-center pointer-events-none p-6 text-center">
+          <Upload className="w-12 h-12 text-rose-600 dark:text-rose-400 animate-bounce mb-2" />
+          <p className="text-lg font-serif font-bold text-rose-900 dark:text-rose-100">Drop PDF & Document files to upload</p>
+          <p className="text-xs text-rose-700 dark:text-rose-300">Files will be attached to {windowMeta.title}</p>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {uploadSuccessToast && (
+        <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 shadow-xl border border-stone-700 animate-fade-in text-xs font-medium">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+          <span>{uploadSuccessToast}</span>
+        </div>
+      )}
       
       {/* Top Window Navigation Bar with Back Button */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/80 dark:border-stone-800">
@@ -178,13 +268,22 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => onOpenGeminiGeneral(windowMeta.title)}
             className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 hover:bg-indigo-100 transition-colors shadow-xs"
           >
             <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
             <span>Ask Gemini</span>
+          </button>
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 dark:text-rose-300 border border-rose-200/70 dark:border-rose-800 transition-all shadow-xs hover:scale-[1.02]"
+            title="Upload PDF or notes from your device"
+          >
+            <Upload className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+            <span>+ Add Notes from Device</span>
           </button>
 
           <button
@@ -326,6 +425,44 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           })}
         </div>
 
+        {/* Filter by Format Pills (when files/PDFs exist) */}
+        {pdfCountInWindow > 0 && (
+          <div className="flex items-center gap-1.5 flex-wrap text-xs">
+            <span className="text-stone-400 font-medium mr-1">Format:</span>
+            <button
+              onClick={() => setFileTypeFilter('all')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                fileTypeFilter === 'all'
+                  ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+              }`}
+            >
+              All Formats ({rawWindowNotes.length})
+            </button>
+            <button
+              onClick={() => setFileTypeFilter('pdf')}
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg font-medium transition-all ${
+                fileTypeFilter === 'pdf'
+                  ? 'bg-rose-600 text-white shadow-xs'
+                  : 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 hover:bg-rose-100'
+              }`}
+            >
+              <FileText className="w-3 h-3" />
+              PDF Documents ({pdfCountInWindow})
+            </button>
+            <button
+              onClick={() => setFileTypeFilter('text')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                fileTypeFilter === 'text'
+                  ? 'bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 shadow-xs'
+                  : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-200'
+              }`}
+            >
+              Written Notes ({textCountInWindow})
+            </button>
+          </div>
+        )}
+
         {/* Filter by Tags Pills */}
         {availableTags.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap">
@@ -406,18 +543,27 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
               No notes in this window
             </h3>
             <p className="text-xs text-stone-500 mt-1 max-w-sm">
-              {searchQuery || selectedTag
-                ? 'No notes match your current search or tag filters.'
-                : 'Start jotting down formulas, lectures, or summaries in this collection.'}
+              {searchQuery || selectedTag || fileTypeFilter !== 'all'
+                ? 'No notes or PDF files match your current filters.'
+                : 'Upload syllabus PDFs or start jotting down formulas, lectures, and summaries.'}
             </p>
           </div>
-          <button
-            onClick={() => onCreateNoteInContext(windowMeta.categoryFilter || 'General')}
-            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 text-white hover:bg-indigo-700 transition-colors shadow-sm"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Create First Note Here</span>
-          </button>
+          <div className="flex items-center gap-2.5 flex-wrap justify-center">
+            <button
+              onClick={() => fileInputRef.current?.click()}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-rose-600 text-white hover:bg-rose-700 transition-all shadow-sm hover:scale-[1.02]"
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload PDF / Notes from Device</span>
+            </button>
+            <button
+              onClick={() => onCreateNoteInContext(windowMeta.categoryFilter || 'General')}
+              className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-stone-900 text-white dark:bg-stone-100 dark:text-stone-900 hover:bg-stone-800 transition-all shadow-sm"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Create Note Here</span>
+            </button>
+          </div>
         </div>
       )}
 

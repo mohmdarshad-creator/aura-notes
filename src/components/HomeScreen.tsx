@@ -22,7 +22,11 @@ import {
   CheckCircle2,
   GraduationCap,
   Building2,
-  Hash
+  Hash,
+  Upload,
+  FileText,
+  FileUp,
+  Cpu
 } from 'lucide-react'
 import { Note, SubjectItem, NoteColor, UserProfile } from '../types'
 import { HeroWelcome } from './HeroWelcome'
@@ -44,6 +48,7 @@ interface HomeScreenProps {
   onOpenGemini: () => void
   onNewNote: () => void
   onOpenSettings?: () => void
+  onUploadFileNote?: (file: File, category: string) => void
 }
 
 const COLOR_MAP: Record<NoteColor, { border: string; bg: string; text: string; glow: string; badge: string }> = {
@@ -113,13 +118,42 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onAddNotebook,
   onOpenGemini,
   onNewNote,
-  onOpenSettings
+  onOpenSettings,
+  onUploadFileNote
 }) => {
   const [showAddModal, setShowAddModal] = useState(false)
   const [addModalTarget, setAddModalTarget] = useState<'subject' | 'notebook'>('subject')
   const [newSubName, setNewSubName] = useState('')
   const [newSubDesc, setNewSubDesc] = useState('')
   const [newSubColor, setNewSubColor] = useState<NoteColor>('indigo')
+  
+  // Selected semester for viewing subjects
+  const [selectedSemester, setSelectedSemester] = useState<number>(1)
+  const [subjectViewTab, setSubjectViewTab] = useState<'semester' | 'custom'>('semester')
+  const [deviceUploadToast, setDeviceUploadToast] = useState<string | null>(null)
+  const [targetUploadSubject, setTargetUploadSubject] = useState<string>('')
+  const semesterFileInputRef = useRef<HTMLInputElement>(null)
+
+  const triggerUploadForSubject = (subjectTitle: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    setTargetUploadSubject(subjectTitle)
+    semesterFileInputRef.current?.click()
+  }
+
+  const handleSemesterFileSelected = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files)
+      const category = targetUploadSubject || `Semester ${selectedSemester}`
+      files.forEach(f => {
+        if (onUploadFileNote) {
+          onUploadFileNote(f, category)
+        }
+      })
+      setDeviceUploadToast(`Uploaded ${files.length} document${files.length > 1 ? 's' : ''} to ${category}`)
+      setTimeout(() => setDeviceUploadToast(null), 3500)
+      if (semesterFileInputRef.current) semesterFileInputRef.current.value = ''
+    }
+  }
 
   // Scroll reveal observer for tiles moving in as the page gets scrolled down
   const semestersRef = useRef<HTMLDivElement>(null)
@@ -323,6 +357,24 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
 
       {/* SECTION: SEMESTER (8 Tiles: Semester 1 to Semester 8) */}
       <section className="space-y-4">
+        {/* Hidden File Input for Device Upload */}
+        <input 
+          ref={semesterFileInputRef}
+          type="file"
+          accept=".pdf,application/pdf,.doc,.docx,.txt"
+          multiple
+          className="hidden"
+          onChange={handleSemesterFileSelected}
+        />
+
+        {/* Device Upload Toast */}
+        {deviceUploadToast && (
+          <div className="fixed top-20 right-6 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-stone-900 text-white dark:bg-white dark:text-stone-900 shadow-xl border border-stone-700 animate-fade-in text-xs font-medium">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <span>{deviceUploadToast}</span>
+          </div>
+        )}
+
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
@@ -330,7 +382,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               Semester
             </h2>
             <p className="text-xs text-stone-400 mt-0.5">
-              Select any semester to open notes, subjects and academic materials
+              Select any semester to display its subject tiles and add notes from your device
             </p>
           </div>
         </div>
@@ -344,29 +396,46 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             const semCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, semNum) : []
             const semCredits = semCourses.reduce((sum, c) => sum + c.credits, 0)
             const semNotesCount = notes.filter(n => n.category.toLowerCase() === `semester ${semNum}` || n.category.toLowerCase() === `sem ${semNum}`).length
+            const isSelected = selectedSemester === semNum
 
             return (
               <div
                 key={semNum}
-                onClick={() => onOpenSubject(`Semester ${semNum}`)}
+                onClick={() => setSelectedSemester(semNum)}
                 style={{ transitionDelay: semestersVisible ? `${index * 60}ms` : '0ms' }}
-                className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] hover:border-indigo-400 dark:hover:border-indigo-600`}
+                className={`tile-reveal ${semestersVisible ? 'revealed' : ''} group relative p-4 rounded-2xl border transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[145px] ${
+                  isSelected
+                    ? 'bg-indigo-50/40 dark:bg-indigo-950/40 border-indigo-500 shadow-md ring-2 ring-indigo-500/30 -translate-y-1'
+                    : 'bg-white dark:bg-stone-900 border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-xl hover:-translate-y-1.5 hover:scale-[1.02] hover:border-indigo-400 dark:hover:border-indigo-600'
+                }`}
               >
                 {/* Top Badge & Count */}
                 <div className="flex items-center justify-between">
-                  <span className="w-7 h-7 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-mono font-bold text-xs flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors shadow-xs">
+                  <span className={`w-7 h-7 rounded-lg font-mono font-bold text-xs flex items-center justify-center transition-colors shadow-xs ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white'
+                      : 'bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 group-hover:bg-indigo-600 group-hover:text-white'
+                  }`}>
                     0{semNum}
                   </span>
-                  {semCourses.length > 0 && (
-                    <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
-                      {semCourses.length} Sub
+                  {isSelected ? (
+                    <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-indigo-600 text-white shadow-xs">
+                      Active
                     </span>
+                  ) : (
+                    semCourses.length > 0 && (
+                      <span className="text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
+                        {semCourses.length} Sub
+                      </span>
+                    )
                   )}
                 </div>
 
                 {/* Center Title */}
                 <div className="my-2">
-                  <h3 className="font-serif font-bold text-sm sm:text-base text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                  <h3 className={`font-serif font-bold text-sm sm:text-base transition-colors ${
+                    isSelected ? 'text-indigo-600 dark:text-indigo-400' : 'text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400'
+                  }`}>
                     Semester {semNum}
                   </h3>
                   <div className="text-[10px] text-stone-400 mt-0.5 truncate">
@@ -380,7 +449,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                 {/* Bottom subtle indicator */}
                 <div className="flex items-center justify-between text-[10px] text-stone-400 font-medium pt-2 border-t border-stone-100 dark:border-stone-800/70">
                   <span>{semNotesCount} Notes</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500 transition-all" />
+                  <ChevronRight className={`w-3.5 h-3.5 transition-all ${
+                    isSelected ? 'text-indigo-600 dark:text-indigo-400 translate-x-1' : 'text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500'
+                  }`} />
                 </div>
               </div>
             )
@@ -388,84 +459,238 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
         </div>
       </section>
 
-      {/* 2x2 BOXES WITH SUBJECT NAMES (Clickable to open in window) */}
+      {/* SECTION: SEMESTER SUBJECT TILES WITH "+ ADD NOTES FROM DEVICE" */}
       <section className="space-y-4">
-        <div className="flex items-center justify-between">
+        {/* Header with Switcher and Add Subject */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
-              <Layers className="w-4 h-4 text-indigo-500" />
-              Subjects
-            </h2>
+            <div className="flex items-center gap-2 flex-wrap">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-stone-500 dark:text-stone-400 flex items-center gap-2">
+                <Layers className="w-4 h-4 text-indigo-500" />
+                Semester {selectedSemester} Subjects
+              </h2>
+              {isArshad && storageService.getCoursesBySemester(activeUser.id, selectedSemester).length > 0 && (
+                <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50">
+                  {storageService.getCoursesBySemester(activeUser.id, selectedSemester).length} Courses • {storageService.getCoursesBySemester(activeUser.id, selectedSemester).reduce((s, c) => s + c.credits, 0)} Credits
+                </span>
+              )}
+            </div>
             <p className="text-xs text-stone-400 mt-0.5">
-              Select any subject to open its dedicated notes window
+              Click any subject tile to open its notes window, or click "+ Add Notes from Device" to upload PDF/doc files
             </p>
           </div>
-          <button
-            onClick={() => {
-              setAddModalTarget('subject')
-              setShowAddModal(true)
-            }}
-            className="text-xs font-medium text-indigo-600 dark:text-indigo-400 hover:underline flex items-center gap-1"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add Subject</span>
-          </button>
+
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Quick 1-8 Semester Jump Bubbles */}
+            <div className="flex items-center bg-stone-100 dark:bg-stone-800/90 p-1 rounded-xl text-xs font-medium border border-stone-200/70 dark:border-stone-700">
+              {[1, 2, 3, 4, 5, 6, 7, 8].map(s => (
+                <button
+                  key={s}
+                  onClick={() => setSelectedSemester(s)}
+                  className={`px-2 py-1 rounded-lg text-xs font-mono transition-all ${
+                    selectedSemester === s
+                      ? 'bg-indigo-600 text-white font-bold shadow-xs'
+                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-white'
+                  }`}
+                >
+                  S{s}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => {
+                setAddModalTarget('subject')
+                setShowAddModal(true)
+              }}
+              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 border border-indigo-200/60 dark:border-indigo-800/60 flex items-center gap-1 transition-colors"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Subject</span>
+            </button>
+          </div>
         </div>
 
-        {/* 2x2 Grid */}
-        <div ref={subjectsRef} className="grid grid-cols-1 sm:grid-cols-2 gap-5 lg:gap-6">
-          {subjects.map((sub, index) => {
-            const subjectNotes = displayNotes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
-            const colors = COLOR_MAP[sub.color] || COLOR_MAP.indigo
+        {/* Subject Tiles Grid */}
+        <div ref={subjectsRef} className="space-y-4">
+          {(() => {
+            const activeCourses = isArshad ? storageService.getCoursesBySemester(activeUser.id, selectedSemester) : []
 
+            if (activeCourses.length > 0) {
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {activeCourses.map((course, index) => {
+                    // Match notes for this subject
+                    const courseNotes = notes.filter(n => 
+                      n.category.toLowerCase() === course.title.toLowerCase() ||
+                      n.category.toLowerCase() === course.code.toLowerCase() ||
+                      n.title.toLowerCase().includes(course.code.toLowerCase())
+                    )
+                    const coursePdfs = courseNotes.filter(n => n.fileData || n.tags.includes('pdf') || n.title.includes('📄'))
+
+                    // Determine aesthetic color accent based on course prefix
+                    let accentColor = 'indigo'
+                    if (course.code.startsWith('21CSS') || course.code.startsWith('21CSC')) accentColor = 'indigo'
+                    else if (course.code.startsWith('21MAB')) accentColor = 'sky'
+                    else if (course.code.startsWith('21PYB') || course.code.startsWith('21CYB')) accentColor = 'purple'
+                    else if (course.code.startsWith('21BTB') || course.code.startsWith('21GNM') || course.code.startsWith('21CYM')) accentColor = 'emerald'
+                    else if (course.code.startsWith('21LEH') || course.code.startsWith('21LEM') || course.code.startsWith('21GNH')) accentColor = 'amber'
+                    else accentColor = 'stone'
+
+                    return (
+                      <div
+                        key={course.code}
+                        onClick={() => onOpenSubject(course.title)}
+                        style={{
+                          transitionDelay: `${index * 50 + 40}ms`
+                        }}
+                        className={`tile-reveal ${subjectsVisible ? 'revealed' : ''} group relative p-5 sm:p-6 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between min-h-[200px] hover:border-indigo-400 dark:hover:border-indigo-600`}
+                      >
+                        {/* Ambient subtle glow */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+
+                        <div className="relative z-10 flex flex-col justify-between h-full space-y-3">
+                          {/* Top row: Code Badge, Credits, Notes count */}
+                          <div className="flex items-center justify-between gap-2 flex-wrap">
+                            <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-200/70 dark:border-stone-700/70 shadow-2xs">
+                              {course.code}
+                            </span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800">
+                                {course.credits} Cr
+                              </span>
+                              <span className="text-[11px] font-mono text-stone-500 dark:text-stone-400 bg-stone-100 dark:bg-stone-800/80 px-2 py-0.5 rounded-md">
+                                {courseNotes.length} {courseNotes.length === 1 ? 'note' : 'notes'}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Course Title & Category */}
+                          <div>
+                            <h3 className="font-serif font-bold text-base sm:text-lg text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug line-clamp-2">
+                              {course.title}
+                            </h3>
+                            <p className="text-xs text-stone-500 dark:text-stone-400 mt-1 line-clamp-1">
+                              {course.category || 'Core Academic Curriculum'}
+                            </p>
+                          </div>
+
+                          {/* PDF count indicator if any */}
+                          {coursePdfs.length > 0 && (
+                            <div className="flex items-center gap-1.5 text-xs text-rose-600 dark:text-rose-400 font-medium">
+                              <FileText className="w-3.5 h-3.5" />
+                              <span>{coursePdfs.length} PDF Document{coursePdfs.length > 1 ? 's' : ''} attached</span>
+                            </div>
+                          )}
+
+                          {/* Bottom Action Bar: Prominent "+ Add Notes from Device" and Open Link */}
+                          <div className="pt-3 border-t border-stone-100 dark:border-stone-800/80 flex items-center justify-between gap-2">
+                            <button
+                              onClick={(e) => triggerUploadForSubject(course.title, e)}
+                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:hover:bg-rose-900/70 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 transition-all shadow-xs hover:scale-[1.03]"
+                              title={`Upload PDF or document notes for ${course.title}`}
+                            >
+                              <Upload className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                              <span>+ Add Notes from Device</span>
+                            </button>
+
+                            <span className="text-xs font-medium text-stone-400 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 flex items-center gap-1 transition-colors">
+                              <span>Open</span>
+                              <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                            </span>
+                          </div>
+
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            }
+
+            // Empty state for semesters without registered courses (e.g., Sem 4..8 or Raniya)
             return (
-              <div
-                key={sub.id}
-                onClick={() => onOpenSubject(sub.name)}
-                style={{
-                  transitionDelay: `${index * 110 + 60}ms`
-                }}
-                className={`tile-reveal ${subjectsVisible ? 'revealed' : ''} group relative p-6 sm:p-7 rounded-3xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.015] transition-all duration-300 cursor-pointer overflow-hidden ${colors.border} ${colors.glow}`}
-              >
-                {/* Ambient background hover gradient */}
-                <div className={`absolute inset-0 bg-gradient-to-br ${colors.bg} opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
-
-                <div className="relative z-10 flex flex-col justify-between h-full min-h-[160px]">
-                  
-                  {/* Top Bar with Icon & Note Count Badge */}
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-stone-100/80 dark:bg-stone-800/80 border border-stone-200/70 dark:border-stone-700/60 flex items-center justify-center group-hover:scale-110 group-hover:-translate-y-1 transition-all duration-300 shadow-xs">
-                      {renderSubjectIcon(sub.icon, colors.text)}
-                    </div>
-                    
-                    <span className={`text-xs font-mono font-medium px-2.5 py-1 rounded-full border transition-transform duration-300 group-hover:scale-105 ${colors.badge}`}>
-                      {subjectNotes.length} {subjectNotes.length === 1 ? 'note' : 'notes'}
-                    </span>
-                  </div>
-
-                  {/* Subject Title & Description */}
-                  <div className="my-3">
-                    <h3 className="font-serif font-bold text-xl sm:text-2xl text-stone-900 dark:text-stone-100 tracking-tight group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                      {sub.name}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-stone-500 dark:text-stone-400 line-clamp-2 mt-1 leading-relaxed">
-                      {sub.description || 'Dedicated study notebook & doubt repository'}
-                    </p>
-                  </div>
-
-                  {/* Bottom Action Indicator */}
-                  <div className="flex items-center justify-between pt-3 border-t border-stone-100 dark:border-stone-800/80 text-xs font-medium text-stone-400 group-hover:text-stone-700 dark:group-hover:text-stone-200 transition-colors">
-                    <span className="flex items-center gap-1.5">
-                      <BookOpen className="w-3.5 h-3.5" />
-                      Open Subject Window
-                    </span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-2 text-indigo-500 transition-transform duration-300" />
-                  </div>
-
+              <div className="py-14 px-6 rounded-3xl border border-dashed border-stone-200 dark:border-stone-800 bg-white/60 dark:bg-stone-900/40 text-center flex flex-col items-center justify-center space-y-4">
+                <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                  <GraduationCap className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-stone-800 dark:text-stone-200 text-lg">
+                    Semester {selectedSemester} Curriculum
+                  </h3>
+                  <p className="text-xs text-stone-500 dark:text-stone-400 max-w-md mx-auto mt-1">
+                    {isArshad 
+                      ? `Semester ${selectedSemester} courses will appear here as you advance. You can start uploading lecture materials or create custom subject tiles now.`
+                      : `Semester ${selectedSemester} course modules ready. You can add notes or upload documents directly from your device.`}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                  <button
+                    onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-sm hover:scale-[1.02]"
+                  >
+                    <Upload className="w-3.5 h-3.5" />
+                    <span>+ Add Notes from Device</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      setAddModalTarget('subject')
+                      setShowAddModal(true)
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 hover:bg-stone-800 transition-all shadow-sm"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Subject Tile</span>
+                  </button>
                 </div>
               </div>
             )
-          })}
+          })()}
+
+          {/* Optional Toggle / Additional section for Custom Added Subjects if any exist */}
+          {subjects.length > 0 && (
+            <div className="pt-2">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-stone-400 dark:text-stone-500">
+                  Custom & General Subjects ({subjects.length})
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
+                {subjects.map((sub) => {
+                  const subNotes = notes.filter(n => n.category.toLowerCase() === sub.name.toLowerCase())
+                  return (
+                    <div
+                      key={sub.id}
+                      onClick={() => onOpenSubject(sub.name)}
+                      className="group p-4 rounded-2xl bg-white dark:bg-stone-900 border border-stone-200/80 dark:border-stone-800 hover:border-indigo-400 dark:hover:border-indigo-600 transition-all cursor-pointer shadow-xs hover:shadow-md flex flex-col justify-between"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="w-8 h-8 rounded-xl bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-600 dark:text-stone-300">
+                          {renderSubjectIcon(sub.icon, 'text-indigo-600 dark:text-indigo-400')}
+                        </div>
+                        <span className="text-[10px] font-mono text-stone-400">{subNotes.length} notes</span>
+                      </div>
+                      <div className="mt-2.5">
+                        <h4 className="font-serif font-bold text-sm text-stone-900 dark:text-stone-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate">
+                          {sub.name}
+                        </h4>
+                      </div>
+                      <div className="mt-3 pt-2 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+                        <button
+                          onClick={(e) => triggerUploadForSubject(sub.name, e)}
+                          className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 hover:underline flex items-center gap-1"
+                        >
+                          <Upload className="w-3 h-3" />
+                          <span>+ Upload</span>
+                        </button>
+                        <ChevronRight className="w-3 h-3 text-stone-400 group-hover:translate-x-0.5 group-hover:text-indigo-500 transition-transform" />
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
