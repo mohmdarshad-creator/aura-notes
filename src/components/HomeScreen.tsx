@@ -341,24 +341,44 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             </button>
           </div>
 
-          <button
-            onClick={() => {
-              setAddModalTarget('subject')
-              setShowAddModal(true)
-            }}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-100 hover:bg-stone-200 dark:bg-stone-800 dark:hover:bg-stone-700 text-stone-700 dark:text-stone-200 transition-colors border border-stone-200 dark:border-stone-700 shadow-xs"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Insert Subject</span>
-          </button>
+          {/* Insert Subject Bubble Button */}
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                setAddModalTarget('subject')
+                setShowAddModal(true)
+              }}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              title="Insert New Subject"
+            >
+              <Plus className="w-4 h-4 flex-shrink-0 text-indigo-600 dark:text-indigo-400 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[130px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                Insert Subject
+              </span>
+            </button>
+          </div>
           
-          <button
-            onClick={onNewNote}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md transition-all hover:scale-[1.02]"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Note</span>
-          </button>
+          {/* New Note Bubble Button */}
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className={`absolute -inset-[1.5px] rounded-full bg-gradient-to-r ${activeUser?.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'} opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none`}
+            />
+            <button
+              type="button"
+              onClick={onNewNote}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md hover:shadow-lg transition-all duration-300 ease-out cursor-pointer active:scale-95 border border-white/20 dark:border-stone-800/40 overflow-hidden"
+              title="Create New Note"
+            >
+              <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                New Note
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -514,16 +534,26 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               ))}
             </div>
 
-            <button
-              onClick={() => {
-                setAddModalTarget('subject')
-                setShowAddModal(true)
-              }}
-              className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 hover:bg-indigo-100 border border-indigo-200/60 dark:border-indigo-800/60 flex items-center gap-1 transition-colors"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              <span>Add Subject</span>
-            </button>
+            {/* Add Subject Bubble Button */}
+            <div className="relative flex items-center group animate-bubble-spring">
+              <div 
+                className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  setAddModalTarget('subject')
+                  setShowAddModal(true)
+                }}
+                className="relative flex items-center justify-center h-8 sm:h-8.5 w-8 sm:w-8.5 px-0 group-hover:w-auto group-hover:px-3 group-hover:gap-1.5 rounded-full bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                title="Add Subject Tile"
+              >
+                <Plus className="w-3.5 h-3.5 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+                <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
+                  Add Subject
+                </span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -640,24 +670,45 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
                       : `Semester ${selectedSemester} course modules ready. You can add notes or upload documents directly from your device.`}
                   </p>
                 </div>
-                <div className="flex items-center gap-2.5 flex-wrap justify-center">
-                  <button
-                    onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-rose-600 hover:bg-rose-700 text-white transition-all shadow-sm hover:scale-[1.02]"
-                  >
-                    <Upload className="w-3.5 h-3.5" />
-                    <span>+ Add Notes from Device</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setAddModalTarget('subject')
-                      setShowAddModal(true)
-                    }}
-                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 hover:bg-stone-800 transition-all shadow-sm"
-                  >
-                    <Plus className="w-3.5 h-3.5" />
-                    <span>Add Subject Tile</span>
-                  </button>
+                <div className="flex items-center gap-3 flex-wrap justify-center">
+                  {/* Add Notes from Device Bubble */}
+                  <div className="relative flex items-center group animate-bubble-spring">
+                    <div 
+                      className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={(e) => triggerUploadForSubject(`Semester ${selectedSemester}`, e)}
+                      className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-4 group-hover:gap-1.5 rounded-full bg-rose-600 hover:bg-rose-700 text-white shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                      title="Upload notes from device"
+                    >
+                      <Upload className="w-4 h-4 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
+                      <span className="max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
+                        + Add Notes from Device
+                      </span>
+                    </button>
+                  </div>
+
+                  {/* Add Subject Tile Bubble */}
+                  <div className="relative flex items-center group animate-bubble-spring">
+                    <div 
+                      className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setAddModalTarget('subject')
+                        setShowAddModal(true)
+                      }}
+                      className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-4 group-hover:gap-1.5 rounded-full bg-stone-900 dark:bg-stone-100 text-white dark:text-stone-900 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+                      title="Insert New Subject Tile"
+                    >
+                      <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+                      <span className="max-w-0 opacity-0 group-hover:max-w-[130px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs font-semibold transition-all duration-300 ease-out">
+                        Add Subject Tile
+                      </span>
+                    </button>
+                  </div>
                 </div>
               </div>
             )

@@ -311,14 +311,24 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
       {/* Top Window Navigation Bar with Back Button */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-stone-200/80 dark:border-stone-800">
         
+        {/* BUTTON 1: Back to Home Bubble (Small circular bubble that enlarges on hover) */}
         <div className="flex items-center gap-3">
-          <button
-            onClick={onBackToHome}
-            className="group flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700 border border-stone-200 dark:border-stone-700 transition-all shadow-xs"
-          >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-            <span>Back to Home</span>
-          </button>
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className={`absolute -inset-[1.5px] rounded-full bg-gradient-to-r ${activeUser?.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'} opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none`}
+            />
+            <button
+              type="button"
+              onClick={onBackToHome}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-white dark:bg-stone-800 text-stone-700 dark:text-stone-200 border border-stone-200 dark:border-stone-700 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              title="Back to Home"
+            >
+              <ArrowLeft className="w-4 h-4 flex-shrink-0 group-hover:-translate-x-0.5 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                Back to Home
+              </span>
+            </button>
+          </div>
 
           <div className="flex items-center gap-2 text-xs text-stone-400">
             <span>Home</span>
@@ -329,32 +339,61 @@ export const NotesWindow: React.FC<NotesWindowProps> = ({
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={() => onOpenGeminiGeneral(windowMeta.title)}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800 hover:bg-indigo-100 transition-colors shadow-xs"
-          >
-            <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-            <span>Ask Gemini</span>
-          </button>
+        {/* Action Buttons: 3 Small Bubbles that Enlarge on Hover */}
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {/* BUTTON 2: Ask Gemini Bubble */}
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-amber-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+            />
+            <button
+              type="button"
+              onClick={() => onOpenGeminiGeneral(windowMeta.title)}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-amber-500 hover:from-indigo-500 hover:to-amber-400 text-white shadow-xs hover:shadow-lg hover:shadow-indigo-500/25 transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              title="Ask Gemini AI"
+            >
+              <Sparkles className="w-4 h-4 text-amber-200 animate-pulse flex-shrink-0 group-hover:rotate-12 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                Ask Gemini
+              </span>
+            </button>
+          </div>
 
-          <button
-            onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/60 dark:hover:bg-rose-900/60 dark:text-rose-300 border border-rose-200/70 dark:border-rose-800 transition-all shadow-xs hover:scale-[1.02]"
-            title="Upload PDF or notes from your device"
-          >
-            <Upload className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-            <span>+ Add Notes from Device</span>
-          </button>
+          {/* BUTTON 3: Add Notes from Device Bubble */}
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className="absolute -inset-[1.5px] rounded-full bg-gradient-to-r from-rose-500 via-pink-500 to-amber-400 opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none"
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-rose-50 hover:bg-rose-100 text-rose-700 dark:bg-rose-950/70 dark:hover:bg-rose-900/80 dark:text-rose-300 border border-rose-200/80 dark:border-rose-800 shadow-xs hover:shadow-md transition-all duration-300 ease-out cursor-pointer active:scale-95 overflow-hidden"
+              title="Upload PDF or notes from your device"
+            >
+              <Upload className="w-4 h-4 text-rose-600 dark:text-rose-400 flex-shrink-0 group-hover:-translate-y-0.5 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[160px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                + Add Notes from Device
+              </span>
+            </button>
+          </div>
 
-          <button
-            onClick={() => onCreateNoteInContext(windowMeta.categoryFilter || 'General')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md transition-all hover:scale-[1.02]"
-          >
-            <Plus className="w-4 h-4" />
-            <span>New Note</span>
-          </button>
+          {/* BUTTON 4: New Note Bubble */}
+          <div className="relative flex items-center group animate-bubble-spring">
+            <div 
+              className={`absolute -inset-[1.5px] rounded-full bg-gradient-to-r ${activeUser?.avatarGradient || 'from-indigo-500 via-sky-500 to-amber-400'} opacity-60 blur-[2px] group-hover:opacity-100 group-hover:blur-[4px] group-hover:scale-105 transition-all duration-300 pointer-events-none`}
+            />
+            <button
+              type="button"
+              onClick={() => onCreateNoteInContext(windowMeta.categoryFilter || 'General')}
+              className="relative flex items-center justify-center h-9 sm:h-10 w-9 sm:w-10 px-0 group-hover:w-auto group-hover:px-3.5 group-hover:gap-1.5 rounded-full bg-stone-900 hover:bg-stone-800 text-white dark:bg-stone-100 dark:hover:bg-white dark:text-stone-900 shadow-md hover:shadow-lg transition-all duration-300 ease-out cursor-pointer active:scale-95 border border-white/20 dark:border-stone-800/40 overflow-hidden"
+              title="Create New Note in this context"
+            >
+              <Plus className="w-4 h-4 flex-shrink-0 group-hover:rotate-90 transition-transform duration-300" />
+              <span className="max-w-0 opacity-0 group-hover:max-w-[120px] group-hover:opacity-100 overflow-hidden whitespace-nowrap text-xs sm:text-sm font-semibold transition-all duration-300 ease-out">
+                New Note
+              </span>
+            </button>
+          </div>
         </div>
 
       </div>
